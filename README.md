@@ -1,6 +1,8 @@
 # WAD1-Project
 IAMdb movie database
 
+MongoDB Password: FaZ00YwKZpsHPyNA
+Connection String: mongodb+srv://iamdb2026_db_user:FaZ00YwKZpsHPyNA@waddev.wrhzxxk.mongodb.net/
 Provide step-by-step instructions on: 
 a. How to set up your application based on the submitted file(s). 
 b. How to run your application. 
