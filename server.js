@@ -21,10 +21,12 @@ server.set("view engine", "ejs")
 // Import route files
 const loginRoutes = require('./routes/loginRoutes');
 const registerRoutes = require('./routes/registerRoutes');
+const homeRoutes = require('./routes/homeRoutes');
 
 // Use the routes
-server.use('/', loginRoutes);   // Login routes
+server.use('/login', loginRoutes);   // Login routes
 server.use('/register', registerRoutes);  // Register routes
+server.use('/home', homeRoutes);  // Home routes
 
 
 
