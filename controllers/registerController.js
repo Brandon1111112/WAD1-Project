@@ -3,7 +3,7 @@ const fs = require('fs/promises')
 //Get Model
 const User = require('../models/user-model')
 
-//Data validation of Login details
+//Data validation of register details
 exports.registerUser = async (req, res) => {
     const {name, email, password } = req.body
     try {

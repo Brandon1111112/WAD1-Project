@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const server = express();
 const path = require("path");
 
-server.use("/", express.static(path.join(__dirname, "views")))
+server.use("/", express.static(path.join(__dirname, "public")))
 
 // Specify path to envrionment variable file 'config.env'
 dotenv.config({ path: './config.env'})
@@ -21,13 +21,12 @@ server.set("view engine", "ejs")
 // Import route files
 const loginRoutes = require('./routes/loginRoutes');
 const registerRoutes = require('./routes/registerRoutes');
-const homeRoutes = require('./routes/homeRoutes');
+const indexRoutes = require('./routes/indexRoutes');
 
 // Use the routes
 server.use('/login', loginRoutes);   // Login routes
 server.use('/register', registerRoutes);  // Register routes
-server.use('/home', homeRoutes);  // Home routes
-
+server.use('/index', indexRoutes);  // Index routes
 
 
 
