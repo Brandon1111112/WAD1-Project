@@ -5,7 +5,9 @@ const User = require('../models/user-model')
 
 //Data validation of register details
 exports.registerUser = async (req, res) => {
-    const {name, email, password } = req.body
+    const {name, email, password} = req.body
+
+
     try {
         const user = await User.findOne({ email })
         if (!user) {
@@ -13,6 +15,7 @@ exports.registerUser = async (req, res) => {
                 name,
                 email,
                 password, 
+                admin:false
             });
             await newUser.save()
             return res.redirect('/home')

@@ -23,12 +23,14 @@ const loginRoutes = require('./routes/loginRoutes');
 const registerRoutes = require('./routes/registerRoutes');
 const indexRoutes = require('./routes/indexRoutes');
 const homeRoutes = require('./routes/homeRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 // Use the routes
 server.use('/login', loginRoutes);   // Login routes
 server.use('/register', registerRoutes);  // Register routes
 server.use('/index', indexRoutes);  // Index routes
 server.use('/home', homeRoutes);
+server.use('/admin', adminRoutes); //admin Routes
 
 
 

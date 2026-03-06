@@ -16,9 +16,16 @@ exports.loginUser = async (req, res) => {
             console.log("Wrong Password")
             return res.render('login', { error: "Wrong password" })
         }
+        
         // success
         console.log("Success")
+        if (user.admin === true){
+            console.log('admin')
+            return res.redirect('/admin')
+        }
         res.redirect('/home')
+       
+        
     } catch (err) {
         res.render('login', { error: "Server error" })
     }

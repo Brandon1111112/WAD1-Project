@@ -13,7 +13,11 @@ const userModel = new mongoose.Schema({
     password: {
         type: String,
         required: [true, 'User must have a password']
-    }
+    },
+    admin: {
+        type: Boolean,
+        required: [false, 'User does not have to be an admin']
+    },
 
 })
 
