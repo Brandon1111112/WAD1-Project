@@ -8,5 +8,20 @@
 <body>
     <h1>Admin Page</h1>
     <h1>Users</h1>
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+        </tr>
+        <% Users.forEach(user => { %>
+            <tr>
+                <td><%= user.name %></td>
+                <td><%= user.email %></td>
+            </tr>
+        <% }); %>
+       
+    </table>
+
+    <button>VIEW Users<a href="/viewusers">here</a></button>
 </body>
 </html>
