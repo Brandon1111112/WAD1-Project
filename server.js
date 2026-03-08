@@ -24,7 +24,7 @@ const registerRoutes = require('./routes/registerRoutes');
 const homeRoutes = require('./routes/homeRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const viewuserRoutes = require('./routes/viewuserRoutes');
-const movielistRoutes = require('./routes/movielistRoutes');
+const movieRoutes = require('./routes/movieRoutes');
 
 // Use the routes
 server.use('/login', loginRoutes);   // Login routes
@@ -32,7 +32,7 @@ server.use('/register', registerRoutes);  // Register routes
 server.use('/home', homeRoutes);
 server.use('/admin', adminRoutes); //admin Routes
 server.use('/viewusers', viewuserRoutes); //Route for admins to view users Routes
-server.use('/movielist', movielistRoutes)
+server.use('/movie', movieRoutes)
 
 
 
@@ -60,4 +60,4 @@ function startServer() {
 }
 startServer()
 // Try connecting DB first before starting web server
-connectDB().then(startServer)
+// connectDB().then(startServer)
