@@ -3,6 +3,7 @@ const dotenv = require('dotenv')
 const mongoose = require('mongoose')
 const server = express();
 const path = require("path");
+require("node:dns/promises").setServers(["1.1.1.1", "8.8.8.8"]);
 
 server.use("/", express.static(path.join(__dirname, "public")))
 
@@ -58,6 +59,6 @@ function startServer() {
     });
 
 }
-startServer()
+
 // Try connecting DB first before starting web server
-// connectDB().then(startServer)
+connectDB().then(startServer)
