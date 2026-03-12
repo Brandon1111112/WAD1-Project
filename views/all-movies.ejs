@@ -1,0 +1,17 @@
+<h1>Movie Table</h1>
+    <table border="1">
+        <tr>
+            <th>S/No</th>
+            <th>Movie Title</th>
+            <th>Movie Desc</th>
+            <th>Release Date</th>
+        </tr>
+        <% movies.forEach((movie, index) => { %>
+            <tr>
+                <td><%= index + 1 %></td>
+                <td><%= movie.movieTitle %></td>
+                <td><%= movie.movieDescription %></td>
+                <td><%= movie.releaseDate %></td>
+            </tr>
+        <% }) %>
+    </table>
