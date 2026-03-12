@@ -9,7 +9,7 @@
         <% movies.forEach((movie, index) => { %>
             <tr>
                 <td><%= index + 1 %></td>
-                <td><%= movie.movieTitle %></td>
+                <td><a href="/movie/<%= movie._id %>"><%= movie.movieTitle %></a></td>
                 <td><%= movie.movieDescription %></td>
                 <td><%= movie.releaseDate %></td>
             </tr>

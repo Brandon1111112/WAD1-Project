@@ -11,11 +11,13 @@ const getAllMovies = async (req, res) => {
 
 const getMovieById = async (req, res) => {
   try {
-    let _id = req.params.id;
-    const movie = await Movie.find({ _id: _id });
+    const movie = await Movie.findById(req.params.id);
+    if (!movie) {
+      return res.send("No movie found!");
+    }
     return movie;
   } catch (error) {
-    console.log("Server Error!")
+    console.log("Server Error!");
   }
 };
 
