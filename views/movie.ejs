@@ -17,6 +17,9 @@
         <%= movie.movieDescription %>
     </p>
 
+    <a href="/movie/edit/<%= movie._id %>">Edit</a>
+    <a href="/movie/delete/<%= movie._id %>">Delete</a>
+
     <!-- Hard Coded for now, will do more as I figure out mongodb -->
     <h2>Reviews</h2>
 

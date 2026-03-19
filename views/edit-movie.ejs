@@ -1,0 +1,18 @@
+<h1>Edit movie page</h1>
+<form action="/movie/edit/<%= movie._id %>" method="POST">
+  <label for="movieTitle">Movie Title</label>
+  <input type="text" name="movieTitle" value="<%= movie.movieTitle %>" /><br /><br />
+  <label for="movieDescription">Movie description</label>
+  <input
+    type="text"
+    name="movieDescription"
+    value="<%= movie.movieDescription %>"
+  /><br /><br />
+  <label for="releaseDate"></label>
+  <input
+    type="date"
+    name="releaseDate"
+    value="<%= movie.releaseDate %>"
+  /><br /><br />
+  <button type="submit">Edit Movie Details</button>
+</form>

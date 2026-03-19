@@ -2,24 +2,20 @@ const express = require("express");
 const router = express.Router();
 const movieController = require("../controllers/movieController");
 
-router.get("/", async (req, res) => {
-  const movies = await movieController.getAllMovies(req, res);
-  res.render("all-movies", { movies: movies });
-});
+router.get("/", movieController.getAllMovies);
 
-router.get("/create", (req, res) => {
-  res.render("create-movie.ejs");
-});
+router.get("/create", movieController.getCreateMovieForm);
 
-router.post("/create", (req, res) => {
-  movieController.createMovie(req, res);
-  res.render("create-movie");
-});
+router.post("/create", movieController.createMovie);
 
-router.get("/:id", async (req, res) => {
-  const movie = await movieController.getMovieById(req, res);
-  console.log(movie)
-  res.render("movie", { movie: movie });
-});
+router.get("/delete/:id", movieController.getMovieToBeDeleted);
+
+router.post("/delete/:id", movieController.deleteMovie);
+
+router.get("/edit/:id", movieController.getMovieToEdit);
+
+router.post("/edit/:id", movieController.updateMovieDetails);
+
+router.get("/:id", movieController.getMovieById);
 
 module.exports = router;

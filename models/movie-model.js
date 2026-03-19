@@ -30,4 +30,36 @@ const movieModel = new mongoose.Schema({
 
 const Movie = mongoose.model("Movie", movieModel, "movie");
 
-module.exports = Movie;
+exports.getAllMovies = function () {
+  return Movie.find();
+};
+
+exports.findMoveById = function (_id) {
+  return Movie.findOne({ _id: _id });
+};
+
+exports.deleteMovieById = function (_id) {
+  return Movie.deleteOne({ _id: _id });
+};
+
+exports.createMovie = function (newMovie) {
+  return Movie.create(newMovie);
+};
+
+exports.editMovieDetails = function (
+  _id,
+  movieTitle,
+  movieDescription,
+  releaseDate,
+) {
+  return Movie.updateOne(
+    { _id: _id },
+    {
+      movieTitle: movieTitle,
+      movieDescription: movieDescription,
+      releaseDate: releaseDate,
+    },
+  );
+};
+
+//module.exports = Movie;
