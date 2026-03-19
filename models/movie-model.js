@@ -22,10 +22,6 @@ const movieModel = new mongoose.Schema({
     type: Array,
     required: [false, "A movie can have no reviews"],
   },
-  hasWatched: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const Movie = mongoose.model("Movie", movieModel, "movie");
