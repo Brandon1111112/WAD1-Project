@@ -1,47 +1,86 @@
 const Movie = require("../models/movie-model");
+const validator = require("./utils/validation"); //validator helper funcs
 
+//Get all movies from MongoDB
 const getAllMovies = async (req, res) => {
   try {
     let movieList = await Movie.getAllMovies();
-    res.render("all-movies", { movies: movieList });
+    return res.render("all-movies", { movies: movieList });
   } catch (error) {
-    res.send("Error getting all books!");
+    return res.status(500).send("Error getting all movies!");
   }
 };
 
+//Get the movie by it's ObjectID and render the movie page
 const getMovieById = async (req, res) => {
+  if (validator.isInvalidId(req.params.id)) {
+    return res.status(400).send("Invalid movie id.");
+  }
   try {
     const movie = await Movie.findMoveById(req.params.id);
     if (!movie) {
       return res.send("No movie found!");
     }
-    res.render("movie", { movie: movie });
+    return res.render("movie", { movie: movie });
   } catch (error) {
-    res.send("Error fetching movie by ID");
+    return res.status(500).send("Error fetching movie by ID");
   }
 };
 
+//Get the create movie form
 const getCreateMovieForm = (req, res) => {
-  res.render("create-movie");
+  return res.render("create-movie");
 };
 
+//Get the input from the movie form and create the movie object in MongoDB
 const createMovie = async (req, res) => {
   const { movieTitle, movieDescription, releaseDate, movieRating } = req.body;
+  if (
+    validator.isMissingText(movieTitle) ||
+    validator.isMissingText(movieDescription) ||
+    validator.isMissingText(releaseDate) ||
+    validator.isMissingNumber(movieRating)
+  ) {
+    return res.status(400).send("All fields are required");
+  }
+
+  const rating = Number(movieRating);
+  if (rating < 1 || rating > 5) {
+    return res.status(400).send("Movie rating must be between 1 and 5");
+  }
+
   try {
-    const newMovie = { movieTitle, movieDescription, releaseDate, movieRating };
+    const newMovie = {
+      movieTitle,
+      movieDescription,
+      releaseDate,
+      movieRating,
+    };
     await Movie.createMovie(newMovie);
-    res.send("Movie has been created successfuly!");
+    return res.status(201).send("Movie has been created successfully!");
   } catch (err) {
-    console.log("Error creating the movie");
+    return res.status(500).send("Error creating movie :(");
   }
 };
 
+//Get the movie object to be deleted and render the delete movie confirmation form.
 const getMovieToBeDeleted = async (req, res) => {
   const movieId = req.params.id;
-  const movie = await Movie.findMoveById(movieId);
-  res.render("movie-delete", { movie: movie });
+  if (validator.isInvalidId(movieId)) {
+    return res.status(400).send("Invalid movie id.");
+  }
+  try {
+    const movie = await Movie.findMoveById(movieId);
+    if (!movie) {
+      return res.status(404).send("Movie not found!");
+    }
+    res.render("movie-delete", { movie: movie });
+  } catch (error) {
+    res.status(500).send("Error fetching the movie to be deleted");
+  }
 };
 
+//Get the confirmation and delete the movie from MongoDB
 const deleteMovie = async (req, res) => {
   try {
     const movieId = req.params.id;
@@ -49,38 +88,51 @@ const deleteMovie = async (req, res) => {
     if (!movieFound) {
       return res.status(404).send("Movie not found!");
     }
-
     await Movie.deleteMovieById(movieId);
-    res.send("Movie was deleted successfuly!");
+    return res.send("Movie was deleted successfuly!");
   } catch (error) {
-    res.send("Movie could not be deleted!");
+    return res.status(500).send("Movie could not be deleted!");
   }
 };
 
+//Get the movie info to edit movie and render the edit movie form
 const getMovieToEdit = async (req, res) => {
   const movieId = req.params.id;
   try {
     let movieDetails = await Movie.findMoveById(movieId);
+    if (!movieDetails) {
+      return res.status(404).send("Movie not found!");
+    }
     res.render("edit-movie", { movie: movieDetails });
   } catch (error) {
-    res.send("Error fetching movie by ID");
+    res.status(500).send("Error fetching movie by ID");
   }
 };
+
+//Update the movie by getting the new info from the fields.
 const updateMovieDetails = async (req, res) => {
   const movieId = req.params.id;
   const { movieTitle, movieDescription, releaseDate } = req.body;
+  if (validator.isInvalidId(movieId)) {
+    return res.status(400).send("Invalid movie id.");
+  }
+  if (
+    validator.isMissingText(movieTitle) ||
+    validator.isMissingText(movieDescription) ||
+    validator.isMissingText(releaseDate)
+  ) {
+    return res.status(400).send("All fields are required.");
+  }
   try {
-    if (movieId) {
-      await Movie.editMovieDetails(
-        movieId,
-        movieTitle,
-        movieDescription,
-        releaseDate,
-      );
-      res.send("Movie details have been successfuly updated!");
-    }
+    await Movie.editMovieDetails(
+      movieId,
+      movieTitle.trim(),
+      movieDescription.trim(),
+      releaseDate,
+    );
+    return res.send("Movie details have been successfuly updated!");
   } catch (error) {
-    res.send("Movie details could not be updated!");
+    return res.status(500).send("Movie details could not be updated!");
   }
 };
 
