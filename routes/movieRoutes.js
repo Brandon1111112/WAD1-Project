@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const movieController = require("../controllers/movieController");
+const auth = require('../middlewares/auth-middleware')
 
 //Route to GET all movie objects
-router.get("/", movieController.getAllMovies);
+router.get("/", auth.isLoggedIn, movieController.getAllMovies);
 
 //Route to GET the create movie form
 router.get("/create", movieController.getCreateMovieForm);

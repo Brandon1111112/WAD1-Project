@@ -38,7 +38,7 @@ server.use('/home', homeRoutes);
 server.use('/admin', adminRoutes); //admin Routes
 server.use('/viewusers', viewuserRoutes); //Route for admins to view users Routes
 server.use('/movie', movieRoutes);
-server.use('/watchedlist', watchedMovieRoutes); //Route for lisiting watched movies and recomandations
+server.use('/watched', watchedMovieRoutes); //Route for lisiting watched movies and recomandations
 
 
 

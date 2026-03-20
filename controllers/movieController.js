@@ -1,11 +1,28 @@
 const Movie = require("../models/movie-model");
 const validator = require("./utils/validation"); //validator helper funcs
+const User = require('../models/user-model'); // Get user model to check if watched or not
 
-//Get all movies from MongoDB
+//Get all movies from MongoDB and check if user watched or not
 const getAllMovies = async (req, res) => {
   try {
+    const loggedUser = req.session.user;
+    const user = await User.findOne({email: loggedUser.userId})
+
+    if (!loggedUser){
+      console.log('User not logged in, redirect to /login')
+      return res.redirect('/login')
+    }
+
+    if (!user) {
+      console.log('User does not exist, redirect to /login')
+      return res.redirect('/login')
+    }
+
+    const watchedMovies = user.watchedMovies.map(entry => entry.movieId.toString());
+
+
     let movieList = await Movie.getAllMovies();
-    return res.render("all-movies", { movies: movieList });
+    return res.render("all-movies", { movies: movieList, watchedMovies });
   } catch (error) {
     return res.status(500).send("Error getting all movies!");
   }

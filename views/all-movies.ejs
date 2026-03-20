@@ -5,6 +5,7 @@
             <th>Movie Title</th>
             <th>Movie Desc</th>
             <th>Release Date</th>
+            <th>Watched</th>
         </tr>
         <% movies.forEach((movie, index) => { %>
             <tr>
@@ -12,6 +13,21 @@
                 <td><a href="/movie/<%= movie._id %>"><%= movie.movieTitle %></a></td>
                 <td><%= movie.movieDescription %></td>
                 <td><%= movie.releaseDate %></td>
+                <td>
+                    <% if (watchedMovies.includes(movie._id.toString())){ %>
+                        <form action="/watched/unwatch" method="post">
+                            <input type="hidden" name="movieId" value="<%= movie._id %>">
+                            <button type="submit">Yes</button>
+                        </form>
+                    <% }else {%>
+                        <form action="/watched/watch" method="post">
+                            <input type="hidden" name="movieId" value="<%= movie._id %>">
+                            <button type="submit">No</button>
+                        </form>
+                    <% }%>
+                </td>
             </tr>
         <% }) %>
     </table>
+    <br>
+    <p><a href="/home">Go Back</a></p>

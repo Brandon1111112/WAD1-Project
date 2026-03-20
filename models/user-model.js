@@ -13,7 +13,8 @@ const userModel = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: [true, 'User must have an email']
+        required: [true, 'User must have an email'],
+        unique: true
     },
     password: {
         type: String,

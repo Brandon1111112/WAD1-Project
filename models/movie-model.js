@@ -20,7 +20,7 @@ const movieModel = new mongoose.Schema({
   },
   reviews: {
     type: Array,
-    required: [false, "A movie can have no reviews"],
+    required: false
   },
 });
 
