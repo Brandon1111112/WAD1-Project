@@ -58,6 +58,5 @@ function startServer() {
     });
 
 }
-startServer()
 // Try connecting DB first before starting web server
-// connectDB().then(startServer)
+connectDB().then(startServer)
