@@ -70,9 +70,5 @@ function startServer() {
     });
 
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> 349f0fe48ea92f49e661f26ab8590701827fda17
 // Try connecting DB first before starting web server
 connectDB().then(startServer)
