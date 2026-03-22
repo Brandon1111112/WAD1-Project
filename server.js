@@ -42,8 +42,6 @@ server.use('/register', registerRoutes);  // Register routes
 server.use('/home', homeRoutes);
 server.use('/admin', adminRoutes); //admin Routes
 server.use('/viewusers', viewuserRoutes); //Route for admins to view users Routes
-server.use('/movie', movieRoutes)
-
 server.use('/movie', movieRoutes);
 server.use('/watched', watchedMovieRoutes); //Route for lisiting watched movies and recomandations
 
