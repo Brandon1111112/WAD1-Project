@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Watchlist</title>
 </head>
 <body>
     <%- include('partials/navbar') %>
-    <h1>Watch list</h1>
+    <h1>Watchlist</h1>
     <% if (watchedMovies.length > 0){ %>
     <table border="1">
         <thead>
@@ -24,7 +24,7 @@
                 <td><%= entry.movieId.movieTitle %></td>
                 <td><%= entry.movieId.releaseDate %></td>
                 <td><%= entry.movieId.movieRating %></td>
-                <td><%= entry.watchedAt.toLocaleDateString() %></td>
+                <td><%= entry.watchedDate.toLocaleDateString() %></td>
             </tr>
             <% } %>
         </tbody>

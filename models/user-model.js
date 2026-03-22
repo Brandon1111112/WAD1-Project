@@ -1,11 +1,6 @@
 const mongoose = require('mongoose')
 
-// Defining Sub-Schema for keeping track of movies watched based on the user
-const watchedEntrySchema = new mongoose.Schema({
-    movieId: {type: mongoose.Schema.Types.ObjectId, ref:'Movie'},
-    watchedAt: {type: Date, default: Date.now}
-}, {_id: false});
-// Defining Schema
+// Defining User Schema
 const userModel = new mongoose.Schema({
     name: {
         type: String,
@@ -24,12 +19,6 @@ const userModel = new mongoose.Schema({
         type: Boolean,
         required: [false, 'User does not have to be an admin'] //removed [false, 'User does not have to be an admin'] as it would never be displayed because optional
     },
-    watchedMovies: {
-        type: [watchedEntrySchema],
-        default: [],
-        required: false
-    },
-
 })
 
 // Model Creation

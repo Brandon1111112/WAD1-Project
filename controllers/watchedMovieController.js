@@ -1,13 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const Movie = require("../models/movie-model");
-const User = require('../models/user-model');
+
+
+const Watchlist = require('../models/watchlist-model')
 
 const showMovieList = async (req,res) => {
     try{
-        const user = await User.findOne({ email: req.session.user.userId }).populate('watchedMovies.movieId');
+        const watchlist = await Watchlist.find(
+            {userId:req.session.user.userId, hasWatched: true}
+        ).populate('movieId');
 
-        return res.render('watchedMovies', {watchedMovies: user.watchedMovies})
+        return res.render('watchedMovies', {watchedMovies: watchlist})
 
     } catch (error) {
         console.log(error);
@@ -18,15 +21,15 @@ const showMovieList = async (req,res) => {
 const markAsWatched = async (req,res) => {
     try {
         const movieId = req.body.movieId;
-        const user = await User.findOne({ email: req.session.user.userId });
-        
-        if (!user.watchedMovies.includes(movieId)){
-            user.watchedMovies.push({
-                movieId: movieId,
-                watchedAt: new Date()
-            });
-            await user.save();
-        }
+        const user = await Watchlist.findOne({userId:req.session.user.userId})
+
+
+        await Watchlist.findOneAndUpdate(
+            {userId: req.session.user.userId, movieId: movieId},
+            {hasWatched: true, whatchedDate: new Date()},
+            {upsert: true}
+        )
+        console.log('Successfully marked')
         return res.redirect('/movie')
     } catch (error) {
         console.log(error);
@@ -37,13 +40,14 @@ const markAsWatched = async (req,res) => {
 const markAsUnwatched = async (req,res) => {
     try {
         const movieId = req.body.movieId;
-        const user = await User.findOne({ email: req.session.user.userId });
+        const user = await Watchlist.findOne({userId: req.session.user.userId})
             
-        user.watchedMovies = user.watchedMovies.filter(
-            entry => entry.movieId.toString() !== movieId
-        );
-            
-        await user.save();
+        await Watchlist.updateOne(
+            {userId: req.session.user.userId, movieId: movieId},
+            {hasWatched: false, watchedDate: null}
+        )
+        
+        console.log('Successfully unmarked')
         return res.redirect('/movie')
     } catch (error) {
         console.log(error);
