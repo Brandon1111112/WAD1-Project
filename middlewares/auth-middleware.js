@@ -15,6 +15,7 @@ const isAdmin = (req,res,next) => {
         console.log('Not an admin user, redirecting to /home')
         return res.redirect('/home')
     }
+    next();
 }   
 
 module.exports = {
