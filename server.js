@@ -3,6 +3,8 @@ const dotenv = require('dotenv')
 const mongoose = require('mongoose')
 const server = express();
 const path = require("path");
+const session = require('express-session')
+require("node:dns/promises").setServers(["1.1.1.1", "8.8.8.8"]);
 
 server.use("/", express.static(path.join(__dirname, "public")))
 
@@ -10,12 +12,19 @@ server.use("/", express.static(path.join(__dirname, "public")))
 dotenv.config({ path: './config.env' })
 
 // Parse URL-encoded data from POST requests
+// Middlewares
 server.use(express.urlencoded({ extended: true }));
 
 //express.json() is a middleware
 server.use(express.json())
 
 // Set EJS as view engine for rendering dynamic HTML pages
+const secret = process.env.SECRET; // get SECRET from config.env
+server.use(session({ 
+    secret,
+    resave: false,
+    saveUninitialized: false
+}))
 server.set("view engine", "ejs")
 
 // Import route files
@@ -25,6 +34,7 @@ const homeRoutes = require('./routes/homeRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const viewuserRoutes = require('./routes/viewuserRoutes');
 const movieRoutes = require('./routes/movieRoutes');
+const watchedMovieRoutes = require('./routes/watchedMoviesRoutes');
 
 // Use the routes
 server.use('/login', loginRoutes);   // Login routes
@@ -34,6 +44,8 @@ server.use('/admin', adminRoutes); //admin Routes
 server.use('/viewusers', viewuserRoutes); //Route for admins to view users Routes
 server.use('/movie', movieRoutes)
 
+server.use('/movie', movieRoutes);
+server.use('/watched', watchedMovieRoutes); //Route for lisiting watched movies and recomandations
 
 
 
@@ -58,5 +70,9 @@ function startServer() {
     });
 
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 349f0fe48ea92f49e661f26ab8590701827fda17
 // Try connecting DB first before starting web server
 connectDB().then(startServer)
