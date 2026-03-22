@@ -1,33 +1,55 @@
-<h1>Movie Table</h1>
-    <table border="1">
-        <tr>
-            <th>S/No</th>
-            <th>Movie Title</th>
-            <th>Movie Desc</th>
-            <th>Release Date</th>
-            <th>Watched</th>
-        </tr>
-        <% movies.forEach((movie, index) => { %>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <%- include('partials/navbar') %>
+        <h1>Movie Table</h1>
+        <table border="1">
             <tr>
-                <td><%= index + 1 %></td>
-                <td><a href="/movie/<%= movie._id %>"><%= movie.movieTitle %></a></td>
-                <td><%= movie.movieDescription %></td>
-                <td><%= movie.releaseDate %></td>
-                <td>
-                    <% if (watchedMovies.includes(movie._id.toString())){ %>
-                        <form action="/watched/unwatch" method="post">
-                            <input type="hidden" name="movieId" value="<%= movie._id %>">
-                            <button type="submit">Yes</button>
-                        </form>
-                    <% }else {%>
-                        <form action="/watched/watch" method="post">
-                            <input type="hidden" name="movieId" value="<%= movie._id %>">
-                            <button type="submit">No</button>
-                        </form>
-                    <% }%>
-                </td>
+                <th>S/No</th>
+                <th>Movie Title</th>
+                <th>Movie Desc</th>
+                <th>Release Date</th>
+                <th>Watched</th>
             </tr>
-        <% }) %>
-    </table>
-    <br>
-    <p><a href="/home">Go Back</a></p>
+            <% movies.forEach((movie, index)=> { %>
+                <tr>
+                    <td>
+                        <%= index + 1 %>
+                    </td>
+                    <td><a href="/movie/<%= movie._id %>">
+                            <%= movie.movieTitle %>
+                        </a></td>
+                    <td>
+                        <%= movie.movieDescription %>
+                    </td>
+                    <td>
+                        <%= movie.releaseDate %>
+                    </td>
+                    <td>
+                        <% if (watchedMovies.includes(movie._id.toString())){ %>
+                            <form action="/watched/unwatch" method="post">
+                                <input type="hidden" name="movieId" value="<%= movie._id %>">
+                                <button type="submit">Yes</button>
+                            </form>
+                            <% }else {%>
+                                <form action="/watched/watch" method="post">
+                                    <input type="hidden" name="movieId" value="<%= movie._id %>">
+                                    <button type="submit">No</button>
+                                </form>
+                                <% }%>
+                    </td>
+                </tr>
+                <% }) %>
+        </table>
+        <br>
+        <p><a href="/home">Go Back</a></p>
+</body>
+
+</html>
