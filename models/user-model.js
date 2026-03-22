@@ -13,6 +13,7 @@ const userModel = new mongoose.Schema({
     },
     email: {
         type: String,
+        required: [true, 'User must have an email']
         required: [true, 'User must have an email'],
         unique: true
     },
@@ -22,6 +23,7 @@ const userModel = new mongoose.Schema({
     },
     admin: {
         type: Boolean,
+        required: [false, 'User does not have to be an admin']
         required: false  //removed [false, 'User does not have to be an admin'] as it would never be displayed because optional
     },
     watchedMovies: {

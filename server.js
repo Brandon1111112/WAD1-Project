@@ -11,9 +11,14 @@ server.use("/", express.static(path.join(__dirname, "public")))
 // Specify path to envrionment variable file 'config.env'
 dotenv.config({ path: './config.env' })
 
+// Parse URL-encoded data from POST requests
 // Middlewares
 server.use(express.urlencoded({ extended: true }));
+
+//express.json() is a middleware
 server.use(express.json())
+
+// Set EJS as view engine for rendering dynamic HTML pages
 const secret = process.env.SECRET; // get SECRET from config.env
 server.use(session({ 
     secret,
@@ -37,6 +42,8 @@ server.use('/register', registerRoutes);  // Register routes
 server.use('/home', homeRoutes);
 server.use('/admin', adminRoutes); //admin Routes
 server.use('/viewusers', viewuserRoutes); //Route for admins to view users Routes
+server.use('/movie', movieRoutes)
+
 server.use('/movie', movieRoutes);
 server.use('/watched', watchedMovieRoutes); //Route for lisiting watched movies and recomandations
 
@@ -63,6 +70,9 @@ function startServer() {
     });
 
 }
+<<<<<<< HEAD
+=======
 
+>>>>>>> 349f0fe48ea92f49e661f26ab8590701827fda17
 // Try connecting DB first before starting web server
 connectDB().then(startServer)
