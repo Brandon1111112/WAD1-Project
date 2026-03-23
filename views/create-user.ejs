@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Create New User</title>
+</head>
+<body>
+    <h3>Create a New User</h3>
+    <form action="/admin/create-user" method="POST">
+
+
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Enter your full name..." required>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email..." required>
+        <label for="password">Password</label>
+        <input type="password" name="password"  placeholder="Enter your password..." required>   
+        <button type="submit">Create User</button>
+
+    </form>
+
+    <% if (result) { %>
+        <p><strong>Name: <%= result.name %></strong></p>
+        Email: <%= result.email %><br>
+        User has been created successfully!
+        <hr>
+    <% } else if(result === "fail") { %>
+        <p>Error creating user. Please try again.</p>
+    <% } %>
+
+    <br><br>
+    <a href="/admin">Back to Admin</a>
+</body>
+</html>

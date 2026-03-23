@@ -42,7 +42,37 @@ exports.deleteUsers = async (req, res) => {
     let success = await User.deleteMany({email: {$in: emails}}); // Delete users with matching emails
     
     if (success.deletedCount > 0) {
-      res.send(`${success.deletedCount} user(s) have been successfully banned. <a href="/admin">Back to admin</a>`);
+      res.send(` <div style="
+        margin: 0;
+        font-family: 'Source Sans 3', system-ui, sans-serif;
+        background: #0d0d0d;
+        color: #f0f0f0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    ">
+        <div style="
+            background: #161618;
+            border: 1px solid #2a2a2e;
+            border-radius: 10px;
+            padding: 40px 48px;
+            text-align: center;
+        ">
+            <div style="font-size: 2rem; margin-bottom: 12px;">🚫</div>
+            <h2 style="
+                font-size: 1.2rem;
+                font-weight: 600;
+                margin-bottom: 8px;
+            ">${success.deletedCount} user(s) successfully banned</h2>
+            <a href="/admin" style="
+                color: #e50914;
+                text-decoration: none;
+                font-size: 0.9rem;
+            ">← Back to Admin</a>
+        </div>
+    </div>
+`);
     } else {
       res.send("No users deleted. <a href='/admin'>Back</a>");
     }

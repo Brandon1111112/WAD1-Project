@@ -24,14 +24,17 @@ const userModel = new mongoose.Schema({
 // Model Creation
 const User = mongoose.model('User', userModel, 'user-auth')
 
-// Update user's admin status
-exports.updateAdminStatus = function(email, adminStatus) {
-    return User.updateOne({email: email}, {admin: adminStatus});
-};
-
 // Method to add a new user (for admin creation)
-exports.addUser = function(newUser) {
+User.addUser = function(newUser) {
     return User.create(newUser);
 };
 
+// Update user's admin status
+User.updateAdminStatus = function(email, adminStatus) {
+    return User.updateOne({email: email}, {admin: adminStatus});
+};
+
 module.exports = User
+
+
+
