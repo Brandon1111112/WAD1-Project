@@ -16,7 +16,7 @@
                 <th>Movie Title</th>
                 <th>Movie Desc</th>
                 <th>Release Date</th>
-                <th>Watched</th>
+                <th>Add to Watchlist</th>
             </tr>
             <% movies.forEach((movie, index)=> { %>
                 <tr>
@@ -34,12 +34,12 @@
                     </td>
                     <td>
                         <% if (watchedMovies.includes(movie._id.toString())){ %>
-                            <form action="/watched/unwatch" method="post">
+                            <form action="/watched/remove" method="post">
                                 <input type="hidden" name="movieId" value="<%= movie._id %>">
                                 <button type="submit">Yes</button>
                             </form>
                             <% }else {%>
-                                <form action="/watched/watch" method="post">
+                                <form action="/watched/add" method="post">
                                     <input type="hidden" name="movieId" value="<%= movie._id %>">
                                     <button type="submit">No</button>
                                 </form>
