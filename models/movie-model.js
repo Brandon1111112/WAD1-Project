@@ -18,6 +18,10 @@ const movieModel = new mongoose.Schema({
     type: Date,
     required: [true, "Movie must have a release date"],
   },
+  genre: {
+    type: String,
+    required: false
+  }
 });
 
 const Movie = mongoose.model("Movie", movieModel, "movie");
@@ -52,6 +56,13 @@ exports.editMovieDetails = function (
       releaseDate: releaseDate,
     },
   );
+};
+
+exports.getMoviesByGenres = function (genres, excludeIds) {
+  return Movie.find({
+    genre: { $in: genres },
+    _id: { $nin: excludeIds }
+  }).limit(10);
 };
 
 //module.exports = Movie;

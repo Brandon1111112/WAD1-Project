@@ -12,5 +12,6 @@ router.get('/list', auth.isLoggedIn, watchedMovieController.showWatchlist);
 router.post('/remove', auth.isLoggedIn, watchedMovieController.removeFromWatchlist);
 // Add the movie to watchlist
 router.post('/add', auth.isLoggedIn, watchedMovieController.addToWatchlist);
-
+// Show user's movie recommendations
+router.get('/recommended', auth.isLoggedIn, watchedMovieController.showRecommendations);
 module.exports = router;

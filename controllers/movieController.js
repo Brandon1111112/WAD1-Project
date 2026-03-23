@@ -31,13 +31,14 @@ const getAllMovies = async (req, res) => {
     const watchedEntries = await Watchlist.find({
       userId: user._id,
       wantsToWatch: true,
+      hasWatched: false,
     });
-    const watchedMovies = watchedEntries.map((entry) =>
+    const watchlist = watchedEntries.map((entry) =>
       entry.movieId.toString(),
     );
 
     let movieList = await Movie.getAllMovies();
-    return res.render("all-movies", { movies: movieList, watchedMovies });
+    return res.render("all-movies", { movies: movieList, watchlist });
   } catch (error) {
     return res.status(500).send("Error getting all movies!");
   }

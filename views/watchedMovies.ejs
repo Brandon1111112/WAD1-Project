@@ -8,21 +8,25 @@
 <body>
     <%- include('partials/navbar') %>
     <h1>Watchlist</h1>
-    <% if (watchedMovies.length > 0){ %>
+    <% if (watchlist.length > 0){ %>
     <table border="1">
         <thead>
             <tr>
             <th>Title</th>
             <th>Release Date</th>
             <th>Rating</th>
-            <th>Added On</th>
+            <th>Added</th>
             </tr>
         </thead>
         <tbody>
-            <% for (let entry of watchedMovies) { %>
+            <% for (let entry of watchlist) { %>
             <tr>
-                <td><%= entry.movieId.movieTitle %></td>
-                <td><%= entry.movieId.releaseDate %></td>
+                <td><a href="/movie/<%= entry.movieId._id %>"><%= entry.movieId.movieTitle %></a></td>
+                <td><%= entry.movieId.releaseDate.toLocaleDateString('en-GB', { 
+                                                                        day: 'numeric', 
+                                                                        month: 'long', 
+                                                                        year: 'numeric' 
+                                                                        }) %></td>
                 <td><%= entry.movieId.movieRating %></td>
                 <td>
                     <%  
@@ -45,7 +49,31 @@
     <% } else { %>
         <p>You have not watched any movies. Check out our <a href="/movie">movie selection</a>.</p>
     <% } %>
-    <br>
-    <p><a href="/home">Go Back</a></p>
+   
+    
+    <% if (alreadyWatched.length > 0) { %>
+    <hr>
+    <h2>Already Watched</h2>
+    <p> You have watched <%= alreadyWatched.length %> movie<%= alreadyWatched.length > 1 ? 's' : '' %></p>
+    
+    
+        <table border="1">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Leave a review?</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (let entry of alreadyWatched){ %>
+                <tr>
+                    <td><a href="/movie/<%= entry.movieId._id %>"><%= entry.movieId.movieTitle %></a></td>
+                    <th><button>Leave review?</button></th>
+                </tr>
+            <% } %>
+            </tbody>
+        </table>
+    <% } %>
+    <p><a href="/home">Go Back</a> | <a href="/watched/recommended">Discover new movies</a></p>
 </body>
 </html>

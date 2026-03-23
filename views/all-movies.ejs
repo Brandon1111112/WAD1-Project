@@ -114,15 +114,15 @@
                 <p class="movie-meta">Release: <%= new Date(movie.releaseDate).toLocaleDateString() %></p>
 
                 <div class="actions">
-                    <% if (watchedMovies.includes(movie._id.toString())){ %>
+                    <% if (watchlist.includes(movie._id.toString())){ %>
                         <form action="/watched/remove" method="post">
                             <input type="hidden" name="movieId" value="<%= movie._id %>">
-                            <button class="btn" type="submit">Yes</button>
+                            <button class="btn" type="submit">Remove from Watchlist</button>
                         </form>
-                        <% }else {%>
+                        <% } else {%>
                         <form action="/watched/add" method="post">
                             <input type="hidden" name="movieId" value="<%= movie._id %>">
-                            <button class="btn" type="submit">No</button>
+                            <button class="btn" type="submit">Add to Watchlist</button>
                         </form>
                         <% }%>
                     </form>

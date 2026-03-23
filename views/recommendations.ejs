@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Recommended For You</h1>
+
+  <% if (topGenres.length > 0) { %>
+    <p>Based on your watch history you seem to enjoy:
+        <ul>
+      <% topGenres.forEach(genre => { %>
+        <strong><li><%= genre %></li></strong>
+      <% }) %>
+        </ul> 
+    </p>
+  <% } %>
+
+  <% if (recommendations.length > 0) { %>
+    <div class="movie-grid">
+      <% recommendations.forEach(movie => { %>
+        <div class="movie-card">
+          <img src="<%= movie.moviePoster || 'https://via.placeholder.com/300x450?text=No+Poster' %>" 
+               alt="<%= movie.movieTitle %>" />
+          <h2><a href="/movie/<%= movie._id %>"><%= movie.movieTitle %></a></h2>
+          <p>Genre: <%= movie.genre %></p>
+          <p>Rating: <%= movie.movieRating %> / 5</p>
+          <p>Release: <%= new Date(movie.releaseDate).toLocaleDateString() %></p>
+
+          <form action="/watched/add" method="POST">
+            <input type="hidden" name="movieId" value="<%= movie._id %>">
+            <button type="submit">Add to Watchlist</button>
+          </form>
+        </div>
+      <% }) %>
+    </div>
+
+  <% } else { %>
+    <p>No recommendations found. Try watching more movies!</p>
+  <% } %>
+
+  <br>
+  <p>
+    <a href="/watched/list">Back to Watchlist</a> |
+    <a href="/home">Home</a>
+  </p>
+</body>
+</html>

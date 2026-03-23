@@ -18,8 +18,10 @@ const watchlistModel = new mongoose.Schema({
 },
   hasLiked: {
     type: Boolean, default: false
-}
-
+},
+  hasWatched: {
+    type: Boolean, default: false
+},
 });
 
 const Watchlist = mongoose.model("Watchlist", watchlistModel, "watchlist");
