@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title><%= movie.movieTitle %></title>
+  </head>
 
 <head>
     <title>
@@ -9,6 +12,8 @@
 
 </head>
 
+  <body>
+    <h1><%= movie.movieTitle %></h1>
 <body>
     <%- include('partials/navbar') %>
         <h1>
@@ -16,6 +21,11 @@
                 <%= movie.movieTitle %>
         </h1>
 
+    <p><%= movie.movieDescription %></p>
+    <p>
+        <%= movie.description %>
+        <%= movie.movieDescription %>
+    </p>
         <p>
             <%= movie.description %>
                 <%= movie.movieDescription %>
@@ -24,8 +34,20 @@
         <a href="/movie/edit/<%= movie._id %>">Edit</a>
         <a href="/movie/delete/<%= movie._id %>">Delete</a>
 
+    <!-- Hard Coded for now, will do more as I figure out mongodb -->
+    <h2 id="reviews">Reviews</h2>
         <h2>Reviews</h2>
 
+    <form action="/review" method="POST">
+      <label for="rating">Rating (1–5):</label><br />
+      <select id="rating" name="rating">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+      <br /><br />
         <% if (error) { %>
             <p style="color: red;">
                 <%= error %>
@@ -44,14 +66,39 @@
                     </select>
                     <br><br>
 
+      <label for="review">Your review:</label><br />
+      <textarea
+        id="review"
+        name="review"
+        rows="5"
+        cols="40"
+        placeholder="Write your review here..."
+      ></textarea>
+      <br /><br />
                     <label for="review">Your review:</label><br>
                     <textarea id="review" name="review" rows="5" cols="40" placeholder="Write your review here..."
                         required></textarea>
                     <br><br>
 
+      <button type="submit">Submit Review</button>
+    </form>
                     <button type="submit">Submit Review</button>
                 </form>
 
+    <hr />
+    <p><strong>Alex</strong></p>
+    <p><strong>Rating:</strong> 5 / 5</p>
+    <p><strong>Review:</strong></p>
+    <p>Cringe.</p>
+    <hr />
+    <p><strong>Sarah</strong></p>
+    <p><strong>Rating:</strong> 4 / 5</p>
+    <p><strong>Review:</strong></p>
+    <p>Very dark and gritty movie.</p>
+    <hr />
+    <br /><br />
+    <a href="/testing.html">Back to movie list</a>
+  </body>
                 <% if (reviews && reviews.length> 0) { %>
                     <% reviews.forEach(function(r) { %>
                         <hr>
