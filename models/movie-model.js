@@ -13,15 +13,7 @@ const movieModel = new mongoose.Schema({
   releaseDate: {
     type: Date,
     required: [true, "Movie must have a release date"],
-  },
-  movieRating: {
-    type: Number,
-    required: [true, "Movie must have a rating"],
-  },
-  reviews: {
-    type: Array,
-    required: false
-  },
+  }
 });
 
 const Movie = mongoose.model("Movie", movieModel, "movie");
