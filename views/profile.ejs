@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa, #e4ecf7);
+        }
+
+        /* Center layout */
+        .profile-container {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        }
+
+        /* Card */
+        .profile-card {
+        width: 350px;
+        background: white;
+        border-radius: 18px;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        /* Profile header */
+        .profile-img {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 10px;
+        }
+
+        .profile-header h2 {
+        margin: 8px 0 5px;
+        }
+
+        .profile-header p {
+        font-size: 14px;
+        color: #777;
+        }
+
+        /* Stats */
+        .profile-stats {
+        display: flex;
+        justify-content: space-around;
+        margin: 25px 0;
+        }
+
+        .stat h3 {
+        margin: 0;
+        color: #4f46e5;
+        }
+
+        .stat p {
+        font-size: 12px;
+        color: #888;
+        margin-top: 5px;
+        }
+
+        /* Buttons */
+        .profile-actions {
+        display: flex;
+        gap: 10px;
+        }
+
+        .btn {
+        flex: 1;
+        padding: 10px;
+        border-radius: 10px;
+        text-decoration: none;
+        color: white;
+        font-size: 14px;
+        transition: 0.3s;
+        }
+
+        .edit {
+        background: #4f46e5;
+        }
+
+        .edit:hover {
+        background: #4338ca;
+        }
+
+        .logout {
+        background: #ef4444;
+        }
+
+        .logout:hover {
+        background: #dc2626;
+    }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+    <div class="profile-card">
+
+        <!-- Profile Header -->
+        <div class="profile-header">
+        <img src="/img/default-profile.jpg" class="profile-img">
+
+        <h2><%= user.userName %></h2>
+        <p><%= user.email %></p>
+        </div>
+
+        <!-- Stats -->
+        <div class="profile-stats">
+        <div class="stat">
+            <h3></h3>
+            <p>Movies Watched</p>
+        </div>
+
+        <div class="stat">
+            <h3></h3>
+            <p>Reviews</p>
+        </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="profile-actions">
+        <a href="/profile/edit" class="btn logout">Edit Profile</a>
+        <a href="/profile/logout" class="btn logout">Logout</a>
+        </div>
+
+    </div>
+    </div>
+
+</body>
+</html>
