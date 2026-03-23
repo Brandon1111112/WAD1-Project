@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users Marked for Deletion</title>
+</head>
+
+<body>
+    <p><strong>Users Marked for Deletion.</strong></p>
+    
+    <% if(result && result.length > 0) { %>
+        <table border="1">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+            <% result.forEach(user => { %>
+                <tr>
+                    <td><%= user.name %></td>
+                    <td><%= user.email %></td>
+                </tr>
+            <% }); %>
+        </table>
+
+        <br>
+
+        <form action="/admin/delete-users" method="POST">
+            <p>Click the Confirm button to ban these users.</p>
+            <% result.forEach(user => { %>
+                <input type="hidden" name="emails" value="<%= user.email %>">
+            <% }); %>
+            <button type="submit">Confirm</button>
+        </form>
+        <a href="/admin">Cancel</a>
+
+    <% } else { %>
+        <p>No users selected.</p>
+        <a href="/admin">Back to Admin</a>
+    <% } %>
+
+</body>
+</html>

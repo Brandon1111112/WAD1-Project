@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+</head>
+<body>
+
+    <h1>Admin Page</h1>
+    <div>
+        <h1>Users Management</h1>
+        <form action="/admin/confirm-delete" method="POST">
+        <table border="1">
+            <tr>
+                <th><strong>Select</strong></th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Admin</th>
+            </tr>
+            <% Users.forEach(user => { %>
+                <tr>
+                    <td><input type="checkbox" name="emails" value="<%= user.email %>"></td>
+                    <td><%= user.name %></td>
+                    <td><%= user.email %></td>
+                    <td><%= user.admin ? 'Yes' : 'No' %></td>
+                </tr>
+            <% }); %>
+        </table>
+
+        <br>
+        
+            <button type="submit">Mark Selected Users for Deletion</button>
+        </form>
+    </div>
+
+
+</body>
+</html>
