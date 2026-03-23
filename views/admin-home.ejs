@@ -8,32 +8,49 @@
 <body>
 
     <h1>Admin Page</h1>
+        <!-- Create User Section -->
+    <div>
+        <h2>Create New User</h2>
+        <a href="/admin/create-user"><button>Create User</button></a>
+    </div>
+
+    <hr>
     <div>
         <h1>Users Management</h1>
-        <form action="/admin/confirm-delete" method="POST">
+        
         <table border="1">
             <tr>
                 <th><strong>Select</strong></th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Admin</th>
+                <th>Actions</th>
             </tr>
             <% Users.forEach(user => { %>
                 <tr>
-                    <td><input type="checkbox" name="emails" value="<%= user.email %>"></td>
+                    <td><input type="checkbox" name="emails" value="<%= user.email %>" form ="deleteForm"></td>
                     <td><%= user.name %></td>
                     <td><%= user.email %></td>
                     <td><%= user.admin ? 'Yes' : 'No' %></td>
+                    <td>
+                    <!-- Show Make Admin button only if user is not already admin -->
+                    <% if (!user.admin) { %>
+                        <form action="/admin/make-admin" method="POST" style="display:inline;"> <!-- CSS Included -->
+                            <input type="hidden" name="email" value="<%= user.email %>">
+                            <button type="submit">Make Admin</button>
+                        </form>
+                    <% } else { %>
+                        <span>Admin</span>
+                    <% } %>
+                    </td>
                 </tr>
             <% }); %>
         </table>
 
         <br>
-        
+        <form id="deleteForm" action="/admin/confirm-delete" method="POST">
             <button type="submit">Mark Selected Users for Deletion</button>
         </form>
     </div>
-
-
 </body>
 </html>
