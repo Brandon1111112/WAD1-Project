@@ -15,7 +15,8 @@ exports.registerUser = async (req, res) => {
                 name,
                 email,
                 password, 
-                admin:false
+                admin:false,
+                profilePic:'/img/default-profile.jpg'
             });
             await newUser.save()
             return res.redirect('/home')

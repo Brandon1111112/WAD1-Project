@@ -34,7 +34,10 @@ const homeRoutes = require('./routes/homeRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const viewuserRoutes = require('./routes/viewuserRoutes');
 const movieRoutes = require('./routes/movieRoutes');
-const watchedMovieRoutes = require('./routes/watchedMoviesRoutes');
+const watchedMoviesRoutes = require('./routes/watchedMoviesRoutes');
+const profileRoutes = require('./routes/profileRoutes.js');
+const logoutRoutes = require('./routes/logoutRoutes.js');
+const editprofileRoutes = require('./routes/editprofileRoutes.js');
 
 // Use the routes
 server.use('/login', loginRoutes);   // Login routes
@@ -43,9 +46,10 @@ server.use('/home', homeRoutes);
 server.use('/admin', adminRoutes); //admin Routes
 server.use('/viewusers', viewuserRoutes); //Route for admins to view users Routes
 server.use('/movie', movieRoutes);
-server.use('/watched', watchedMovieRoutes); //Route for lisiting watched movies and recomandations
-
-
+server.use('/watched', watchedMoviesRoutes); //Route for lisiting watched movies and recomandations
+server.use('/profile', profileRoutes);
+server.use('/editprofile', editprofileRoutes);
+server.use('/logout', logoutRoutes);
 
 // async function to connect to DB
 async function connectDB() {
