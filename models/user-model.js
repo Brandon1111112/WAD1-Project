@@ -19,10 +19,6 @@ const userModel = new mongoose.Schema({
         type: Boolean,
         required: [false, 'User does not have to be an admin'] //removed [false, 'User does not have to be an admin'] as it would never be displayed because optional
     },
-    profilePic: {
-        type: String,
-        default: '/img/default-profile.jpg' // fallback image
-    }
 })
 
 // Model Creation

@@ -22,12 +22,8 @@ exports.loginUser = async (req, res) => {
         req.session.user = {
             userId: user._id,
             userName: user.name,
-            isAdmin: user.admin,
-            email: user.email,
-            profilePic: user.profilePic,
-            password: user.password
+            isAdmin: user.admin
         }
-
         console.log("Success")
         if (user.admin === true){
             console.log('admin')

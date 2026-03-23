@@ -4,11 +4,9 @@ const router = express.Router();
 
 const Watchlist = require('../models/watchlist-model')
 
-const showMovieList = async (req,res) => {
 const showWatchlist = async (req,res) => {
     try{
         const watchlist = await Watchlist.find(
-            {userId:req.session.user.userId, hasWatched: true}
             {userId:req.session.user.userId, wantsToWatch: true}
         ).populate('movieId');
 
@@ -20,7 +18,6 @@ const showWatchlist = async (req,res) => {
     }
 };
 
-const markAsWatched = async (req,res) => {
 const addToWatchlist = async (req,res) => {
     try {
         const movieId = req.body.movieId;
