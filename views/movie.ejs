@@ -4,7 +4,7 @@
 <head>
     <title>
         <%= movie.title %>
-            <%= movie.movieTitle %>
+        <%= movie.movieTitle %>
     </title>
 
 </head>
@@ -18,7 +18,7 @@
 
         <p>
             <%= movie.description %>
-                <%= movie.movieDescription %>
+            <%= movie.movieDescription %>
         </p>
 
         <a href="/movie/edit/<%= movie._id %>">Edit</a>
@@ -65,7 +65,6 @@
                         <p>
                             <%= r.review %>
                         </p>
-
                         <% if (currentUser && r.userId && r.userId._id.toString()===currentUser.userId) { %>
                             <a href="/movie/review/edit/<%= r._id %>">Edit</a>
 
@@ -73,10 +72,10 @@
                                 <button type="submit">Delete</button>
                             </form>
                             <% } %>
-                                <% }) %>
-                                    <% } else { %>
-                                        <p>No reviews yet.</p>
-                                        <% } %>
+                            <% }) %>
+                        <% } else { %>
+                            <p>No reviews yet.</p>
+                        <% } %>
 
 </body>
 

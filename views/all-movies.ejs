@@ -2,54 +2,136 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movies</title>
+    <style>
+        body {
+            margin: 20px;
+            font-family: Arial, sans-serif;
+            color: #222;
+            background: #fafafa;
+        }
+
+        h1 {
+            margin-bottom: 16px;
+            font-size: 24px;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 16px;
+        }
+
+        .movie-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            background: #fff;
+            max-width: 240px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .movie-poster {
+            width: 100%;
+            aspect-ratio: 2 / 3;
+            object-fit: cover;
+            border-radius: 6px;
+            background: #f0f0f0;
+        }
+
+        .movie-title {
+            margin: 10px 0 6px;
+            font-size: 16px;
+            line-height: 1.3;
+        }
+
+        .movie-title a {
+            color: #222;
+            text-decoration: none;
+        }
+
+        .movie-title a:hover {
+            text-decoration: underline;
+        }
+
+        .movie-meta {
+            margin: 2px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .actions {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background: #f7f7f7;
+            text-decoration: none;
+            color: #111;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .btn[disabled] {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 
 <body>
     <%- include('partials/navbar') %>
-        <h1>Movie Table</h1>
-        <table border="1">
-            <tr>
-                <th>S/No</th>
-                <th>Movie Title</th>
-                <th>Movie Desc</th>
-                <th>Release Date</th>
-                <th>Add to Watchlist</th>
-            </tr>
-            <% movies.forEach((movie, index)=> { %>
-                <tr>
-                    <td>
-                        <%= index + 1 %>
-                    </td>
-                    <td><a href="/movie/<%= movie._id %>">
-                            <%= movie.movieTitle %>
-                        </a></td>
-                    <td>
-                        <%= movie.movieDescription %>
-                    </td>
-                    <td>
-                        <%= movie.releaseDate %>
-                    </td>
-                    <td>
-                        <% if (watchedMovies.includes(movie._id.toString())){ %>
-                            <form action="/watched/remove" method="post">
-                                <input type="hidden" name="movieId" value="<%= movie._id %>">
-                                <button type="submit">Yes</button>
-                            </form>
-                            <% }else {%>
-                                <form action="/watched/add" method="post">
-                                    <input type="hidden" name="movieId" value="<%= movie._id %>">
-                                    <button type="submit">No</button>
-                                </form>
-                                <% }%>
-                    </td>
-                </tr>
-                <% }) %>
-        </table>
-        <br>
-        <p><a href="/home">Go Back</a></p>
+    <h1>Movies</h1>
+
+    <div class="movie-grid">
+        <% movies.forEach((movie) => { %>
+            <div class="movie-card">
+                <img
+                    class="movie-poster"
+                    src="<%= movie.moviePoster || 'https://via.placeholder.com/300x450?text=No+Poster' %>"
+                    alt="<%= movie.movieTitle %> poster"
+                />
+
+                <h2 class="movie-title">
+                    <a href="/movie/<%= movie._id %>"><%= movie.movieTitle %></a>
+                </h2>
+
+                <p class="movie-meta">Rating: <%= movie.movieRating %> / 5</p>
+                <p class="movie-meta">Release: <%= new Date(movie.releaseDate).toLocaleDateString() %></p>
+
+                <div class="actions">
+                    <% if (watchedMovies.includes(movie._id.toString())){ %>
+                        <form action="/watched/remove" method="post">
+                            <input type="hidden" name="movieId" value="<%= movie._id %>">
+                            <button class="btn" type="submit">Yes</button>
+                        </form>
+                        <% }else {%>
+                        <form action="/watched/add" method="post">
+                            <input type="hidden" name="movieId" value="<%= movie._id %>">
+                            <button class="btn" type="submit">No</button>
+                        </form>
+                        <% }%>
+                    </form>
+                    <a class="btn" href="/movie/<%= movie._id %>#reviews">Add Review</a>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+    <p><a href="/home">Go Back</a></p>
 </body>
 
 </html>

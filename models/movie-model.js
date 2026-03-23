@@ -10,10 +10,14 @@ const movieModel = new mongoose.Schema({
     type: String,
     required: [true, "Movie must have a description"],
   },
+  moviePoster: {
+    type: String,
+    default: "",
+  },
   releaseDate: {
     type: Date,
     required: [true, "Movie must have a release date"],
-  }
+  },
 });
 
 const Movie = mongoose.model("Movie", movieModel, "movie");

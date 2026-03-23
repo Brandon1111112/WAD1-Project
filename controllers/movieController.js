@@ -4,6 +4,14 @@ const validator = require("./utils/validation");
 const User = require("../models/user-model");
 const Watchlist = require("../models/watchlist-model");
 
+async function getJson(url) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return response.json();
+}
+
 // Get all movies from MongoDB and check if user watched or not
 const getAllMovies = async (req, res) => {
   try {
@@ -22,9 +30,11 @@ const getAllMovies = async (req, res) => {
 
     const watchedEntries = await Watchlist.find({
       userId: user._id,
-      wantsToWatch: true
+      wantsToWatch: true,
     });
-    const watchedMovies = watchedEntries.map((entry) => entry.movieId.toString());
+    const watchedMovies = watchedEntries.map((entry) =>
+      entry.movieId.toString(),
+    );
 
     let movieList = await Movie.getAllMovies();
     return res.render("all-movies", { movies: movieList, watchedMovies });
@@ -52,7 +62,7 @@ const getMovieById = async (req, res) => {
       movie: movie,
       reviews: reviews,
       currentUser: req.session.user,
-      error: null
+      error: null,
     });
   } catch (error) {
     console.error(error);
@@ -78,10 +88,28 @@ const createMovie = async (req, res) => {
   }
 
   try {
+    let moviePoster = "";
+    const omdbApiKey = process.env.OMDB_API_KEY;
+
+    if (omdbApiKey) {
+      const url = `https://www.omdbapi.com/?apikey=${omdbApiKey}&t=${movieTitle.trim()}`;
+      try {
+        let data = await getJson(url);
+        if (data && data.Poster && data.Poster !== "N/A") {
+          moviePoster = data.Poster;
+        } else if (data && data.Error) {
+          console.log("OMDb lookup skipped:", data.Error, "for", movieTitle);
+        }
+      } catch (fetchError) {
+        // If poster lookup fails, still create movie without poster.
+        console.log("OMDb lookup failed:", fetchError.message);
+      }
+    }
     const newMovie = {
       movieTitle,
       movieDescription,
-      releaseDate
+      releaseDate,
+      moviePoster
     };
 
     await Movie.createMovie(newMovie);
@@ -168,7 +196,7 @@ const updateMovieDetails = async (req, res) => {
       movieId,
       movieTitle.trim(),
       movieDescription.trim(),
-      releaseDate
+      releaseDate,
     );
 
     return res.send("Movie details have been successfuly updated!");
@@ -185,5 +213,5 @@ module.exports = {
   deleteMovie,
   updateMovieDetails,
   getMovieToBeDeleted,
-  getMovieToEdit
+  getMovieToEdit,
 };
