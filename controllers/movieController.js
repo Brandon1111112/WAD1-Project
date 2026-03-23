@@ -22,7 +22,7 @@ const getAllMovies = async (req, res) => {
 
     const watchedEntries = await Watchlist.find({
       userId: user._id,
-      hasWatched: true
+      wantsToWatch: true
     });
     const watchedMovies = watchedEntries.map((entry) => entry.movieId.toString());
 

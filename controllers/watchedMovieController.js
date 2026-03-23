@@ -7,7 +7,7 @@ const Watchlist = require('../models/watchlist-model')
 const showWatchlist = async (req,res) => {
     try{
         const watchlist = await Watchlist.find(
-            {userId:req.session.user.userId, hasWatched: true}
+            {userId:req.session.user.userId, wantsToWatch: true}
         ).populate('movieId');
 
         return res.render('watchedMovies', {watchedMovies: watchlist})
@@ -24,7 +24,7 @@ const addToWatchlist = async (req,res) => {
 
         await Watchlist.findOneAndUpdate(
             {userId: req.session.user.userId, movieId: movieId},
-            {hasWatched: true, watchedDate: new Date()},
+            {wantsToWatch: true, watchedDate: new Date()},
             {upsert: true}
         )
         console.log('Successfully added to watchlist')
@@ -41,7 +41,7 @@ const removeFromWatchlist = async (req,res) => {
 
         await Watchlist.updateOne(
             {userId: req.session.user.userId, movieId: movieId},
-            {hasWatched: false, watchedDate: null}
+            {wantsToWatch: false, watchedDate: null}
         )
         
         console.log('Successfully removed from watchlist')

@@ -10,7 +10,7 @@ const watchlistModel = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Movie', require: true
 },
-  hasWatched: {
+  wantsToWatch: {
     type: Boolean, default: false
 },
   watchedDate: {

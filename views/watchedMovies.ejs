@@ -32,7 +32,7 @@
                         const minutes = Math.floor(diff/(1000*60));
 
                         let watchedTime;
-                        if (minutes < 60) watchedTime = `${minutes} ${minutes > 1 ? 'minutes' : 'minute'} ago`;
+                        if (minutes < 60) watchedTime = `${minutes > 0 ? minutes : 'Few moments'} ${minutes >= 1 ? 'minutes' : ''} ago`;
                         else if (hours < 24) watchedTime = `${hours} ${hours > 1 ? 'hours' : 'hour'} ago`;
                         else watchedTime = `${days} ${days > 1 ? 'days' : 'day'} ago`;
                     %>
