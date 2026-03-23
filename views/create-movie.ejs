@@ -1,12 +1,30 @@
-<h1>Create movie page</h1>
-<form action="/movie/create" method="POST">
-  <label for="movieTitle">Movie Title</label>
-  <input type="text" name="movieTitle" /><br /><br />
-  <label for="movieDescription">Movie Description</label>
-  <input type="text" name="movieDescription" /><br /><br />
-  <label for="movieRating">Movie Rating</label>
-  <input type="number" name="movieRating" /><br><br>
-  <label for="releaseDate">Release Date</label>
-  <input type="date" name="releaseDate" /><br><br>
-  <button type="submit">Create Movie</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Movie</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <%- include('partials/navbar') %>
+    <main>
+      <h1>Create Movie</h1>
+      <form class="movie-form" action="/movie/create" method="POST">
+        <div class="form-group">
+          <label for="movieTitle">Movie Title</label>
+          <input type="text" name="movieTitle" required />
+        </div>
+        <div class="form-group">
+          <label for="movieDescription">Movie Description</label>
+          <textarea name="movieDescription" rows="3" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="releaseDate">Release Date</label>
+          <input type="date" name="releaseDate" required />
+        </div>
+        <button class="btn" type="submit">Create Movie</button>
+      </form>
+    </main>
+  </body>
+</html>

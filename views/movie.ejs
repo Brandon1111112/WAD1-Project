@@ -1,40 +1,42 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>
-        <%= movie.title %>
-        <%= movie.movieTitle %>
-    </title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= movie.movieTitle || movie.title %> - Movie Details</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
-
 <body>
     <%- include('partials/navbar') %>
-        <h1>
-            <%= movie.title %>
-                <%= movie.movieTitle %>
-        </h1>
-
-        <p>
-            <%= movie.description %>
-            <%= movie.movieDescription %>
-        </p>
-
-        <a href="/movie/edit/<%= movie._id %>">Edit</a>
-        <a href="/movie/delete/<%= movie._id %>">Delete</a>
-
-        <h2>Reviews</h2>
-
-        <% if (error) { %>
-            <p style="color: red;">
-                <%= error %>
-            </p>
+    <main>
+        <div class="movie-card" style="max-width:380px;margin:40px auto 32px auto;padding:28px 20px 24px 20px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+            <% if (movie.moviePoster) { %>
+                <img class="movie-poster" src="<%= movie.moviePoster %>" alt="<%= movie.movieTitle %> poster" style="margin:0 auto 18px auto;max-width:220px;display:block;" />
             <% } %>
+            <h1 class="movie-title" style="font-size:2rem;text-align:center;margin-bottom:10px;">
+                <%= movie.movieTitle || movie.title %>
+            </h1>
+            <p class="movie-meta" style="text-align:center;margin-bottom:10px;">
+                <%= movie.movieDescription || movie.description %>
+            </p>
+            <p class="movie-meta" style="text-align:center;">Rating: <%= movie.movieRating %> / 5</p>
+            <div style="display:flex;justify-content:center;gap:12px;margin-top:18px;">
+                <a class="btn btn-secondary" href="/movie/edit/<%= movie._id %>" style="min-width:100px;">Edit</a>
+                <a class="btn btn-danger" href="/movie/delete/<%= movie._id %>" style="min-width:100px;">Delete</a>
+            </div>
+        </div>
 
-                <form action="/movie/<%= movie._id %>/review" method="POST">
-                    <label for="rating">Rating (1–5):</label><br>
-                    <select id="rating" name="rating" required>
+        <section style="max-width:380px;margin:0 auto 40px auto;">
+            <h2 style="margin-bottom:16px;">Reviews</h2>
+            <% if (error) { %>
+                <div style="color:#c00;background:#ffeaea;padding:10px 14px;border-radius:8px;margin-bottom:18px;">
+                    <%= error %>
+                </div>
+            <% } %>
+            <form action="/movie/<%= movie._id %>/review" method="POST" class="movie-form" style="margin-bottom:32px;">
+                <div class="form-group">
+                    <label for="rating">Rating (1–5):</label>
+                    <select id="rating" name="rating" required style="width:100%;max-width:100%;">
                         <option value="">Select rating</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -42,41 +44,40 @@
                         <option value="4">4</option>
                         <option value="5">5</option>
                     </select>
-                    <br><br>
-
-                    <label for="review">Your review:</label><br>
-                    <textarea id="review" name="review" rows="5" cols="40" placeholder="Write your review here..."
-                        required></textarea>
-                    <br><br>
-
-                    <button type="submit">Submit Review</button>
-                </form>
-
-                <% if (reviews && reviews.length> 0) { %>
-                    <% reviews.forEach(function(r) { %>
-                        <hr>
-                        <p><strong>
-                                <%= r.userId ? r.userId.name : "Unknown User" %>
-                            </strong></p>
-                        <p><strong>Rating:</strong>
-                            <%= r.rating %> / 5
-                        </p>
-                        <p><strong>Review:</strong></p>
-                        <p>
+                </div>
+                <div class="form-group">
+                    <label for="review">Your review:</label>
+                    <textarea id="review" name="review" rows="4" placeholder="Write your review here..." required style="width:100%;max-width:100%;"></textarea>
+                </div>
+                <button class="btn btn-primary" type="submit">Submit Review</button>
+            </form>
+            <% if (reviews && reviews.length > 0) { %>
+                <div style="display:flex;flex-direction:column;gap:24px;">
+                <% reviews.forEach(function(r) { %>
+                    <div style="border-top:1px solid #eee;padding-top:16px;">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <span style="font-weight:600;"><%= r.userId ? r.userId.name : "Unknown User" %></span>
+                            <span style="color:#888;font-size:0.98rem;">• Rating: <%= r.rating %> / 5</span>
+                        </div>
+                        <div style="margin:8px 0 0 0;white-space:pre-line;">
                             <%= r.review %>
-                        </p>
+                        </div>
                         <% if (currentUser && r.userId && r.userId._id.toString()===currentUser.userId) { %>
-                            <a href="/movie/review/edit/<%= r._id %>">Edit</a>
-
-                            <form action="/movie/review/delete/<%= r._id %>" method="POST" style="display:inline;">
-                                <button type="submit">Delete</button>
-                            </form>
-                            <% } %>
-                            <% }) %>
-                        <% } else { %>
-                            <p>No reviews yet.</p>
+                            <div style="margin-top:8px;display:flex;gap:8px;">
+                                <a class="btn btn-secondary" href="/movie/review/edit/<%= r._id %>" style="min-width:80px;">Edit</a>
+                                <form action="/movie/review/delete/<%= r._id %>" method="POST" style="display:inline;">
+                                    <button class="btn btn-danger" type="submit" style="min-width:80px;">Delete</button>
+                                </form>
+                            </div>
                         <% } %>
-
+                    </div>
+                <% }) %>
+                </div>
+            <% } else { %>
+                <p style="color:#888;">No reviews yet.</p>
+            <% } %>
+        </section>
+    </main>
 </body>
-
+</html>
 </html>

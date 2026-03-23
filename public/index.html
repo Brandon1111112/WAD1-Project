@@ -1,88 +1,56 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IAMdb - Movie Watchlist</title>
     <style>
-        body {
-            background-image: url('/img/homepage_background.png');
-            background-size: cover;
+      body {
+        background-image: url("/img/homepage_background.png");
+        background-size: cover;
+      }
 
-        }
+      h1 {
+        font-size: 80px;
+        color: blanchedalmond;
+      }
 
-        h1 {
-            font-size: 80px;
-            color: blanchedalmond;
-        }
+      p {
+        font-size: 40px;
+        color: rgb(252, 243, 230);
+      }
 
-        p {
-            font-size: 40px;
-            color: rgb(252, 243, 230);
-        }
+      .btn {
+        display: inline-block;
+        padding: 15px 40px;
+        font-size: 24px;
+        width: 200px;
+        background: coral;
+        border-radius: 40px;
+        color: white;
+        text-decoration: none;
+        font-family: Arial, Helvetica, sans-serif;
+        text-align: center;
+      }
 
-        .btn {
-            display: inline-block;
-            padding: 15px 40px;
-            font-size: 24px;
-            width: 200px;
-            background: coral;
-            border-radius: 40px;
-            color: white;
-            text-decoration: none;
-            font-family: Arial, Helvetica, sans-serif;
-            text-align: center;
-        }
-
-        .container {
-            font-family: Arial, Helvetica, sans-serif;
-            justify-content: center;
-            text-align: center;
-        }
-
-        .navbar {
-            background-color: #333;
-            display: flex;
-            padding: 5px 10px;
-        }
-
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            margin-right: 20px;
-            padding: 8px 12px;
-            transition: 0.3s;
-        }
-
-        .navbar a:hover {
-            background-color: #575757;
-            border-radius: 4px;
-        }
-
-        .navbar .right {
-            margin-left: auto;
-        }
+      .container {
+        font-family: Arial, Helvetica, sans-serif;
+        justify-content: center;
+        text-align: center;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-    <div class="navbar">
-        <a href="/">Home</a>
-        <a href="/movie">Movies</a>
-        <a href="/watched/list">Watchlist</a>
-        <a href="/forum">Forum</a>
-        <a href="/profile" class="right">Profile</a>
-    </div>
+  <body>
     <!-- Header Section -->
     <header>
-        <div class="container">
-            <h1>IAMdb</h1>
-            <p>Your Ultimate Movie Watchlist</p>
-            <!-- Login Button -->
-            <a href="/login" class="btn">Login</a>
-        </div>
+      <div class="container">
+        <h1>IAMdb</h1>
+        <p>Your Ultimate Movie Watchlist</p>
+        <!-- Login Button -->
+        <a href="/login" class="btn">Login</a>
+        <a href="/register" class="btn">Register</a>
+      </div>
     </header>
-</body>
-
+  </body>
 </html>

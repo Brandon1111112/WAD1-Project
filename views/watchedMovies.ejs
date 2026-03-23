@@ -4,48 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watchlist</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
     <%- include('partials/navbar') %>
     <h1>Watchlist</h1>
     <% if (watchlist.length > 0){ %>
-    <table border="1">
-        <thead>
-            <tr>
-            <th>Title</th>
-            <th>Release Date</th>
-            <th>Rating</th>
-            <th>Added</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% for (let entry of watchlist) { %>
-            <tr>
-                <td><a href="/movie/<%= entry.movieId._id %>"><%= entry.movieId.movieTitle %></a></td>
-                <td><%= entry.movieId.releaseDate.toLocaleDateString('en-GB', { 
-                                                                        day: 'numeric', 
-                                                                        month: 'long', 
-                                                                        year: 'numeric' 
-                                                                        }) %></td>
-                <td><%= entry.movieId.movieRating %></td>
-                <td>
+    <div class="movie-grid">
+        <% watchlist.forEach((entry) => { %>
+            <div class="movie-card">
+                <img
+                    class="movie-poster"
+                    src="<%= entry.movieId.moviePoster || 'https://via.placeholder.com/300x450?text=No+Poster' %>"
+                    alt="<%= entry.movieId.movieTitle %> poster"
+                />
+                <h2 class="movie-title">
+                    <a href="/movie/<%= entry.movieId._id %>"><%= entry.movieId.movieTitle %></a>
+                </h2>
+                <p class="movie-meta">Rating: <%= entry.movieId.movieRating %> / 5</p>
+                <p class="movie-meta">Release: <%= new Date(entry.movieId.releaseDate).toLocaleDateString() %></p>
+                <p class="movie-meta">
+                    Added: 
                     <%  
                         const diff = Date.now() - entry.watchedDate;
                         const days = Math.floor(diff/(1000*60*60*24));
                         const hours = Math.floor(diff/(1000*60*60));
                         const minutes = Math.floor(diff/(1000*60));
-
                         let watchedTime;
                         if (minutes < 60) watchedTime = `${minutes > 0 ? minutes : 'Few moments'} ${minutes >= 1 ? 'minutes' : ''} ago`;
                         else if (hours < 24) watchedTime = `${hours} ${hours > 1 ? 'hours' : 'hour'} ago`;
                         else watchedTime = `${days} ${days > 1 ? 'days' : 'day'} ago`;
                     %>
                     <%= watchedTime %>
-                </td>
-            </tr>
-            <% } %>
-        </tbody>
-    </table>
+                </p>
+                <div class="actions">
+                    <form action="/watched/remove" method="post">
+                        <input type="hidden" name="movieId" value="<%= entry.movieId._id %>">
+                        <button class="btn" type="submit">Remove from Watchlist</button>
+                    </form>
+                    <a class="btn" href="/movie/<%= entry.movieId._id %>#reviews">Add Review</a>
+                </div>
+            </div>
+        <% }) %>
+    </div>
     <% } else { %>
         <p>You have not watched any movies. Check out our <a href="/movie">movie selection</a>.</p>
     <% } %>
