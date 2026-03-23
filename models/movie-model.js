@@ -18,9 +18,13 @@ const movieModel = new mongoose.Schema({
     type: Number,
     required: [true, "Movie must have a rating"],
   },
+  moviePoster: {
+    type: String,
+    default: "",
+  },
   reviews: {
     type: Array,
-    required: false
+    required: false,
   },
 });
 

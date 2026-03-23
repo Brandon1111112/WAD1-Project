@@ -5,9 +5,11 @@ const router = express.Router();
 const Watchlist = require('../models/watchlist-model')
 
 const showMovieList = async (req,res) => {
+const showWatchlist = async (req,res) => {
     try{
         const watchlist = await Watchlist.find(
             {userId:req.session.user.userId, hasWatched: true}
+            {userId:req.session.user.userId, wantsToWatch: true}
         ).populate('movieId');
 
         return res.render('watchedMovies', {watchedMovies: watchlist})
@@ -19,17 +21,16 @@ const showMovieList = async (req,res) => {
 };
 
 const markAsWatched = async (req,res) => {
+const addToWatchlist = async (req,res) => {
     try {
         const movieId = req.body.movieId;
-        const user = await Watchlist.findOne({userId:req.session.user.userId})
-
 
         await Watchlist.findOneAndUpdate(
             {userId: req.session.user.userId, movieId: movieId},
-            {hasWatched: true, whatchedDate: new Date()},
+            {wantsToWatch: true, watchedDate: new Date()},
             {upsert: true}
         )
-        console.log('Successfully marked')
+        console.log('Successfully added to watchlist')
         return res.redirect('/movie')
     } catch (error) {
         console.log(error);
@@ -37,17 +38,16 @@ const markAsWatched = async (req,res) => {
     };
 };
 
-const markAsUnwatched = async (req,res) => {
+const removeFromWatchlist = async (req,res) => {
     try {
         const movieId = req.body.movieId;
-        const user = await Watchlist.findOne({userId: req.session.user.userId})
-            
+
         await Watchlist.updateOne(
             {userId: req.session.user.userId, movieId: movieId},
-            {hasWatched: false, watchedDate: null}
+            {wantsToWatch: false, watchedDate: null}
         )
         
-        console.log('Successfully unmarked')
+        console.log('Successfully removed from watchlist')
         return res.redirect('/movie')
     } catch (error) {
         console.log(error);
@@ -56,7 +56,7 @@ const markAsUnwatched = async (req,res) => {
 }
 
 module.exports = {
-    showMovieList,
-    markAsWatched,
-    markAsUnwatched
+    showWatchlist,
+    addToWatchlist,
+    removeFromWatchlist
 }

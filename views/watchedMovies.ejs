@@ -15,7 +15,7 @@
             <th>Title</th>
             <th>Release Date</th>
             <th>Rating</th>
-            <th>Watched On</th>
+            <th>Added On</th>
             </tr>
         </thead>
         <tbody>
@@ -24,7 +24,20 @@
                 <td><%= entry.movieId.movieTitle %></td>
                 <td><%= entry.movieId.releaseDate %></td>
                 <td><%= entry.movieId.movieRating %></td>
-                <td><%= entry.watchedDate.toLocaleDateString() %></td>
+                <td>
+                    <%  
+                        const diff = Date.now() - entry.watchedDate;
+                        const days = Math.floor(diff/(1000*60*60*24));
+                        const hours = Math.floor(diff/(1000*60*60));
+                        const minutes = Math.floor(diff/(1000*60));
+
+                        let watchedTime;
+                        if (minutes < 60) watchedTime = `${minutes > 0 ? minutes : 'Few moments'} ${minutes >= 1 ? 'minutes' : ''} ago`;
+                        else if (hours < 24) watchedTime = `${hours} ${hours > 1 ? 'hours' : 'hour'} ago`;
+                        else watchedTime = `${days} ${days > 1 ? 'days' : 'day'} ago`;
+                    %>
+                    <%= watchedTime %>
+                </td>
             </tr>
             <% } %>
         </tbody>
