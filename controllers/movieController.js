@@ -44,12 +44,15 @@ const getAllMovies = async (req, res) => {
       entry.movieId.toString(),
     );
 
+    const ratingSummaries = await Review.getAllMovieRatingSummaries();
+
     let movieList = await Movie.getAllMovies();
     return res.render("all-movies", {
       movies: movieList,
       watchlist,
       alreadyWatched,
       currentUser: req.session.user,
+      ratingSummaries,
     });
   } catch (error) {
     return res.status(500).send("Error getting all movies!");
@@ -89,6 +92,16 @@ const getMovieById = async (req, res) => {
     // array of movies with wantToWatch: false and hasWatched: true
     const alreadyWatched = hasWatched.map((entry) => entry.movieId.toString());
 
+    const ratingSummary = await Review.getRatingSummaryByMovieId(req.params.id);
+
+    let avgRating = 0;
+    let totalReviews = 0;
+
+    if (ratingSummary.length > 0) {
+      avgRating = ratingSummary[0].avgRating;
+      totalReviews = ratingSummary[0].totalReviews;
+    }
+
     return res.render("movie", {
       movie: movie,
       reviews: reviews,
@@ -96,6 +109,8 @@ const getMovieById = async (req, res) => {
       error: null,
       watchlist,
       alreadyWatched,
+      avgRating,
+      totalReviews
     });
   } catch (error) {
     console.error(error);

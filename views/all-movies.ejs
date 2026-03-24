@@ -1,63 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Movies – IAMdb</title>
   <link rel="stylesheet" href="/style.css" />
 </head>
+
 <body>
   <%- include('partials/navbar') %>
-  <main>
-    <div class="page-container">
-      <div class="page-header flex items-center justify-between">
-        <div>
-          <h1 class="page-title">Movies</h1>
-          <p class="page-subtitle">Browse and manage the full collection</p>
+    <main>
+      <div class="page-container">
+        <div class="page-header flex items-center justify-between">
+          <div>
+            <h1 class="page-title">Movies</h1>
+            <p class="page-subtitle">Browse and manage the full collection</p>
+          </div>
+          <% if (currentUser && currentUser.isAdmin) { %>
+            <a href="/movie/create" class="btn btn-primary">+ Add Movie</a>
+            <% } %>
         </div>
-        <% if (currentUser && currentUser.isAdmin) { %>
-          <a href="/movie/create" class="btn btn-primary">+ Add Movie</a>
-        <% } %>
-      </div>
 
-      <div class="movie-grid">
-        <% movies.forEach((movie) => { %>
-          <div class="movie-card">
-            <a href="/movie/<%= movie._id %>">
-              <% if (movie.moviePoster) { %>
-                <img class="movie-poster" src="<%= movie.moviePoster %>" alt="<%= movie.movieTitle %> poster" />
-              <% } else { %>
-                <div class="movie-poster-placeholder">🎬</div>
-              <% } %>
-            </a>
-            <div class="movie-card-body">
-              <div class="movie-title">
-                <a href="/movie/<%= movie._id %>"><%= movie.movieTitle %></a>
-              </div>
-              <div class="movie-rating">★ <%= movie.movieRating %> <span style="color:var(--text-3);font-weight:400;">/ 5</span></div>
-              <div class="movie-meta"><%= new Date(movie.releaseDate).toLocaleDateString('en-GB', {year:'numeric',month:'short',day:'numeric'}) %></div>
-              <div class="actions">
-                <% if (alreadyWatched.includes(movie._id.toString())) { %>
-                  <span class="watched-badge">✓ Watched</span>
-                <% } %>
-                <% if (watchlist.includes(movie._id.toString())) { %>
-                  <form action="/watched/remove" method="POST">
-                    <input type="hidden" name="movieId" value="<%= movie._id %>">
-                    <button class="btn btn-ghost btn-sm" type="submit">Remove from Watchlist</button>
-                  </form>
-                <% } else { %>
-                  <form action="/watched/add" method="POST">
-                    <input type="hidden" name="movieId" value="<%= movie._id %>">
-                    <button class="btn btn-secondary btn-sm" type="submit">+ Watchlist</button>
-                  </form>
-                <% } %>
-                <a class="btn btn-sm" href="/movie/<%= movie._id %>#reviews">Review</a>
+        <div class="movie-grid">
+          <% movies.forEach((movie)=> { %>
+            <div class="movie-card">
+              <a href="/movie/<%= movie._id %>">
+                <% if (movie.moviePoster) { %>
+                  <img class="movie-poster" src="<%= movie.moviePoster %>" alt="<%= movie.movieTitle %> poster" />
+                  <% } else { %>
+                    <div class="movie-poster-placeholder">🎬</div>
+                    <% } %>
+              </a>
+              <div class="movie-card-body">
+                <div class="movie-title">
+                  <a href="/movie/<%= movie._id %>">
+                    <%= movie.movieTitle %>
+                  </a>
+                </div>
+                <div class="movie-rating">
+                  <% const rating=ratingSummaries.find(r=>
+                    r._id.toString() === movie._id.toString()
+                    );
+                    %>
+
+                    <% if (rating) { %>
+                      ★ <%= rating.avgRating.toFixed(1) %>
+                        <span style="color:var(--text-3);font-weight:400;">/ 5</span>
+                        <span style="color:var(--text-3);font-weight:400;">(<%= rating.totalReviews %>)</span>
+                        <% } else { %>
+                          <span style="color:var(--text-3);font-weight:400;">No ratings yet</span>
+                          <% } %>
+                </div>
+                <div class="movie-meta">
+                  <%= new Date(movie.releaseDate).toLocaleDateString('en-GB',
+                    {year:'numeric',month:'short',day:'numeric'}) %>
+                </div>
+                <div class="actions">
+                  <% if (alreadyWatched.includes(movie._id.toString())) { %>
+                    <span class="watched-badge">✓ Watched</span>
+                    <% } %>
+                      <% if (watchlist.includes(movie._id.toString())) { %>
+                        <form action="/watched/remove" method="POST">
+                          <input type="hidden" name="movieId" value="<%= movie._id %>">
+                          <button class="btn btn-ghost btn-sm" type="submit">Remove from Watchlist</button>
+                        </form>
+                        <% } else { %>
+                          <form action="/watched/add" method="POST">
+                            <input type="hidden" name="movieId" value="<%= movie._id %>">
+                            <button class="btn btn-secondary btn-sm" type="submit">+ Watchlist</button>
+                          </form>
+                          <% } %>
+                            <a class="btn btn-sm" href="/movie/<%= movie._id %>#reviews">Review</a>
+                </div>
               </div>
             </div>
-          </div>
-        <% }) %>
+            <% }) %>
+        </div>
       </div>
-    </div>
-  </main>
+    </main>
 </body>
+
 </html>

@@ -1,20 +1,22 @@
 const express = require('express');
 const router = express.Router();
-
+const Review = require("../models/review-model");
 const Movie = require('../models/movie-model')
 const Watchlist = require('../models/watchlist-model')
 
-const showWatchlist = async (req,res) => {
-    try{
+const showWatchlist = async (req, res) => {
+    try {
         const watchlist = await Watchlist.find(
-            {userId:req.session.user.userId, wantsToWatch: true, hasWatched: false}
+            { userId: req.session.user.userId, wantsToWatch: true, hasWatched: false }
         ).populate('movieId');
 
         const alreadyWatched = await Watchlist.find(
-            {userId:req.session.user.userId, wantsToWatch: false, hasWatched: true}
+            { userId: req.session.user.userId, wantsToWatch: false, hasWatched: true }
         ).populate('movieId');
 
-        return res.render('watchedMovies', {watchlist, alreadyWatched})
+        const ratingSummaries = await Review.getAllMovieRatingSummaries();
+
+        return res.render('watchedMovies', { watchlist, alreadyWatched, ratingSummaries })
 
     } catch (error) {
         console.log(error);
@@ -22,14 +24,14 @@ const showWatchlist = async (req,res) => {
     }
 };
 
-const addToWatchlist = async (req,res) => {
+const addToWatchlist = async (req, res) => {
     try {
         const movieId = req.body.movieId;
 
         await Watchlist.findOneAndUpdate(
-            {userId: req.session.user.userId, movieId: movieId},
-            {wantsToWatch: true, hasWatched: false, addDate: new Date()},
-            {upsert: true}
+            { userId: req.session.user.userId, movieId: movieId },
+            { wantsToWatch: true, hasWatched: false, addDate: new Date() },
+            { upsert: true }
         )
         console.log('Successfully added to watchlist')
         return res.redirect(req.headers.referer || '/movie')
@@ -39,15 +41,15 @@ const addToWatchlist = async (req,res) => {
     };
 };
 
-const removeFromWatchlist = async (req,res) => {
+const removeFromWatchlist = async (req, res) => {
     try {
         const movieId = req.body.movieId;
 
         await Watchlist.updateOne(
-            {userId: req.session.user.userId, movieId: movieId},
-            {wantsToWatch: false, addDate: null}
+            { userId: req.session.user.userId, movieId: movieId },
+            { wantsToWatch: false, addDate: null }
         )
-        
+
         console.log('Successfully removed from watchlist');
         return res.redirect(req.headers.referer || '/movie')
     } catch (error) {
@@ -56,16 +58,16 @@ const removeFromWatchlist = async (req,res) => {
     }
 }
 
-const markAsWatched = async (req,res) => {
+const markAsWatched = async (req, res) => {
     try {
         const movieId = req.body.movieId;
 
         await Watchlist.updateOne(
-            {userId: req.session.user.userId, movieId: movieId},
-            {wantsToWatch: false, hasWatched: true, addDate: null},
-            {upsert: true}
+            { userId: req.session.user.userId, movieId: movieId },
+            { wantsToWatch: false, hasWatched: true, addDate: null },
+            { upsert: true }
         )
-        
+
         console.log('Successfully marked as watched');
         return res.redirect(req.headers.referer || '/movie')
     } catch (error) {
@@ -74,15 +76,15 @@ const markAsWatched = async (req,res) => {
     }
 }
 
-const unmarkAsWatched = async (req,res) => {
+const unmarkAsWatched = async (req, res) => {
     try {
         const movieId = req.body.movieId;
-        
+
         await Watchlist.updateOne(
-            {userId: req.session.user.userId, movieId: movieId},
-            {wantsToWatch: false, hasWatched: false}
+            { userId: req.session.user.userId, movieId: movieId },
+            { wantsToWatch: false, hasWatched: false }
         )
-        
+
         console.log('Successfully unmarked as watched');
         return res.redirect(req.headers.referer || '/movie')
     } catch (error) {
@@ -91,7 +93,7 @@ const unmarkAsWatched = async (req,res) => {
     }
 }
 
-const showRecommendations = async (req,res) => {
+const showRecommendations = async (req, res) => {
     try {
         const watched = await Watchlist.find({
             userId: req.session.user.userId,
@@ -107,20 +109,20 @@ const showRecommendations = async (req,res) => {
 
         // find top 3 genres
         const topGenres = Object.keys(genreCount)
-            .sort((a,b) => genreCount[b] - genreCount[a])
-            .slice(0,3);
+            .sort((a, b) => genreCount[b] - genreCount[a])
+            .slice(0, 3);
 
         // find movies not yet watched
         const watchedMovies = watched.map(entry => entry.movieId._id);
         const recommendations = await Movie.getMoviesByGenres(topGenres, watchedMovies)
 
-        res.render('recommendations', {recommendations, topGenres})
+        res.render('recommendations', { recommendations, topGenres })
     } catch (error) {
         console.log(error);
         res.status(500).send('Error showing reccomendation');
     }
-    
-}   
+
+}
 
 module.exports = {
     showWatchlist,

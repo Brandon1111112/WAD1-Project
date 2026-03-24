@@ -1,97 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Watchlist – IAMdb</title>
   <link rel="stylesheet" href="/style.css" />
 </head>
+
 <body>
   <%- include('partials/navbar') %>
-  <div class="page-container">
-    <div class="page-header flex items-center justify-between">
-      <div>
-        <h1 class="page-title">My Watchlist</h1>
-        <p class="page-subtitle">Movies you've saved to watch</p>
+    <div class="page-container">
+      <div class="page-header flex items-center justify-between">
+        <div>
+          <h1 class="page-title">My Watchlist</h1>
+          <p class="page-subtitle">Movies you've saved to watch</p>
+        </div>
+        <a href="/watched/recommended" class="btn btn-secondary">Discover →</a>
       </div>
-      <a href="/watched/recommended" class="btn btn-secondary">Discover →</a>
+
+      <% if (watchlist.length> 0) { %>
+        <div class="movie-grid">
+          <% watchlist.forEach((entry)=> { %>
+            <div class="movie-card">
+              <a href="/movie/<%= entry.movieId._id %>">
+                <% if (entry.movieId.moviePoster) { %>
+                  <img class="movie-poster" src="<%= entry.movieId.moviePoster %>"
+                    alt="<%= entry.movieId.movieTitle %>" />
+                  <% } else { %>
+                    <div class="movie-poster-placeholder">🎬</div>
+                    <% } %>
+              </a>
+              <div class="movie-card-body">
+                <div class="movie-title"><a href="/movie/<%= entry.movieId._id %>">
+                    <%= entry.movieId.movieTitle %>
+                  </a></div>
+                <div class="movie-rating">
+                  <% const rating=ratingSummaries.find(r=>
+                    r._id.toString() === entry.movieId._id.toString()
+                    ); %>
+
+                    <% if (rating) { %>
+                      ★ <%= rating.avgRating.toFixed(1) %>
+                        <span style="color:var(--text-3);font-weight:400;">/ 5</span>
+                        <span style="color:var(--text-3);font-weight:400;">(<%= rating.totalReviews %>)</span>
+                        <% } else { %>
+                          <span style="color:var(--text-3);font-weight:400;">No ratings yet</span>
+                          <% } %>
+                </div>
+                <div class="movie-meta">
+                  <% const diff=Date.now() - entry.addDate; const days=Math.floor(diff/(1000*60*60*24)); const
+                    hours=Math.floor(diff/(1000*60*60)); const minutes=Math.floor(diff/(1000*60)); let time; if (minutes
+                    < 60) time=`${minutes> 0 ? minutes : 'A few'} min ago`;
+                    else if (hours < 24) time=`${hours}h ago`; else time=`${days}d ago`; %>
+                      Added <%= time %>
+                </div>
+                <div class="actions">
+                  <form action="/watched/remove" method="POST">
+                    <input type="hidden" name="movieId" value="<%= entry.movieId._id %>">
+                    <button class="btn btn-sm btn-ghost" type="submit">Remove</button>
+                  </form>
+                  <a class="btn btn-sm" href="/movie/<%= entry.movieId._id %>#reviews">Review</a>
+                </div>
+              </div>
+            </div>
+            <% }) %>
+        </div>
+        <% } else { %>
+          <div class="empty-state">
+            <p>Your watchlist is empty. <a href="/movie">Browse movies</a> to add some!</p>
+          </div>
+          <% } %>
+
+            <% if (alreadyWatched.length> 0) { %>
+              <hr class="section-divider">
+              <div class="section-heading">
+                Already Watched
+                <span class="section-count">
+                  <%= alreadyWatched.length %> movie<%= alreadyWatched.length> 1 ? 's' : '' %>
+                </span>
+              </div>
+              <div class="movie-grid">
+                <% for (let entry of alreadyWatched) { %>
+                  <div class="movie-card">
+                    <a href="/movie/<%= entry.movieId._id %>">
+                      <% if (entry.movieId.moviePoster) { %>
+                        <img class="movie-poster" src="<%= entry.movieId.moviePoster %>"
+                          alt="<%= entry.movieId.movieTitle %>" />
+                        <% } else { %>
+                          <div class="movie-poster-placeholder">🎬</div>
+                          <% } %>
+                    </a>
+                    <div class="movie-card-body">
+                      <div class="movie-title"><a href="/movie/<%= entry.movieId._id %>">
+                          <%= entry.movieId.movieTitle %>
+                        </a></div>
+                      <div class="movie-rating">
+                        <% const rating=ratingSummaries.find(r=>
+                          r._id.toString() === entry.movieId._id.toString()
+                          ); %>
+
+                          <% if (rating) { %>
+                            ★ <%= rating.avgRating.toFixed(1) %>
+                              <span style="color:var(--text-3);font-weight:400;">/ 5</span>
+                              <span style="color:var(--text-3);font-weight:400;">(<%= rating.totalReviews %>)</span>
+                              <% } else { %>
+                                <span style="color:var(--text-3);font-weight:400;">No ratings yet</span>
+                                <% } %>
+                      </div>
+                      <span class="watched-badge">✓ Watched</span>
+                      <div class="actions">
+                        <form action="/watched/unwatch" method="POST">
+                          <input type="hidden" name="movieId" value="<%= entry.movieId._id %>">
+                          <button class="btn btn-sm btn-ghost" type="submit">Unmark</button>
+                        </form>
+                        <a class="btn btn-sm" href="/movie/<%= entry.movieId._id %>#reviews">Review</a>
+                      </div>
+                    </div>
+                  </div>
+                  <% } %>
+              </div>
+              <% } %>
     </div>
-
-    <% if (watchlist.length > 0) { %>
-      <div class="movie-grid">
-        <% watchlist.forEach((entry) => { %>
-          <div class="movie-card">
-            <a href="/movie/<%= entry.movieId._id %>">
-              <% if (entry.movieId.moviePoster) { %>
-                <img class="movie-poster" src="<%= entry.movieId.moviePoster %>" alt="<%= entry.movieId.movieTitle %>" />
-              <% } else { %>
-                <div class="movie-poster-placeholder">🎬</div>
-              <% } %>
-            </a>
-            <div class="movie-card-body">
-              <div class="movie-title"><a href="/movie/<%= entry.movieId._id %>"><%= entry.movieId.movieTitle %></a></div>
-              <div class="movie-rating">★ <%= entry.movieId.movieRating %>/5</div>
-              <div class="movie-meta">
-                <%
-                  const diff = Date.now() - entry.addDate;
-                  const days = Math.floor(diff/(1000*60*60*24));
-                  const hours = Math.floor(diff/(1000*60*60));
-                  const minutes = Math.floor(diff/(1000*60));
-                  let time;
-                  if (minutes < 60) time = `${minutes > 0 ? minutes : 'A few'} min ago`;
-                  else if (hours < 24) time = `${hours}h ago`;
-                  else time = `${days}d ago`;
-                %>
-                Added <%= time %>
-              </div>
-              <div class="actions">
-                <form action="/watched/remove" method="POST">
-                  <input type="hidden" name="movieId" value="<%= entry.movieId._id %>">
-                  <button class="btn btn-sm btn-ghost" type="submit">Remove</button>
-                </form>
-                <a class="btn btn-sm" href="/movie/<%= entry.movieId._id %>#reviews">Review</a>
-              </div>
-            </div>
-          </div>
-        <% }) %>
-      </div>
-    <% } else { %>
-      <div class="empty-state">
-        <p>Your watchlist is empty. <a href="/movie">Browse movies</a> to add some!</p>
-      </div>
-    <% } %>
-
-    <% if (alreadyWatched.length > 0) { %>
-      <hr class="section-divider">
-      <div class="section-heading">
-        Already Watched
-        <span class="section-count"><%= alreadyWatched.length %> movie<%= alreadyWatched.length > 1 ? 's' : '' %></span>
-      </div>
-      <div class="movie-grid">
-        <% for (let entry of alreadyWatched) { %>
-          <div class="movie-card">
-            <a href="/movie/<%= entry.movieId._id %>">
-              <% if (entry.movieId.moviePoster) { %>
-                <img class="movie-poster" src="<%= entry.movieId.moviePoster %>" alt="<%= entry.movieId.movieTitle %>" />
-              <% } else { %>
-                <div class="movie-poster-placeholder">🎬</div>
-              <% } %>
-            </a>
-            <div class="movie-card-body">
-              <div class="movie-title"><a href="/movie/<%= entry.movieId._id %>"><%= entry.movieId.movieTitle %></a></div>
-              <div class="movie-rating">★ <%= entry.movieId.movieRating %>/5</div>
-              <span class="watched-badge">✓ Watched</span>
-              <div class="actions">
-                <form action="/watched/unwatch" method="POST">
-                  <input type="hidden" name="movieId" value="<%= entry.movieId._id %>">
-                  <button class="btn btn-sm btn-ghost" type="submit">Unmark</button>
-                </form>
-                <a class="btn btn-sm" href="/movie/<%= entry.movieId._id %>#reviews">Review</a>
-              </div>
-            </div>
-          </div>
-        <% } %>
-      </div>
-    <% } %>
-  </div>
 </body>
+
 </html>

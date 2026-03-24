@@ -61,3 +61,32 @@ exports.deleteReviewById = function (_id) {
 exports.findReviewByUserAndMovie = function (userId, movieId) {
     return Review.findOne({ userId: userId, movieId: movieId });
 };
+
+exports.getAllMovieRatingSummaries = function () {
+    return Review.aggregate([
+        {
+            $group: {
+                _id: "$movieId",
+                avgRating: { $avg: "$rating" },
+                totalReviews: { $sum: 1 }
+            }
+        }
+    ]);
+};
+
+exports.getRatingSummaryByMovieId = function (movieId) {
+    return Review.aggregate([
+        {
+            $match: {
+                movieId: new mongoose.Types.ObjectId(movieId)
+            }
+        },
+        {
+            $group: {
+                _id: "$movieId",
+                avgRating: { $avg: "$rating" },
+                totalReviews: { $sum: 1 }
+            }
+        }
+    ]);
+};
