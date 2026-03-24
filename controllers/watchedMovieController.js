@@ -28,14 +28,14 @@ const addToWatchlist = async (req,res) => {
 
         await Watchlist.findOneAndUpdate(
             {userId: req.session.user.userId, movieId: movieId},
-            {wantsToWatch: true, hasWatched: false, watchedDate: new Date()},
+            {wantsToWatch: true, hasWatched: false, addDate: new Date()},
             {upsert: true}
         )
         console.log('Successfully added to watchlist')
         return res.redirect(req.headers.referer || '/movie')
     } catch (error) {
         console.log(error);
-        res.status(500).send('Error to mark movie as watched');
+        res.status(500).send('Error to add movie from watchlist');
     };
 };
 
@@ -45,10 +45,44 @@ const removeFromWatchlist = async (req,res) => {
 
         await Watchlist.updateOne(
             {userId: req.session.user.userId, movieId: movieId},
-            {wantsToWatch: false, watchedDate: null}
+            {wantsToWatch: false, addDate: null}
         )
         
         console.log('Successfully removed from watchlist');
+        return res.redirect(req.headers.referer || '/movie')
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Error to remove movie from watchlist');
+    }
+}
+
+const markAsWatched = async (req,res) => {
+    try {
+        const movieId = req.body.movieId;
+
+        await Watchlist.updateOne(
+            {userId: req.session.user.userId, movieId: movieId},
+            {wantsToWatch: false, hasWatched: true, addDate: null}
+        )
+        
+        console.log('Successfully marked as watched');
+        return res.redirect(req.headers.referer || '/movie')
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Error to mark movie as watched');
+    }
+}
+
+const unmarkAsWatched = async (req,res) => {
+    try {
+        const movieId = req.body.movieId;
+        
+        await Watchlist.updateOne(
+            {userId: req.session.user.userId, movieId: movieId},
+            {wantsToWatch: false, hasWatched: false}
+        )
+        
+        console.log('Successfully unmarked as watched');
         return res.redirect(req.headers.referer || '/movie')
     } catch (error) {
         console.log(error);
@@ -91,5 +125,7 @@ module.exports = {
     showWatchlist,
     addToWatchlist,
     removeFromWatchlist,
-    showRecommendations
+    showRecommendations,
+    markAsWatched,
+    unmarkAsWatched
 }

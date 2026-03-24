@@ -24,6 +24,31 @@
                 <a class="btn btn-secondary" href="/movie/edit/<%= movie._id %>" style="min-width:100px;">Edit</a>
                 <a class="btn btn-danger" href="/movie/delete/<%= movie._id %>" style="min-width:100px;">Delete</a>
             </div>
+            <div class="actions">
+                <% if (watchlist.includes(movie._id.toString())){ %>
+                    <form action="/watched/remove" method="post">
+                        <input type="hidden" name="movieId" value="<%= movie._id %>">
+                        <button class="btn" type="submit">Remove from Watchlist</button>
+                    </form>
+                <% } else {%>
+                    <form action="/watched/add" method="post">
+                        <input type="hidden" name="movieId" value="<%= movie._id %>">
+                        <button class="btn" type="submit">Add to Watchlist</button>
+                    </form>
+                <% }%>
+
+                <% if (alreadyWatched.includes(movie._id.toString())){ %>
+                    <form action="/watched/unwatch" method="post">
+                        <input type="hidden" name="movieId" value="<%= movie._id %>">
+                        <button class="btn" type="submit">Unmark as Watched</button>
+                    </form>
+                <% } else {%>
+                    <form action="/watched/watch" method="post">
+                        <input type="hidden" name="movieId" value="<%= movie._id %>">
+                        <button class="btn" type="submit">Mark as Watched</button>
+                    </form>
+                <% }%>
+                </div>
         </div>
 
         <section style="max-width:380px;margin:0 auto 40px auto;">

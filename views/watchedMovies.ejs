@@ -26,7 +26,7 @@
                 <p class="movie-meta">
                     Added: 
                     <%  
-                        const diff = Date.now() - entry.watchedDate;
+                        const diff = Date.now() - entry.addDate;
                         const days = Math.floor(diff/(1000*60*60*24));
                         const hours = Math.floor(diff/(1000*60*60));
                         const minutes = Math.floor(diff/(1000*60));

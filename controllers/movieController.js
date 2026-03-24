@@ -37,8 +37,17 @@ const getAllMovies = async (req, res) => {
       entry.movieId.toString(),
     );
 
+    const watchedMovies = await Watchlist.find({
+      userId: user._id,
+      wantsToWatch: false,
+      hasWatched: true,
+    });
+    const alreadyWatched = watchedMovies.map((entry) =>
+      entry.movieId.toString(),
+    );
+
     let movieList = await Movie.getAllMovies();
-    return res.render("all-movies", { movies: movieList, watchlist });
+    return res.render("all-movies", { movies: movieList, watchlist, alreadyWatched});
   } catch (error) {
     return res.status(500).send("Error getting all movies!");
   }
@@ -59,11 +68,35 @@ const getMovieById = async (req, res) => {
 
     const reviews = await Review.getReviewsByMovieId(req.params.id);
 
+    // find if the user has already movies in the watchlist
+    const wantsToWatch = await Watchlist.find({
+      userId: req.session.user.userId,
+      wantsToWatch: true,
+      hasWatched: false,
+    });
+    // array of movies with wantToWatch: true and hasWatched: false
+    const watchlist = wantsToWatch.map((entry) =>
+      entry.movieId.toString(),
+    );
+    
+    // find movies the user has already watched
+    const hasWatched = await Watchlist.find({
+      userId: req.session.user.userId,
+      wantsToWatch: false,
+      hasWatched: true,
+    });
+    // array of movies with wantToWatch: false and hasWatched: true
+    const alreadyWatched = hasWatched.map((entry) =>
+      entry.movieId.toString(),
+    );
+
     return res.render("movie", {
       movie: movie,
       reviews: reviews,
       currentUser: req.session.user,
       error: null,
+      watchlist,
+      alreadyWatched,
     });
   } catch (error) {
     console.error(error);
