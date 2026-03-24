@@ -58,22 +58,34 @@
     <p> You have watched <%= alreadyWatched.length %> movie<%= alreadyWatched.length > 1 ? 's' : '' %></p>
     
     
-        <table border="1">
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>Leave a review?</th>
-            </tr>
-            </thead>
-            <tbody>
+        <div class="movie-grid">
             <% for (let entry of alreadyWatched){ %>
-                <tr>
-                    <td><a href="/movie/<%= entry.movieId._id %>"><%= entry.movieId.movieTitle %></a></td>
-                    <th><button>Leave review?</button></th>
-                </tr>
+                <div class="movie-card">
+                <img
+                    class="movie-poster"
+                    src="<%= entry.movieId.moviePoster || 'https://via.placeholder.com/300x450?text=No+Poster' %>"
+                    alt="<%= entry.movieId.movieTitle %> poster"
+                />
+
+                <h2 class="movie-title">
+                    <a href="/movie/<%= entry.movieId %>"><%= entry.movieId.movieTitle %></a>
+                </h2>
+
+                <p class="movie-meta">Rating: <%= entry.movieId.movieRating %> / 5</p>
+                <p class="movie-meta">Release: <%= new Date(entry.movieId.releaseDate).toLocaleDateString() %></p>
+
+                <div class="actions">
+                        <form action="/watched/unwatch" method="post">
+                            <input type="hidden" name="movieId" value="<%= entry.movieId._id %>">
+                            <button class="btn" type="submit">Unmark as Watched</button>
+                        </form>
+                    </form>
+                    <a class="btn" href="/movie/<%= entry.movieId._id %>#reviews">Add Review</a>
+                </div>
+            </div>
             <% } %>
-            </tbody>
-        </table>
+            
+        </div>
     <% } %>
     <p><a href="/home">Go Back</a> | <a href="/watched/recommended">Discover new movies</a></p>
 </body>

@@ -12,7 +12,7 @@ const showWatchlist = async (req,res) => {
 
         const alreadyWatched = await Watchlist.find(
             {userId:req.session.user.userId, wantsToWatch: false, hasWatched: true}
-        ).populate('movieId')
+        ).populate('movieId');
 
         return res.render('watchedMovies', {watchlist, alreadyWatched})
 
