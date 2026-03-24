@@ -36,12 +36,12 @@
                   const days = Math.floor(diff/(1000*60*60*24));
                   const hours = Math.floor(diff/(1000*60*60));
                   const minutes = Math.floor(diff/(1000*60));
-                  let t;
-                  if (minutes < 60) t = `${minutes > 0 ? minutes : 'A few'} min ago`;
-                  else if (hours < 24) t = `${hours}h ago`;
-                  else t = `${days}d ago`;
+                  let time;
+                  if (minutes < 60) time = `${minutes > 0 ? minutes : 'A few'} min ago`;
+                  else if (hours < 24) time = `${hours}h ago`;
+                  else time = `${days}d ago`;
                 %>
-                Added <%= t %>
+                Added <%= time %>
               </div>
               <div class="actions">
                 <form action="/watched/remove" method="POST">

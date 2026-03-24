@@ -62,7 +62,8 @@ const markAsWatched = async (req,res) => {
 
         await Watchlist.updateOne(
             {userId: req.session.user.userId, movieId: movieId},
-            {wantsToWatch: false, hasWatched: true, addDate: null}
+            {wantsToWatch: false, hasWatched: true, addDate: null},
+            {upsert: true}
         )
         
         console.log('Successfully marked as watched');
