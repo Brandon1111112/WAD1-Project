@@ -47,7 +47,7 @@ const getAllMovies = async (req, res) => {
     );
 
     let movieList = await Movie.getAllMovies();
-    return res.render("all-movies", { movies: movieList, watchlist, alreadyWatched});
+    return res.render("all-movies", { movies: movieList, watchlist, alreadyWatched, currentUser: req.session.user });
   } catch (error) {
     return res.status(500).send("Error getting all movies!");
   }

@@ -8,22 +8,22 @@ const auth = require("../middlewares/auth-middleware");
 router.get("/", auth.isLoggedIn, movieController.getAllMovies);
 
 // Route to GET the create movie form
-router.get("/create", movieController.getCreateMovieForm);
+router.get("/create", auth.isAdmin, movieController.getCreateMovieForm);
 
 // Route to send a POST request to create a new movie object
-router.post("/create", movieController.createMovie);
+router.post("/create", auth.isAdmin, movieController.createMovie);
 
 // Route to GET the movie to be deleted
-router.get("/delete/:id", movieController.getMovieToBeDeleted);
+router.get("/delete/:id", auth.isAdmin, movieController.getMovieToBeDeleted);
 
 // Route to send a POST request to delete the movie object
-router.post("/delete/:id", movieController.deleteMovie);
+router.post("/delete/:id", auth.isAdmin, movieController.deleteMovie);
 
 // Route to GET the movie object to be edited
-router.get("/edit/:id", movieController.getMovieToEdit);
+router.get("/edit/:id", auth.isAdmin, movieController.getMovieToEdit);
 
 // Route to send a POST request to edit the movie object
-router.post("/edit/:id", movieController.updateMovieDetails);
+router.post("/edit/:id", auth.isAdmin , movieController.updateMovieDetails);
 
 // Create review
 router.post("/:id/review", auth.isLoggedIn, reviewController.addReview);

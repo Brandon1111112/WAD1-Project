@@ -60,8 +60,10 @@
               <button class="btn btn-primary" type="submit">✓ Mark as Watched</button>
             </form>
           <% } %>
-          <a class="btn" href="/movie/edit/<%= movie._id %>">Edit</a>
-          <a class="btn btn-danger" href="/movie/delete/<%= movie._id %>">Delete</a>
+          <% if (currentUser && currentUser.isAdmin) { %>
+            <a class="btn" href="/movie/edit/<%= movie._id %>">Edit</a>
+            <a class="btn btn-danger" href="/movie/delete/<%= movie._id %>">Delete</a>
+          <% } %>
         </div>
       </div>
     </div>

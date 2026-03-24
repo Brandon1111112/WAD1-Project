@@ -15,7 +15,9 @@
           <h1 class="page-title">Movies</h1>
           <p class="page-subtitle">Browse and manage the full collection</p>
         </div>
-        <a href="/movie/create" class="btn btn-primary">+ Add Movie</a>
+        <% if (currentUser && currentUser.isAdmin) { %>
+          <a href="/movie/create" class="btn btn-primary">+ Add Movie</a>
+        <% } %>
       </div>
 
       <div class="movie-grid">
