@@ -22,8 +22,8 @@
           <input class="form-input" type="email" name="email" value="<%= user.email %>" required />
         </div>
         <div class="form-group">
-          <label class="form-label">New Password <span style="color:var(--text-3);font-weight:400;">(leave blank to keep current)</span></label>
-          <input class="form-input" type="password" name="password" placeholder="••••••••" />
+          <label class="form-label">New Password</label>
+          <input class="form-input" type="password" name="password" value="<%= user.password %>" />
         </div>
         <div class="profile-actions" style="margin-top:20px;">
           <a href="/profile" class="btn btn-ghost">Back</a>
