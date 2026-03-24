@@ -1,50 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discover – IAMdb</title>
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-    <h1>Recommended For You</h1>
-
-  <% if (topGenres.length > 0) { %>
-    <p>Based on your watch history you seem to enjoy:
-        <ul>
-      <% topGenres.forEach(genre => { %>
-        <strong><li><%= genre %></li></strong>
-      <% }) %>
-        </ul> 
-    </p>
-  <% } %>
-
-  <% if (recommendations.length > 0) { %>
-    <div class="movie-grid">
-      <% recommendations.forEach(movie => { %>
-        <div class="movie-card">
-          <img src="<%= movie.moviePoster || 'https://via.placeholder.com/300x450?text=No+Poster' %>" 
-               alt="<%= movie.movieTitle %>" />
-          <h2><a href="/movie/<%= movie._id %>"><%= movie.movieTitle %></a></h2>
-          <p>Genre: <%= movie.genre %></p>
-          <p>Rating: <%= movie.movieRating %> / 5</p>
-          <p>Release: <%= new Date(movie.releaseDate).toLocaleDateString() %></p>
-
-          <form action="/watched/add" method="POST">
-            <input type="hidden" name="movieId" value="<%= movie._id %>">
-            <button type="submit">Add to Watchlist</button>
-          </form>
-        </div>
-      <% }) %>
+  <%- include('partials/navbar') %>
+  <div class="page-container">
+    <div class="page-header">
+      <h1 class="page-title">Recommended for You</h1>
+      <p class="page-subtitle">Based on your watch history</p>
     </div>
-
-  <% } else { %>
-    <p>No recommendations found. Try watching more movies!</p>
-  <% } %>
-
-  <br>
-  <p>
-    <a href="/watched/list">Back to Watchlist</a> |
-    <a href="/home">Home</a>
-  </p>
+    <% if (topGenres.length > 0) { %>
+      <p style="font-size:13px;color:var(--text-2);margin-bottom:10px;">You seem to enjoy:</p>
+      <div class="genre-chips">
+        <% topGenres.forEach(genre => { %><span class="genre-chip"><%= genre %></span><% }) %>
+      </div>
+    <% } %>
+    <% if (recommendations.length > 0) { %>
+      <div class="movie-grid">
+        <% recommendations.forEach(movie => { %>
+          <div class="movie-card">
+            <a href="/movie/<%= movie._id %>">
+              <% if (movie.moviePoster) { %>
+                <img class="movie-poster" src="<%= movie.moviePoster %>" alt="<%= movie.movieTitle %>" />
+              <% } else { %>
+                <div class="movie-poster-placeholder">🎬</div>
+              <% } %>
+            </a>
+            <div class="movie-card-body">
+              <div class="movie-title"><a href="/movie/<%= movie._id %>"><%= movie.movieTitle %></a></div>
+              <% if (movie.genre) { %><span class="genre-tag"><%= movie.genre %></span><% } %>
+              <div class="movie-rating">★ <%= movie.movieRating %>/5</div>
+              <div class="actions">
+                <form action="/watched/add" method="POST">
+                  <input type="hidden" name="movieId" value="<%= movie._id %>">
+                  <button class="btn btn-sm btn-secondary" type="submit">+ Watchlist</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <p>No recommendations yet. <a href="/movie">Watch more movies</a> to get personalised picks!</p>
+      </div>
+    <% } %>
+    <div style="margin-top:16px;display:flex;gap:12px;">
+      <a href="/watched/list" class="btn btn-ghost btn-sm">← Watchlist</a>
+      <a href="/home" class="btn btn-ghost btn-sm">Home</a>
+    </div>
+  </div>
 </body>
 </html>

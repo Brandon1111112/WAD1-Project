@@ -1,56 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Page</title>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin – IAMdb</title>
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-
-    <h1>Admin Page</h1>
-        <!-- Create User Section -->
-    <div>
-        <h2>Create New User</h2>
-        <a href="/admin/create-user"><button>Create User</button></a>
+  <%- include('partials/navbar') %>
+  <div class="page-container">
+    <div class="admin-header">
+      <div class="page-header" style="border:none;margin-bottom:0;padding-bottom:0;">
+        <h1 class="page-title">Admin Panel</h1>
+        <p class="page-subtitle">Manage users and permissions</p>
+      </div>
+      <a href="/admin/create-user" class="btn btn-primary">+ Create User</a>
     </div>
 
-    <hr>
-    <div>
-        <h1>Users Management</h1>
-        
-        <table border="1">
+    <form id="deleteForm" action="/admin/confirm-delete" method="POST">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th style="width:40px;">Select</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% Users.forEach(user => { %>
             <tr>
-                <th><strong>Select</strong></th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Admin</th>
-                <th>Actions</th>
+              <td><input type="checkbox" name="emails" value="<%= user.email %>"></td>
+              <td><%= user.name %></td>
+              <td style="color:var(--text-2);"><%= user.email %></td>
+              <td>
+                <% if (user.admin) { %>
+                  <span class="admin-badge">Admin</span>
+                <% } else { %>
+                  <span style="font-size:12px;color:var(--text-3);">User</span>
+                <% } %>
+              </td>
+              <td>
+                <% if (!user.admin) { %>
+                  <form action="/admin/make-admin" method="POST" style="display:inline;">
+                    <input type="hidden" name="email" value="<%= user.email %>">
+                    <button class="btn btn-sm btn-secondary" type="submit">Make Admin</button>
+                  </form>
+                <% } %>
+              </td>
             </tr>
-            <% Users.forEach(user => { %>
-                <tr>
-                    <td><input type="checkbox" name="emails" value="<%= user.email %>" form ="deleteForm"></td>
-                    <td><%= user.name %></td>
-                    <td><%= user.email %></td>
-                    <td><%= user.admin ? 'Yes' : 'No' %></td>
-                    <td>
-                    <!-- Show Make Admin button only if user is not already admin -->
-                    <% if (!user.admin) { %>
-                        <form action="/admin/make-admin" method="POST" style="display:inline;"> <!-- CSS Included -->
-                            <input type="hidden" name="email" value="<%= user.email %>">
-                            <button type="submit">Make Admin</button>
-                        </form>
-                    <% } else { %>
-                        <span>Admin</span>
-                    <% } %>
-                    </td>
-                </tr>
-            <% }); %>
-        </table>
-
-        <br>
-        <form id="deleteForm" action="/admin/confirm-delete" method="POST">
-            <button type="submit">Mark Selected Users for Deletion</button>
-        </form>
-    </div>
+          <% }) %>
+        </tbody>
+      </table>
+      <div style="margin-top:16px;display:flex;justify-content:flex-end;">
+        <button class="btn btn-danger" type="submit">Delete Selected Users</button>
+      </div>
+    </form>
+  </div>
 </body>
 </html>

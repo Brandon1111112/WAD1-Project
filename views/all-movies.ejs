@@ -1,55 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Movies</title>
-    <link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movies – IAMdb</title>
+  <link rel="stylesheet" href="/style.css" />
 </head>
-
 <body>
-    <%- include('partials/navbar') %>
-    <h1>Movies</h1>
+  <%- include('partials/navbar') %>
+  <main>
+    <div class="page-container">
+      <div class="page-header flex items-center justify-between">
+        <div>
+          <h1 class="page-title">Movies</h1>
+          <p class="page-subtitle">Browse and manage the full collection</p>
+        </div>
+        <a href="/movie/create" class="btn btn-primary">+ Add Movie</a>
+      </div>
 
-    <div class="movie-grid">
+      <div class="movie-grid">
         <% movies.forEach((movie) => { %>
-            <div class="movie-card">
-                <img
-                    class="movie-poster"
-                    src="<%= movie.moviePoster || 'https://via.placeholder.com/300x450?text=No+Poster' %>"
-                    alt="<%= movie.movieTitle %> poster"
-                />
-
-                <h2 class="movie-title">
-                    <a href="/movie/<%= movie._id %>"><%= movie.movieTitle %></a>
-                </h2>
-
-                <p class="movie-meta">Rating: <%= movie.movieRating %> / 5</p>
-                <p class="movie-meta">Release: <%= new Date(movie.releaseDate).toLocaleDateString() %></p>
-
-                <div class="actions">
-                    <% if (alreadyWatched.includes(movie._id.toString())){ %>
-                        ✅ Already Watched
-                    <% } %>
-                    <% if (watchlist.includes(movie._id.toString())){ %>
-                        <form action="/watched/remove" method="post">
-                            <input type="hidden" name="movieId" value="<%= movie._id %>">
-                            <button class="btn" type="submit">Remove from Watchlist</button>
-                        </form>
-                    <% } else {%>
-                        <form action="/watched/add" method="post">
-                            <input type="hidden" name="movieId" value="<%= movie._id %>">
-                            <button class="btn" type="submit">Add to Watchlist</button>
-                        </form>
-                        <% }%>
-                    </form>
-                    <a class="btn" href="/movie/<%= movie._id %>#reviews">Add Review</a>
-                </div>
+          <div class="movie-card">
+            <a href="/movie/<%= movie._id %>">
+              <% if (movie.moviePoster) { %>
+                <img class="movie-poster" src="<%= movie.moviePoster %>" alt="<%= movie.movieTitle %> poster" />
+              <% } else { %>
+                <div class="movie-poster-placeholder">🎬</div>
+              <% } %>
+            </a>
+            <div class="movie-card-body">
+              <div class="movie-title">
+                <a href="/movie/<%= movie._id %>"><%= movie.movieTitle %></a>
+              </div>
+              <div class="movie-rating">★ <%= movie.movieRating %> <span style="color:var(--text-3);font-weight:400;">/ 5</span></div>
+              <div class="movie-meta"><%= new Date(movie.releaseDate).toLocaleDateString('en-GB', {year:'numeric',month:'short',day:'numeric'}) %></div>
+              <div class="actions">
+                <% if (alreadyWatched.includes(movie._id.toString())) { %>
+                  <span class="watched-badge">✓ Watched</span>
+                <% } %>
+                <% if (watchlist.includes(movie._id.toString())) { %>
+                  <form action="/watched/remove" method="POST">
+                    <input type="hidden" name="movieId" value="<%= movie._id %>">
+                    <button class="btn btn-ghost btn-sm" type="submit">Remove from Watchlist</button>
+                  </form>
+                <% } else { %>
+                  <form action="/watched/add" method="POST">
+                    <input type="hidden" name="movieId" value="<%= movie._id %>">
+                    <button class="btn btn-secondary btn-sm" type="submit">+ Watchlist</button>
+                  </form>
+                <% } %>
+                <a class="btn btn-sm" href="/movie/<%= movie._id %>#reviews">Review</a>
+              </div>
             </div>
+          </div>
         <% }) %>
+      </div>
     </div>
-    <p><a href="/home">Go Back</a></p>
+  </main>
 </body>
-
 </html>

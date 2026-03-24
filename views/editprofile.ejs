@@ -1,200 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Profile</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa, #e4ecf7);
-        }
-
-        .profile-container {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .profile-card {
-            width: 100%;
-            max-width: 420px;
-            background: #ffffff;
-            border-radius: 22px;
-            padding: 35px 30px;
-            text-align: center;
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
-        }
-
-        .profile-title {
-            font-size: 30px;
-            font-weight: 700;
-            margin-bottom: 18px;
-            color: #111827;
-        }
-
-        .profile-img {
-            width: 105px;
-            height: 105px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 25px;
-            border: 4px solid #e5e7eb;
-        }
-
-        .form-group {
-            text-align: left;
-            margin-bottom: 18px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 8px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 13px 14px;
-            border: 1px solid #d1d5db;
-            border-radius: 12px;
-            font-size: 15px;
-            outline: none;
-            transition: 0.2s ease;
-            background: #f9fafb;
-        }
-
-        .form-group input:focus {
-            border-color: #4f46e5;
-            background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
-        }
-
-        .helper-text {
-            text-align: left;
-            font-size: 12px;
-            color: #6b7280;
-            margin-top: -8px;
-            margin-bottom: 18px;
-        }
-
-        .profile-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 25px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 13px;
-            border: none;
-            border-radius: 12px;
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s ease;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .save-btn {
-            background: #ef5b4c;
-            color: white;
-        }
-
-        .save-btn:hover {
-            background: #dc4b3d;
-        }
-
-        .back-btn {
-            background: #ede9fe;
-            color: #5b21b6;
-        }
-
-        .back-btn:hover {
-            background: #ddd6fe;
-        }
-
-        .error {
-            color: #b91c1c;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 14px;
-            margin-bottom: 18px;
-        }
-
-        @media (max-width: 480px) {
-            .profile-card {
-                padding: 28px 20px;
-            }
-
-            .profile-actions {
-                flex-direction: column;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Profile – IAMdb</title>
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-    <%- include('partials/navbar') %>
-    <div class="profile-container">
-        <div class="profile-card">
-            <h1 class="profile-title">Edit Profile</h1>
-
-            <img class="profile-img" src="/img/default-profile.jpg" alt="Profile Picture">
-
-            <form action="/profile/edit" method="POST">
-                <div class="form-group">
-                    <label for="name">Name</label>
-                    <input 
-                        type="text" 
-                        name="name" 
-                        id="name" 
-                        value="<%= user.userName %>" 
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input 
-                        type="email" 
-                        name="email" 
-                        id="email" 
-                        value="<%= user.email %>" 
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input 
-                        type="password" 
-                        name="password" 
-                        id="password" 
-                        value="<%= user.password %>" 
-                    >
-                </div>
-                <p class="error"><%= error %></p>
-                <div class="profile-actions">
-                    <a href="/profile" class="btn back-btn">Back</a>
-                    <button type="submit" class="btn save-btn">Save Changes</button>
-                </div>
-                
-                
-                    
-            </form>
+  <%- include('partials/navbar') %>
+  <div class="profile-page" style="align-items:flex-start;">
+    <div class="profile-card" style="max-width:420px;">
+      <h1 style="font-family:var(--serif);font-size:24px;font-weight:600;text-align:center;margin-bottom:20px;">Edit Profile</h1>
+      <img src="/img/default-profile.jpg" class="profile-img" alt="Profile">
+      <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+      <form action="/profile/edit" method="POST">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input class="form-input" type="text" name="name" value="<%= user.userName %>" required />
         </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" name="email" value="<%= user.email %>" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">New Password <span style="color:var(--text-3);font-weight:400;">(leave blank to keep current)</span></label>
+          <input class="form-input" type="password" name="password" placeholder="••••••••" />
+        </div>
+        <div class="profile-actions" style="margin-top:20px;">
+          <a href="/profile" class="btn btn-ghost">Back</a>
+          <button class="btn btn-primary" type="submit">Save Changes</button>
+        </div>
+      </form>
     </div>
+  </div>
 </body>
 </html>

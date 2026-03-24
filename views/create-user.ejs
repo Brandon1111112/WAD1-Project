@@ -1,33 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Create New User</title>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create User – IAMdb</title>
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-    <h3>Create a New User</h3>
-    <form action="/admin/create-user" method="POST">
-
-
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" placeholder="Enter your full name..." required>
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email..." required>
-        <label for="password">Password</label>
-        <input type="password" name="password"  placeholder="Enter your password..." required>   
-        <button type="submit">Create User</button>
-
-    </form>
-
-    <% if (result) { %>
-        <p><strong>Name: <%= result.name %></strong></p>
-        Email: <%= result.email %><br>
-        User has been created successfully!
-        <hr>
-    <% } else if(result === "fail") { %>
-        <p>Error creating user. Please try again.</p>
+  <%- include('partials/navbar') %>
+  <div class="page-container-sm">
+    <div class="page-header">
+      <h1 class="page-title">Create User</h1>
+      <p class="page-subtitle">Add a new user account</p>
+    </div>
+    <% if (result && result !== 'fail') { %>
+      <div class="alert alert-success">User <strong><%= result.name %></strong> (<%= result.email %>) created successfully.</div>
+    <% } else if (result === 'fail') { %>
+      <div class="alert alert-error">Error creating user. Please try again.</div>
     <% } %>
-
-    <br><br>
-    <a href="/admin">Back to Admin</a>
+    <div class="form-card">
+      <form action="/admin/create-user" method="POST">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input class="form-input" type="text" name="name" placeholder="Full name" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" name="email" placeholder="email@example.com" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" name="password" placeholder="Set a password" required />
+        </div>
+        <div class="form-actions">
+          <a href="/admin" class="btn btn-ghost">Back to Admin</a>
+          <button class="btn btn-primary" type="submit">Create User</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </body>
 </html>

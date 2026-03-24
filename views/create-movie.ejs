@@ -1,30 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Create Movie</title>
-    <link rel="stylesheet" href="/style.css" />
-  </head>
-  <body>
-    <%- include('partials/navbar') %>
-    <main>
-      <h1>Create Movie</h1>
-      <form class="movie-form" action="/movie/create" method="POST">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Movie – IAMdb</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <%- include('partials/navbar') %>
+  <div class="page-container-sm">
+    <div class="page-header">
+      <h1 class="page-title">Add Movie</h1>
+      <p class="page-subtitle">Add a new title to the database</p>
+    </div>
+    <div class="form-card">
+      <form action="/movie/create" method="POST">
         <div class="form-group">
-          <label for="movieTitle">Movie Title</label>
-          <input type="text" name="movieTitle" required />
+          <label class="form-label">Movie Title</label>
+          <input class="form-input" type="text" name="movieTitle" placeholder="e.g. Interstellar" required />
         </div>
         <div class="form-group">
-          <label for="movieDescription">Movie Description</label>
-          <textarea name="movieDescription" rows="3" required></textarea>
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" name="movieDescription" placeholder="Brief synopsis…" required></textarea>
         </div>
         <div class="form-group">
-          <label for="releaseDate">Release Date</label>
-          <input type="date" name="releaseDate" required />
+          <label class="form-label">Release Date</label>
+          <input class="form-input" type="date" name="releaseDate" required />
         </div>
-        <button class="btn" type="submit">Create Movie</button>
+        <div class="form-actions">
+          <a href="/movie" class="btn btn-ghost">Cancel</a>
+          <button class="btn btn-primary" type="submit">Create Movie</button>
+        </div>
       </form>
-    </main>
-  </body>
+    </div>
+  </div>
+</body>
 </html>

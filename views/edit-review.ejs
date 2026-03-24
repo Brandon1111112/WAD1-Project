@@ -1,33 +1,38 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Edit Review</title>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Review – IAMdb</title>
+  <link rel="stylesheet" href="/style.css" />
 </head>
-
 <body>
-    <h1>Edit Your Review</h1>
-
-    <form action="/movie/review/edit/<%= review._id %>" method="POST">
-        <label for="rating">Rating (1–5):</label><br>
-        <select id="rating" name="rating" required>
-            <option value="1" <%=review.rating==1 ? "selected" : "" %>>1</option>
-            <option value="2" <%=review.rating==2 ? "selected" : "" %>>2</option>
-            <option value="3" <%=review.rating==3 ? "selected" : "" %>>3</option>
-            <option value="4" <%=review.rating==4 ? "selected" : "" %>>4</option>
-            <option value="5" <%=review.rating==5 ? "selected" : "" %>>5</option>
-        </select>
-        <br><br>
-
-        <label for="review">Review:</label><br>
-        <textarea id="review" name="review" rows="5" cols="40" required><%= review.review %></textarea>
-        <br><br>
-
-        <button type="submit">Update Review</button>
-    </form>
-
-    <br>
-    <a href="/movie/<%= review.movieId %>">Back to Movie</a>
+  <%- include('partials/navbar') %>
+  <div class="page-container-sm">
+    <div class="page-header">
+      <h1 class="page-title">Edit Review</h1>
+    </div>
+    <div class="form-card">
+      <form action="/movie/review/edit/<%= review._id %>" method="POST">
+        <div class="form-group">
+          <label class="form-label">Rating</label>
+          <select class="form-select" name="rating" required style="max-width:180px;">
+            <option value="1" <%=review.rating==1?'selected':''%>>1 – Poor</option>
+            <option value="2" <%=review.rating==2?'selected':''%>>2 – Fair</option>
+            <option value="3" <%=review.rating==3?'selected':''%>>3 – Good</option>
+            <option value="4" <%=review.rating==4?'selected':''%>>4 – Great</option>
+            <option value="5" <%=review.rating==5?'selected':''%>>5 – Excellent</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Review</label>
+          <textarea class="form-textarea" name="review" required><%= review.review %></textarea>
+        </div>
+        <div class="form-actions">
+          <a href="/movie/<%= review.movieId %>" class="btn btn-ghost">Cancel</a>
+          <button class="btn btn-primary" type="submit">Update Review</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </body>
-
 </html>

@@ -1,53 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Edit Movie</title>
-    <link rel="stylesheet" href="/style.css" />
-  </head>
-  <body>
-    <%- include('partials/navbar') %>
-    <main>
-      <div
-        class="movie-form"
-        style="box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06); padding-top: 28px"
-      >
-        <h2 style="margin-bottom: 18px; text-align: center; font-weight: 600">
-          Edit Movie
-        </h2>
-        <form
-          action="/movie/edit/<%= movie._id %>"
-          method="POST"
-          style="display: flex; flex-direction: column; gap: 18px"
-        >
-          <div class="form-group">
-            <label for="movieTitle">Movie Title</label>
-            <input
-              type="text"
-              name="movieTitle"
-              value="<%= movie.movieTitle %>"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="movieDescription">Movie Description</label>
-            <textarea name="movieDescription" rows="3" required>
-<%= movie.movieDescription %></textarea
-            >
-          </div>
-          <div class="form-group">
-            <label for="releaseDate">Release Date</label>
-            <input
-              type="date"
-              name="releaseDate"
-              value="<%= movie.releaseDate.toISOString().split('T')[0] %>"
-              required
-            />
-          </div>
-          <button class="btn" type="submit">Save Changes</button>
-        </form>
-      </div>
-    </main>
-  </body>
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Movie – IAMdb</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <%- include('partials/navbar') %>
+  <div class="page-container-sm">
+    <div class="page-header">
+      <h1 class="page-title">Edit Movie</h1>
+      <p class="page-subtitle"><%= movie.movieTitle %></p>
+    </div>
+    <div class="form-card">
+      <form action="/movie/edit/<%= movie._id %>" method="POST">
+        <div class="form-group">
+          <label class="form-label">Movie Title</label>
+          <input class="form-input" type="text" name="movieTitle" value="<%= movie.movieTitle %>" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" name="movieDescription" required><%= movie.movieDescription %></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Release Date</label>
+          <input class="form-input" type="date" name="releaseDate" value="<%= movie.releaseDate.toISOString().split('T')[0] %>" required />
+        </div>
+        <div class="form-actions">
+          <a href="/movie/<%= movie._id %>" class="btn btn-ghost">Cancel</a>
+          <button class="btn btn-primary" type="submit">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
 </html>

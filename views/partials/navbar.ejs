@@ -1,36 +1,8 @@
-<style>
-  .head {
-    margin: 0;
-    padding: 0;
-  }
-
-  .navbar {
-    background-color: #333;
-    display: flex;
-    padding: 5px 10px;
-  }
-
-  .navbar a {
-    color: white;
-    text-decoration: none;
-    margin-right: 20px;
-    padding: 8px 12px;
-    transition: 0.3s;
-  }
-
-  .navbar a:hover {
-    background-color: #575757;
-    border-radius: 4px;
-  }
-
-  .navbar .right {
-    margin-left: auto;
-  }
-</style>
-<div class="navbar">
-  <a href="/home">Home</a>
-  <a href="/movie">Movies</a>
-  <a href="/watched/list">Watchlist</a>
-  <a href="/forum">Forum</a>
-  <a href="/profile" class="right">Profile</a>
-</div>
+<nav class="navbar">
+  <a href="/home" class="navbar-brand">IAM<span>db</span></a>
+  <a href="/home" class="nav-link">Home</a>
+  <a href="/movie" class="nav-link">Movies</a>
+  <a href="/watched/list" class="nav-link">Watchlist</a>
+  <a href="/watched/recommended" class="nav-link">Discover</a>
+  <a href="/profile" class="nav-link right nav-profile">Profile</a>
+</nav>
