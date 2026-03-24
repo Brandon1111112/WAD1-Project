@@ -33,9 +33,7 @@ const getAllMovies = async (req, res) => {
       wantsToWatch: true,
       hasWatched: false,
     });
-    const watchlist = watchedEntries.map((entry) =>
-      entry.movieId.toString(),
-    );
+    const watchlist = watchedEntries.map((entry) => entry.movieId.toString());
 
     const watchedMovies = await Watchlist.find({
       userId: user._id,
@@ -47,7 +45,12 @@ const getAllMovies = async (req, res) => {
     );
 
     let movieList = await Movie.getAllMovies();
-    return res.render("all-movies", { movies: movieList, watchlist, alreadyWatched, currentUser: req.session.user });
+    return res.render("all-movies", {
+      movies: movieList,
+      watchlist,
+      alreadyWatched,
+      currentUser: req.session.user,
+    });
   } catch (error) {
     return res.status(500).send("Error getting all movies!");
   }
@@ -75,10 +78,8 @@ const getMovieById = async (req, res) => {
       hasWatched: false,
     });
     // array of movies with wantToWatch: true and hasWatched: false
-    const watchlist = wantsToWatch.map((entry) =>
-      entry.movieId.toString(),
-    );
-    
+    const watchlist = wantsToWatch.map((entry) => entry.movieId.toString());
+
     // find movies the user has already watched
     const hasWatched = await Watchlist.find({
       userId: req.session.user.userId,
@@ -86,9 +87,7 @@ const getMovieById = async (req, res) => {
       hasWatched: true,
     });
     // array of movies with wantToWatch: false and hasWatched: true
-    const alreadyWatched = hasWatched.map((entry) =>
-      entry.movieId.toString(),
-    );
+    const alreadyWatched = hasWatched.map((entry) => entry.movieId.toString());
 
     return res.render("movie", {
       movie: movie,
@@ -143,11 +142,12 @@ const createMovie = async (req, res) => {
       movieTitle,
       movieDescription,
       releaseDate,
-      moviePoster
+      moviePoster,
     };
 
-    await Movie.createMovie(newMovie);
-    return res.status(201).send("Movie has been created successfully!");
+    const createdMovie = await Movie.createMovie(newMovie);
+    // Redirect to the new movie's page
+    return res.redirect(`/movie/${createdMovie._id}`);
   } catch (err) {
     return res.status(500).send("Error creating movie :(");
   }
@@ -185,7 +185,8 @@ const deleteMovie = async (req, res) => {
     }
 
     await Movie.deleteMovieById(movieId);
-    return res.send("Movie was deleted successfuly!");
+    // Redirect to all movies page after deletion
+    return res.redirect("/movie");
   } catch (error) {
     return res.status(500).send("Movie could not be deleted!");
   }
@@ -232,8 +233,8 @@ const updateMovieDetails = async (req, res) => {
       movieDescription.trim(),
       releaseDate,
     );
-
-    return res.send("Movie details have been successfuly updated!");
+    // Redirect to the updated movie's page
+    return res.redirect(`/movie/${movieId}`);
   } catch (error) {
     return res.status(500).send("Movie details could not be updated!");
   }
