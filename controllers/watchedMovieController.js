@@ -32,7 +32,7 @@ const addToWatchlist = async (req,res) => {
             {upsert: true}
         )
         console.log('Successfully added to watchlist')
-        return res.redirect('/movie')
+        return res.redirect(req.headers.referer || '/movie')
     } catch (error) {
         console.log(error);
         res.status(500).send('Error to mark movie as watched');
@@ -48,8 +48,8 @@ const removeFromWatchlist = async (req,res) => {
             {wantsToWatch: false, watchedDate: null}
         )
         
-        console.log('Successfully removed from watchlist')
-        return res.redirect('/movie')
+        console.log('Successfully removed from watchlist');
+        return res.redirect(req.headers.referer || '/movie')
     } catch (error) {
         console.log(error);
         res.status(500).send('Error to mark movie as unwatched');
