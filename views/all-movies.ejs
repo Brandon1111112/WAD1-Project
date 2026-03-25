@@ -22,6 +22,16 @@
             <% } %>
         </div>
 
+        <form action="/movie" method="GET">
+            <input type="text" name="search" placeholder="Search movies..."
+                value="<%= searchQuery || '' %>">
+            <button type="submit">Search</button>
+        </form>
+      
+        <% if (movies.length === 0 && searchQuery) {%>
+          <p>No movies found for "<%= searchQuery %>"</p>
+        <% }%>
+
         <div class="movie-grid">
           <% movies.forEach((movie)=> { %>
             <div class="movie-card">

@@ -6,6 +6,8 @@ const Watchlist = require('../models/watchlist-model')
 
 const showWatchlist = async (req, res) => {
     try {
+        const searchQuery = req.query.search || '';
+
         const watchlist = await Watchlist.find(
             { userId: req.session.user.userId, wantsToWatch: true, hasWatched: false }
         ).populate('movieId');
@@ -14,9 +16,16 @@ const showWatchlist = async (req, res) => {
             { userId: req.session.user.userId, wantsToWatch: false, hasWatched: true }
         ).populate('movieId');
 
+        const filterBySearch = (entries) => {
+            if (!searchQuery) return entries;
+            return entries.filter(entry => 
+                entry.movieId.movieTitle.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        }
+
         const ratingSummaries = await Review.getAllMovieRatingSummaries();
 
-        return res.render('watchedMovies', { watchlist, alreadyWatched, ratingSummaries })
+        return res.render('watchedMovies', { watchlist: filterBySearch(watchlist), alreadyWatched: filterBySearch(alreadyWatched), ratingSummaries, searchQuery})
 
     } catch (error) {
         console.log(error);
