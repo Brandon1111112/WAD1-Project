@@ -9,8 +9,9 @@ exports.editUser = async (req, res) => {
 
     // Validate all required fields are provided
     if (!email || !password || !name) {
+        const user = await User.findById(userId);
         return res.render('editProfile', {
-            user: req.session.user,
+            user: user,
             error: 'Please Enter All Fields'
         });
     }
@@ -22,43 +23,42 @@ exports.editUser = async (req, res) => {
     });
 
     if (existingUser) {
+        const user = await User.findById(userId);
         return res.render('editProfile', {
-            user: req.session.user,
+            user: user,
             error: 'Email already in use'
         });
     }
 
     // Update user document in database with new values
-    const updatedUser = await User.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
         userId,
         { name, email, password },
         { new: true, runValidators: true } // Return updated document and run schema validation
     );
 
-    // Sync updated user data to session for immediate use
-    req.session.user = {
-        userId: updatedUser._id,
-        userName: updatedUser.name,
-        email: updatedUser.email,
-        password: updatedUser.password,
-        isAdmin: updatedUser.admin,
-        profilePic: req.session.user.profilePic // Preserve existing profile picture
-    };
-    
+    // Redirect to profile after successful update
     res.redirect('/profile');
 }
 
 exports.getProfile = async (req, res) => {
-    const user = req.session.user
-    const watchlistCount = await Watchlist.getWatchListCount(req.session.user.userId)
-    const watchedCount = await Watchlist.getWatchedCount(req.session.user.userId)
-    const reviewCount = await Review.getreviewCountbyuserID(req.session.user.userId)
-    res.render('profile',{user:user,watchlistCount: watchlistCount,watchedCount: watchedCount,reviewCount:reviewCount});
+    // Fetch user from database using session userId
+    const user = await User.findById(req.session.user.userId);
+    const watchlistCount = await Watchlist.getWatchListCount(req.session.user.userId);
+    const watchedCount = await Watchlist.getWatchedCount(req.session.user.userId);
+    const reviewCount = await Review.getreviewCountbyuserID(req.session.user.userId);
+    res.render('profile', {
+        user: user,
+        watchlistCount: watchlistCount,
+        watchedCount: watchedCount,
+        reviewCount: reviewCount
+    });
 };
 
-exports.renderEditProfile = (req, res) => {
-    const user = req.session.user
-    res.render('editprofile',{user:user,error:""});
+exports.renderEditProfile = async (req, res) => {
+    // Fetch user from database using session userId
+    const user = await User.findById(req.session.user.userId);
+    res.render('editprofile', { user: user, error: "" });
 }
 
 exports.logout = (req, res) => {
