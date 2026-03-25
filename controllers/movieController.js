@@ -231,7 +231,7 @@ const getMovieToEdit = async (req, res) => {
 // Update the movie by getting the new info from the fields
 const updateMovieDetails = async (req, res) => {
   const movieId = req.params.id;
-  const { movieTitle, movieDescription, releaseDate } = req.body;
+  const { movieTitle, genre, movieDescription, releaseDate } = req.body;
 
   if (validator.isInvalidId(movieId)) {
     return res.status(400).send("Invalid movie id.");
@@ -240,7 +240,8 @@ const updateMovieDetails = async (req, res) => {
   if (
     validator.isMissingText(movieTitle) ||
     validator.isMissingText(movieDescription) ||
-    validator.isMissingText(releaseDate)
+    validator.isMissingText(releaseDate) ||
+    validator.isMissingText(genre)
   ) {
     return res.status(400).send("All fields are required.");
   }
@@ -249,6 +250,7 @@ const updateMovieDetails = async (req, res) => {
     await Movie.editMovieDetails(
       movieId,
       movieTitle.trim(),
+      genre,
       movieDescription.trim(),
       releaseDate,
     );

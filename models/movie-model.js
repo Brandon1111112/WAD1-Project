@@ -45,6 +45,7 @@ Movie.createMovie = function (newMovie) {
 Movie.editMovieDetails = function (
   _id,
   movieTitle,
+  genre,
   movieDescription,
   releaseDate,
 ) {
@@ -52,6 +53,7 @@ Movie.editMovieDetails = function (
     { _id: _id },
     {
       movieTitle: movieTitle,
+      genre: genre,
       movieDescription: movieDescription,
       releaseDate: releaseDate,
     },
