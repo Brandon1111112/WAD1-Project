@@ -32,7 +32,19 @@
             <div class="movie-card-body">
               <div class="movie-title"><a href="/movie/<%= movie._id %>"><%= movie.movieTitle %></a></div>
               <% if (movie.genre) { %><span class="genre-tag"><%= movie.genre %></span><% } %>
-              <div class="movie-rating">★ <%= movie.movieRating %>/5</div>
+              <div class="movie-rating">
+                  <% const rating = ratingSummaries.find(r =>
+                    r._id.toString() === movie._id.toString()
+                    ); %>
+
+                  <% if (rating) { %>
+                    ★ <%= rating.avgRating.toFixed(1) %>
+                      <span style="color:var(--text-3);font-weight:400;">/ 5</span>
+                      <span style="color:var(--text-3);font-weight:400;">(<%= rating.totalReviews %>)</span>
+                  <% } else { %>
+                        <span style="color:var(--text-3);font-weight:400;">No ratings yet</span>
+                  <% } %>
+                </div>
               <div class="actions">
                 <form action="/watched/add" method="POST">
                   <input type="hidden" name="movieId" value="<%= movie._id %>">

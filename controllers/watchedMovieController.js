@@ -148,7 +148,9 @@ const showRecommendations = async (req, res) => {
       watchedMovies,
     );
 
-    res.render("recommendations", { recommendations, topGenres });
+    const ratingSummaries = await Review.getAllMovieRatingSummaries();
+
+    res.render("recommendations", { recommendations, topGenres, ratingSummaries });
   } catch (error) {
     console.log(error);
     res.status(500).send("Error showing reccomendation");
