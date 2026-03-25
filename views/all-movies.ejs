@@ -23,9 +23,13 @@
         </div>
 
         <form action="/movie" method="GET">
-            <input type="text" name="search" placeholder="Search movies..."
-                value="<%= searchQuery || '' %>">
-            <button type="submit">Search</button>
+          <div class="form-group">
+            <input  class="form-input" type="text" name="search" placeholder="Search movies..."
+            value="<%= searchQuery || '' %>">
+          </div>
+          <div class="form-search-btn">
+            <button class="btn btn-primary"  type="submit">Search</button>
+          </div>  
         </form>
       
         <% if (movies.length === 0 && searchQuery) {%>

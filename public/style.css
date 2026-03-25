@@ -163,6 +163,9 @@ main { padding: 0; }
   box-shadow: var(--shadow-sm);
 }
 .form-group { margin-bottom: 18px; }
+.form-search-btn {
+  margin-bottom: 18px;
+}
 .form-group:last-child { margin-bottom: 0; }
 .form-label {
   display: block;
