@@ -1,5 +1,5 @@
 const fs = require('fs/promises');
-
+const bcrypt = require('bcrypt');
 const User = require('../models/user-model.js')
 const Movie = require('../models/movie-model.js')
 const Review = require('../models/review-model.js')
@@ -41,7 +41,7 @@ exports.deleteUsers = async (req, res) => {
     
     let success = await User.deleteMany({email: {$in: emails}}); // Delete users with matching emails
     
-    if (success.deletedCount > 0) {
+    if (success.deletedCount > 0) { //deleteMany provides deletedCount to indicate how many were deleted
       res.send(` <div style="
         margin: 0;
         font-family: 'Source Sans 3', system-ui, sans-serif;
@@ -93,34 +93,38 @@ exports.showCreateUserForm = async (req, res) => {
 
 // Create new user in database as an admin
 exports.createUser = async (req, res) => {
-  let name = req.body.name;
-  let email = req.body.email;
-  let password = req.body.password;
-
-  let newUser = {
-    name: name,
-    email: email,
-    password: password,
-    admin: false
-  };
 
   try {
+    const { name, email, password } = req.body;
+    // Validate all required fields
+    if (!name || !email || !password) {
+        return res.render('admin-home', { error: 'Please enter all fields' });
+    }
+
     let existingUser = await User.findOne({email: email});
     if (existingUser) {
-      return res.render('create-user', {result: "User with this email already exists!"});
+      return res.render('admin-home', { error: 'User with this email already exists!' });
     }
+        // Hash password and create new user
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+        name,
+        email,
+        password: hashedPassword, // Use 'password' field to match schema
+        admin: false
+    });
     
     let result = await User.addUser(newUser);
     console.log("User created:" + result);
-    res.render('create-user', {result: result || null});
+    res.render('admin-home', { message: 'User created successfully!' });
   } catch (error) {
     console.error(error);
     let result = "fail";
-    res.render('create-user', {result});
+    res.render('admin-home', { error: 'Error creating user' });
   }
 };
 
-// Make user an admin
+// Make user an admin for admin privileges (Admin/SuperAdmin can do so)
 exports.makeUserAdmin = async (req, res) => {
   let email = req.body.email;
   
@@ -136,5 +140,23 @@ exports.makeUserAdmin = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.send("Error updating user. <a href='/admin'>Back</a>");
+  }
+};
+
+exports.demoteUserAdmin = async (req, res) => {
+  let email = req.body.email;
+  let currentUser = req.session.user;
+  
+  // Only superadmin can demote
+  if (!currentUser.isSuperAdmin) { //If NOT (False) == True then return error message. So only super admin can access this function
+    return res.send("Only super admin can demote admins. <a href='/admin'>Back</a>");
+  }
+  
+  let success = await User.updateAdminStatus(email, false);
+  
+  if (success.modifiedCount > 0) {
+    res.send(`User has been demoted. <a href="/admin">Back to admin</a>`);
+  } else {
+    res.send("Could not update user. <a href='/admin'>Back</a>");
   }
 };

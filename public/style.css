@@ -669,8 +669,16 @@ input[type="date"].fi {
   font-weight: 600;
   padding: 2px 8px;
   border-radius: 100px;
-  background: var(--accent-dim);
-  color: var(--accent);
+  background: var(--success-dim);
+  color: var(--success);
+}
+.superadmin-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: var(--danger-dim);
+  color: var(--danger);
 }
 .admin-header {
   display: flex;
@@ -679,6 +687,15 @@ input[type="date"].fi {
   margin-bottom: 24px;
   flex-wrap: wrap;
   gap: 12px;
+}
+
+.user-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: var(--accent-2-dim);
+  color: var(--accent-2);
 }
 
 /* ── Delete confirm card ────────────────────────────────────────── */

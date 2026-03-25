@@ -21,7 +21,9 @@ exports.loginUser = async (req, res) => {
         // success
         // initialised session with user infos
         req.session.user = {
-            userId: user._id
+            userId: user._id,
+            admin: user.admin,
+            superAdmin: user.superAdmin
         }
         
         console.log("Success")

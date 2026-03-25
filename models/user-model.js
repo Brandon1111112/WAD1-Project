@@ -19,6 +19,11 @@ const userModel = new mongoose.Schema({
         type: Boolean,
         required: [false, 'User does not have to be an admin'] //removed [false, 'User does not have to be an admin'] as it would never be displayed because optional
     },
+    superAdmin: {
+        type: Boolean,
+        required: [false, 'User does not have to be a super admin']
+    } //Superadmin is only present to manage the demotion of admins. Admins themsevles cannot remove other admins.
+    //Superadmins will indirectly be admins 
 })
 
 // Model Creation
@@ -32,6 +37,11 @@ User.addUser = function(newUser) {
 // Update user's admin status
 User.updateAdminStatus = function(email, adminStatus) {
     return User.updateOne({email: email}, {admin: adminStatus});
+};
+
+// Update user's super admin status
+User.updateSuperAdminStatus = function(email, superAdminStatus) {
+    return User.updateOne({email: email}, {superAdmin: superAdminStatus});
 };
 
 module.exports = User

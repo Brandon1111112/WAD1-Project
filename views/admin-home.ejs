@@ -16,6 +16,20 @@
       <a href="/admin/create-user" class="btn btn-primary">+ Create User</a>
     </div>
 
+    <!-- Action forms rendered outside deleteForm, as it kept causing nesting issues
+         I then linked to their buttons below via the form="make/demote-admin-i being the user position in the table" attribute using the loop index. -->
+    <% Users.forEach((user, i) => { %>
+      <% if (!user.admin) { %>
+        <form id="make-admin-<%= i %>" action="/admin/make-admin" method="POST">
+          <input type="hidden" name="email" value="<%= user.email %>">
+        </form>
+      <% } else if (user.admin && !user.superAdmin) { %>
+        <form id="demote-admin-<%= i %>" action="/admin/demote-admin" method="POST">
+          <input type="hidden" name="email" value="<%= user.email %>">
+        </form>
+      <% } %>
+    <% }) %>
+
     <form id="deleteForm" action="/admin/confirm-delete" method="POST">
       <table class="admin-table">
         <thead>
@@ -28,24 +42,39 @@
           </tr>
         </thead>
         <tbody>
-          <% Users.forEach(user => { %>
+        <% let loggedUser = user; %> <!-- The currently logged-in user session-->
+        <!--Loop below for the users display in checkboxes-->
+          <!-- index i to forEach to match action form IDs above -->
+          <% Users.forEach((user, i) => { %>
             <tr>
               <td><input type="checkbox" name="emails" value="<%= user.email %>"></td>
               <td><%= user.name %></td>
               <td style="color:var(--text-2);"><%= user.email %></td>
               <td>
-                <% if (user.admin) { %>
+                <!--Check if the user is an admin for the badge -->
+                <% if (user.superAdmin) { %>
+                  <span class="superadmin-badge">Super Admin</span>
+                <% } else if (user.admin) { %>
                   <span class="admin-badge">Admin</span>
                 <% } else { %>
-                  <span style="font-size:12px;color:var(--text-3);">User</span>
+                  <span class = "user-badge">User</span>
                 <% } %>
               </td>
               <td>
-                <% if (!user.admin) { %>
-                  <form action="/admin/make-admin" method="POST" style="display:inline;">
-                    <input type="hidden" name="email" value="<%= user.email %>">
-                    <button class="btn btn-sm btn-secondary" type="submit">Make Admin</button>
-                  </form>
+                <% if (loggedUser.superAdmin) { %> 
+                    <!-- Show make admin/demote admin options if current user is a superadmin -->
+                    <% if (!user.admin) { %>
+                    <!-- If user not an admin: Show make Admin option -->
+                    <button class="btn btn-sm btn-secondary" type="submit" form="make-admin-<%= i %>">Make Admin</button>
+                    <% } else if (user.admin && !user.superAdmin) { %>
+                    <!-- If user is an admin but not a superadmin: Show demote admin option -->
+                    <button class="btn btn-sm btn-danger" type="submit" form="demote-admin-<%= i %>">Remove Admin</button>
+                    <% } %>
+                <% } else if (loggedUser.admin) { %> <!-- If user is an admin: Show make Admin option but not demote admin option -->
+                    <% if (!user.admin && !user.superAdmin) { %>
+                    <!-- If user is an admin: Show make Admin option but not demote admin option -->
+                    <button class="btn btn-sm btn-secondary" type="submit" form="make-admin-<%= i %>">Make Admin</button>
+                    <% } %>
                 <% } %>
               </td>
             </tr>

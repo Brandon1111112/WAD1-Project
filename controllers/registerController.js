@@ -23,7 +23,8 @@ exports.registerUser = async (req, res) => {
             name,
             email,
             password: hashedPassword, // Use 'password' field to match schema
-            admin: false
+            admin: false,
+            superAdmin: false
         });
 
         await newUser.save();
