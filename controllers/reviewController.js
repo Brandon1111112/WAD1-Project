@@ -32,18 +32,8 @@ const addReview = async (req, res) => {
         );
 
         if (existingReview) {
-            const reviews = await Review.getReviewsByMovieId(movieId);
-
-            return res.render("movie", {
-                movie: movie,
-                reviews: reviews,
-                currentUser: req.session.user,
-                error: "You have already reviewed this movie.",
-                formData: {
-                    rating: rating,
-                    review: review
-                }
-            });
+            req.session.error = "You have already reviewed this movie.";
+            return res.redirect(`/movie/${movieId}`);
         }
 
         const newReview = {

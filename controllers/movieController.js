@@ -67,7 +67,9 @@ const getMovieById = async (req, res) => {
 
   try {
     const movie = await Movie.findMoveById(req.params.id);
-
+    const error = req.session.error || null;
+    req.session.error = null;
+    
     if (!movie) {
       return res.send("No movie found!");
     }
@@ -106,7 +108,7 @@ const getMovieById = async (req, res) => {
       movie: movie,
       reviews: reviews,
       currentUser: req.session.user,
-      error: null,
+      error,
       watchlist,
       alreadyWatched,
       avgRating,
