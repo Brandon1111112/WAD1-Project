@@ -18,6 +18,11 @@ const movieModel = new mongoose.Schema({
     type: Date,
     required: [true, "Movie must have a release date"],
   },
+  runTime: {
+    type: Number,
+    required: [true, "Movie must have a runtime"],
+    default: 60 // In case the movie api fails it will fall back to this default value
+  },
   genre: {
     type: String,
     required: [true, "Movie must have a genre"]

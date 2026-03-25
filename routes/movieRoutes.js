@@ -23,19 +23,31 @@ router.post("/delete/:id", auth.isAdmin, movieController.deleteMovie);
 router.get("/edit/:id", auth.isAdmin, movieController.getMovieToEdit);
 
 // Route to send a POST request to edit the movie object
-router.post("/edit/:id", auth.isAdmin , movieController.updateMovieDetails);
+router.post("/edit/:id", auth.isAdmin, movieController.updateMovieDetails);
 
 // Create review
 router.post("/:id/review", auth.isLoggedIn, reviewController.addReview);
 
 // Edit review form
-router.get("/review/edit/:reviewId", auth.isLoggedIn, reviewController.getReviewToEdit);
+router.get(
+  "/review/edit/:reviewId",
+  auth.isLoggedIn,
+  reviewController.getReviewToEdit,
+);
 
 // Update review
-router.post("/review/edit/:reviewId", auth.isLoggedIn, reviewController.updateReview);
+router.post(
+  "/review/edit/:reviewId",
+  auth.isLoggedIn,
+  reviewController.updateReview,
+);
 
 // Delete review
-router.post("/review/delete/:reviewId", auth.isLoggedIn, reviewController.deleteReview);
+router.post(
+  "/review/delete/:reviewId",
+  auth.isLoggedIn,
+  reviewController.deleteReview,
+);
 
 // Route to GET a movie by its ID
 router.get("/:id", auth.isLoggedIn, movieController.getMovieById);

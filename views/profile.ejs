@@ -1,36 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Profile – IAMdb</title>
-  <link rel="stylesheet" href="/style.css" />
-</head>
-<body>
-  <%- include('partials/navbar') %>
-  <div class="profile-page">
-    <div class="profile-card">
-      <img src="/img/default-profile.jpg" class="profile-img" alt="Profile picture">
-      <div class="profile-name"><%= user.name %></div>
-      <div class="profile-email"><%= user.email %></div>
-      <div class="profile-stats">
-        <div class="stat">
-          <span class="stat-val"><%=watchedCount%></span>
-          <span class="stat-label">Watched</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile – IAMdb</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <%- include('partials/navbar') %>
+    <div class="profile-page">
+      <div class="profile-card">
+        <img
+          src="/img/default-profile.jpg"
+          class="profile-img"
+          alt="Profile picture"
+        />
+        <div class="profile-name"><%= user.name %></div>
+        <div class="profile-email"><%= user.email %></div>
+        <div class="profile-stats">
+          <div class="stat">
+            <span class="stat-val"><%=watchedCount%></span>
+            <span class="stat-label">Watched</span>
+          </div>
+          <div class="stat">
+            <span class="stat-val"><%=reviewCount%></span>
+            <span class="stat-label">Reviews</span>
+          </div>
+          <div class="stat">
+            <span class="stat-val"><%=watchlistCount%></span>
+            <span class="stat-label">Watchlist</span>
+          </div>
+          <div class="stat">
+            <span class="stat-val"><%=totalHours%> hrs</span>
+            <span class="stat-label">Time Watched</span>
+          </div>
         </div>
-        <div class="stat">
-          <span class="stat-val"><%=reviewCount%></span>
-          <span class="stat-label">Reviews</span>
+        <div class="profile-actions">
+          <a href="/profile/edit" class="btn btn-secondary">Edit Profile</a>
+          <a href="/profile/logout" class="btn btn-danger">Logout</a>
         </div>
-        <div class="stat">
-          <span class="stat-val"><%=watchlistCount%></span>
-          <span class="stat-label">Watchlist</span>
-        </div>
-      </div>
-      <div class="profile-actions">
-        <a href="/profile/edit" class="btn btn-secondary">Edit Profile</a>
-        <a href="/profile/logout" class="btn btn-danger">Logout</a>
       </div>
     </div>
-  </div>
-</body>
+  </body>
 </html>

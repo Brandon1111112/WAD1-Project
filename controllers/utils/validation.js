@@ -6,5 +6,9 @@ const isMissingText = (v) =>
 const isMissingNumber = (v) => v == null || v === "" || Number.isNaN(Number(v));
 const isInvalidId = (id) =>
   isMissingText(id) || !mongoose.Types.ObjectId.isValid(id);
+const convertToNum = (numStr) => {
+  let arraySplit = numStr.split(" ");
+  return Number(arraySplit[0]);
+};
 
-module.exports = { isMissingText, isMissingNumber, isInvalidId };
+module.exports = { isMissingText, isMissingNumber, isInvalidId, convertToNum };

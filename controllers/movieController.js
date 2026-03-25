@@ -150,6 +150,7 @@ const createMovie = async (req, res) => {
 
   try {
     let moviePoster = "";
+    let runTime = 0;
     const omdbApiKey = process.env.OMDB_API_KEY;
 
     if (omdbApiKey) {
@@ -158,6 +159,11 @@ const createMovie = async (req, res) => {
         let data = await getJson(url);
         if (data.Poster && data.Poster !== "N/A") {
           moviePoster = data.Poster;
+        } else if (data.Error) {
+          console.log("OMDb lookup skipped:", data.Error, "for", movieTitle);
+        }
+        if (data.Runtime && data.Runtime !== "N/A") {
+          runTime = validator.convertToNum(data.Runtime);
         } else if (data.Error) {
           console.log("OMDb lookup skipped:", data.Error, "for", movieTitle);
         }
@@ -171,6 +177,7 @@ const createMovie = async (req, res) => {
       movieDescription,
       releaseDate,
       genre,
+      runTime,
       moviePoster,
     };
 
