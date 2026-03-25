@@ -25,6 +25,13 @@ server.use(session({
     resave: false,
     saveUninitialized: false
 }))
+
+// Make user available in all views //Used to help with Navbar to show different for Admin versus Users on NavBar
+server.use((req, res, next) => {
+  res.locals.user = req.session.user;
+  next();
+});
+
 server.set("view engine", "ejs")
 
 // Import route files
@@ -46,6 +53,8 @@ server.use('/viewusers', viewuserRoutes); //Route for admins to view users Route
 server.use('/movie', movieRoutes);
 server.use('/watched', watchedMovieRoutes); //Route for lisiting watched movies and recomandations
 server.use('/profile', profileRoutes); // Route to profile page
+
+
 
 
 // async function to connect to DB

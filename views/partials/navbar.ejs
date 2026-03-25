@@ -1,8 +1,20 @@
 <nav class="navbar">
   <a href="/home" class="navbar-brand">IAM<span>db</span></a>
+
+<% if (user && user.isAdmin) { %>
+  <!-- Admin Navigation -->
   <a href="/home" class="nav-link">Home</a>
   <a href="/movie" class="nav-link">Movies</a>
   <a href="/watched/list" class="nav-link">Watchlist</a>
   <a href="/watched/recommended" class="nav-link">Discover</a>
+  <a href="/admin" class="nav-link">Admin</a>
+<% } else { %>
+  <!-- User Navigation -->
+  <a href="/home" class="nav-link">Home</a>
+  <a href="/movie" class="nav-link">Movies</a>
+  <a href="/watched/list" class="nav-link">Watchlist</a>
+  <a href="/watched/recommended" class="nav-link">Discover</a>
+<% } %>
+
   <a href="/profile" class="nav-link right nav-profile">Profile</a>
 </nav>
