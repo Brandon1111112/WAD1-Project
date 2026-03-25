@@ -30,6 +30,14 @@ const reviewModel = new mongoose.Schema({
 
 const Review = mongoose.model("Review", reviewModel, "reviews");
 
+exports.getreviewCountbyuserID = async function(userId){
+  const count = await Review.countDocuments({
+    userId: userId
+  });
+
+  return count;
+}
+
 exports.createReview = function (newReview) {
     return Review.create(newReview);
 };
