@@ -42,11 +42,12 @@ exports.editUser = async (req, res) => {
 }
 
 exports.getProfile = async (req, res) => {
+    const userId = req.session.user.userId;
     // Fetch user from database using session userId
-    const user = await User.findById(req.session.user.userId);
-    const watchlistCount = await Watchlist.getWatchListCount(req.session.user.userId);
-    const watchedCount = await Watchlist.getWatchedCount(req.session.user.userId);
-    const reviewCount = await Review.getreviewCountbyuserID(req.session.user.userId);
+    const user = await User.findById(userId);
+    const watchlistCount = await Watchlist.getWatchListCount(userId);
+    const watchedCount = await Watchlist.getWatchedCount(userId);
+    const reviewCount = await Review.getreviewCountbyuserID(userId);
     res.render('profile', {
         user: user,
         watchlistCount: watchlistCount,
@@ -57,7 +58,8 @@ exports.getProfile = async (req, res) => {
 
 exports.renderEditProfile = async (req, res) => {
     // Fetch user from database using session userId
-    const user = await User.findById(req.session.user.userId);
+    const userId = req.session.user.userId;
+    const user = await User.findById(userId);
     res.render('editprofile', { user: user, error: "" });
 }
 
