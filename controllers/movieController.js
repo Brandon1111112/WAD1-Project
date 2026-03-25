@@ -69,7 +69,7 @@ const getMovieById = async (req, res) => {
     const movie = await Movie.findMoveById(req.params.id);
     const error = req.session.error || null;
     req.session.error = null;
-    
+
     if (!movie) {
       return res.send("No movie found!");
     }
@@ -112,7 +112,7 @@ const getMovieById = async (req, res) => {
       watchlist,
       alreadyWatched,
       avgRating,
-      totalReviews
+      totalReviews,
     });
   } catch (error) {
     console.error(error);
@@ -127,12 +127,13 @@ const getCreateMovieForm = (req, res) => {
 
 // Get the input from the movie form and create the movie object in MongoDB
 const createMovie = async (req, res) => {
-  const { movieTitle, movieDescription, releaseDate } = req.body;
+  const { movieTitle, movieDescription, releaseDate, genre } = req.body;
 
   if (
     validator.isMissingText(movieTitle) ||
     validator.isMissingText(movieDescription) ||
-    validator.isMissingText(releaseDate)
+    validator.isMissingText(releaseDate) ||
+    validator.isMissingText(genre)
   ) {
     return res.status(400).send("All fields are required");
   }
@@ -145,9 +146,9 @@ const createMovie = async (req, res) => {
       const url = `https://www.omdbapi.com/?apikey=${omdbApiKey}&t=${movieTitle.trim()}`;
       try {
         let data = await getJson(url);
-        if (data && data.Poster && data.Poster !== "N/A") {
+        if (data.Poster && data.Poster !== "N/A") {
           moviePoster = data.Poster;
-        } else if (data && data.Error) {
+        } else if (data.Error) {
           console.log("OMDb lookup skipped:", data.Error, "for", movieTitle);
         }
       } catch (fetchError) {
@@ -159,6 +160,7 @@ const createMovie = async (req, res) => {
       movieTitle,
       movieDescription,
       releaseDate,
+      genre,
       moviePoster,
     };
 

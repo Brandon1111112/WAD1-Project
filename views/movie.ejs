@@ -36,12 +36,16 @@
                     <%= new Date(movie.releaseDate).getFullYear() %>
                   </span>
                   <span class="meta-sep">·</span>
-                  <span>Rating:
+                  <span>
                     <% if (totalReviews> 0) { %>
                       <%= avgRating.toFixed(1) %>/5
                         <% } else { %>
                           No ratings yet
                           <% } %>
+                  </span>
+                  <span class="meta-sep">·</span>
+                  <span>
+                    <%= movie.genre %>
                   </span>
                 </div>
                 <% if (totalReviews> 0) { %>

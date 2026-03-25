@@ -20,7 +20,7 @@ const movieModel = new mongoose.Schema({
   },
   genre: {
     type: String,
-    required: false
+    required: [true, "Movie must have a genre"]
   }
 });
 
