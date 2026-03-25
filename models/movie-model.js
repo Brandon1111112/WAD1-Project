@@ -26,23 +26,23 @@ const movieModel = new mongoose.Schema({
 
 const Movie = mongoose.model("Movie", movieModel, "movie");
 
-exports.getAllMovies = function () {
+Movie.getAllMovies = function () {
   return Movie.find();
 };
 
-exports.findMoveById = function (_id) {
+Movie.findMoveById = function (_id) {
   return Movie.findOne({ _id: _id });
 };
 
-exports.deleteMovieById = function (_id) {
+Movie.deleteMovieById = function (_id) {
   return Movie.deleteOne({ _id: _id });
 };
 
-exports.createMovie = function (newMovie) {
+Movie.createMovie = function (newMovie) {
   return Movie.create(newMovie);
 };
 
-exports.editMovieDetails = function (
+Movie.editMovieDetails = function (
   _id,
   movieTitle,
   movieDescription,
@@ -58,11 +58,11 @@ exports.editMovieDetails = function (
   );
 };
 
-exports.getMoviesByGenres = function (genres, excludeIds) {
+Movie.getMoviesByGenres = function (genres, excludeIds) {
   return Movie.find({
     genre: { $in: genres },
     _id: { $nin: excludeIds }
   }).limit(10);
 };
 
-//module.exports = Movie;
+module.exports = Movie;

@@ -30,7 +30,7 @@ const reviewModel = new mongoose.Schema({
 
 const Review = mongoose.model("Review", reviewModel, "reviews");
 
-exports.getreviewCountbyuserID = async function(userId){
+Review.getreviewCountbyuserID = async function(userId){
   const count = await Review.countDocuments({
     userId: userId
   });
@@ -38,21 +38,21 @@ exports.getreviewCountbyuserID = async function(userId){
   return count;
 }
 
-exports.createReview = function (newReview) {
+Review.createReview = function (newReview) {
     return Review.create(newReview);
 };
 
-exports.getReviewsByMovieId = function (movieId) {
+Review.getReviewsByMovieId = function (movieId) {
     return Review.find({ movieId: movieId })
         .populate("userId")
         .sort({ createdAt: -1 });
 };
 
-exports.findReviewById = function (_id) {
+Review.findReviewById = function (_id) {
     return Review.findOne({ _id: _id }).populate("userId");
 };
 
-exports.updateReviewById = function (_id, rating, review) {
+Review.updateReviewById = function (_id, rating, review) {
     return Review.updateOne(
         { _id: _id },
         {
@@ -62,15 +62,15 @@ exports.updateReviewById = function (_id, rating, review) {
     );
 };
 
-exports.deleteReviewById = function (_id) {
+Review.deleteReviewById = function (_id) {
     return Review.deleteOne({ _id: _id });
 };
 
-exports.findReviewByUserAndMovie = function (userId, movieId) {
+Review.findReviewByUserAndMovie = function (userId, movieId) {
     return Review.findOne({ userId: userId, movieId: movieId });
 };
 
-exports.getAllMovieRatingSummaries = function () {
+Review.getAllMovieRatingSummaries = function () {
     return Review.aggregate([
         {
             $group: {
@@ -82,7 +82,7 @@ exports.getAllMovieRatingSummaries = function () {
     ]);
 };
 
-exports.getRatingSummaryByMovieId = function (movieId) {
+Review.getRatingSummaryByMovieId = function (movieId) {
     return Review.aggregate([
         {
             $match: {
@@ -98,3 +98,5 @@ exports.getRatingSummaryByMovieId = function (movieId) {
         }
     ]);
 };
+
+module.exports = Review;
