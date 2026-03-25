@@ -60,7 +60,6 @@
                     <p class="detail-description">
                       <%= movie.movieDescription %>
                     </p>
-
                     <div class="detail-actions">
                       <% if (watchlist.includes(movie._id.toString())) { %>
                         <form action="/watched/remove" method="POST">

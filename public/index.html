@@ -1,56 +1,47 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>IAMdb - Movie Watchlist</title>
-    <style>
-      body {
-        background-image: url("/img/homepage_background.png");
-        background-size: cover;
-      }
-
-      h1 {
-        font-size: 80px;
-        color: blanchedalmond;
-      }
-
-      p {
-        font-size: 40px;
-        color: rgb(252, 243, 230);
-      }
-
-      .btn {
-        display: inline-block;
-        padding: 15px 40px;
-        font-size: 24px;
-        width: 200px;
-        background: coral;
-        border-radius: 40px;
-        color: white;
-        text-decoration: none;
-        font-family: Arial, Helvetica, sans-serif;
-        text-align: center;
-      }
-
-      .container {
-        font-family: Arial, Helvetica, sans-serif;
-        justify-content: center;
-        text-align: center;
-      }
-    </style>
-  </head>
-
-  <body>
-    <!-- Header Section -->
-    <header>
-      <div class="container">
-        <h1>IAMdb</h1>
-        <p>Your Ultimate Movie Watchlist</p>
-        <!-- Login Button -->
-        <a href="/login" class="btn">Login</a>
-        <a href="/register" class="btn">Register</a>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IAMdb – Your Movie Companion</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/index.html" class="navbar-brand">IAM<span>db</span></a>
+    <a href="/index.html" class="nav-link">Home</a>
+    <a href="/movie" class="nav-link">Movies</a>
+    <a href="/login" class="nav-link right nav-profile">Login/Register</a>
+  </nav>
+  <main>
+    <section class="hero">
+      <div class="hero-eyebrow">Your cinematic companion</div>
+      <h1 class="hero-title">Discover films<br>worth <em>watching</em></h1>
+      <p class="hero-tagline">Track, rate, and review your favourite movies. Find your next obsession.</p>
+      <a href="/movie" class="cta-btn">Browse all movies</a>
+    </section>
+    <section class="features">
+      <div class="feature">
+        <div class="feature-icon">🎬</div>
+        <div class="feature-title">Track Watched Movies</div>
+        <div class="feature-desc">Keep a personal log of every movie you've seen.</div>
       </div>
-    </header>
-  </body>
+      <div class="feature">
+        <div class="feature-icon">📝</div>
+        <div class="feature-title">Write Reviews</div>
+        <div class="feature-desc">Share your thoughts and read what others think.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⭐</div>
+        <div class="feature-title">Rate Movies</div>
+        <div class="feature-desc">Give ratings and see what's trending in the community.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">Manage Watchlist</div>
+        <div class="feature-desc">Save movies you want to watch and never miss out.</div>
+      </div>
+    </section>
+  </main>
+</body>
 </html>
