@@ -116,7 +116,8 @@ exports.createUser = async (req, res) => {
     
     let result = await User.addUser(newUser);
     console.log("User created:" + result);
-    res.render('admin-home', { message: 'User created successfully!' });
+    let users = await User.find();
+    res.render('admin-home', { message: 'User created successfully!', Users: users });
   } catch (error) {
     console.error(error);
     let result = "fail";
