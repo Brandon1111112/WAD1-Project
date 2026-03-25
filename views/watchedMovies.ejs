@@ -71,6 +71,10 @@
                       Added <%= time %>
                 </div>
                 <div class="actions">
+                  <form action="/watched/watch" method="POST">
+                    <input type="hidden" name="movieId" value="<%= entry.movieId._id %>">
+                    <button class="btn btn-sm btn-ghost" type="submit">✓ Mark as Watched</button>
+                  </form>
                   <form action="/watched/remove" method="POST">
                     <input type="hidden" name="movieId" value="<%= entry.movieId._id %>">
                     <button class="btn btn-sm btn-ghost" type="submit">Remove</button>
