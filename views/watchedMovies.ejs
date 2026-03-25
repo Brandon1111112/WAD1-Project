@@ -49,10 +49,15 @@
                           <% } %>
                 </div>
                 <div class="movie-meta">
-                  <% const diff=Date.now() - entry.addDate; const days=Math.floor(diff/(1000*60*60*24)); const
-                    hours=Math.floor(diff/(1000*60*60)); const minutes=Math.floor(diff/(1000*60)); let time; if (minutes
-                    < 60) time=`${minutes> 0 ? minutes : 'A few'} min ago`;
-                    else if (hours < 24) time=`${hours}h ago`; else time=`${days}d ago`; %>
+                  <% const diff=Date.now() - entry.addDate; const days=Math.floor(diff/(1000*60*60*24)); 
+                    const hours=Math.floor(diff/(1000*60*60)); 
+                    const minutes=Math.floor(diff/(1000*60)); 
+                    let time; 
+                    if (minutes < 60) time=`${minutes > 0 ? minutes : 'A few'} min ago`;
+                    else if (hours < 24) time=`${hours}h ago`; 
+                    else if (days < 30) time=`${days}d ago`;
+                    else time = entry.addDate.toLocaleDateString('en-GB');
+                    %>
                       Added <%= time %>
                 </div>
                 <div class="actions">
