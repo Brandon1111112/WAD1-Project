@@ -19,6 +19,16 @@
         <a href="/watched/recommended" class="btn btn-secondary">Discover →</a>
       </div>
 
+      <form action="/watched/list" method="GET">
+        <input type="text" name="search" placeholder="Search your watchlist..."
+                value="<%= searchQuery || '' %>">
+        <button type="submit">Search</button>
+      </form>
+      
+      <% if (watchlist.length === 0 && searchQuery) {%>
+        <p>No movies found in the Watchlist for "<%= searchQuery %>"</p>
+      <% }%>
+
       <% if (watchlist.length> 0) { %>
         <div class="movie-grid">
           <% watchlist.forEach((entry)=> { %>
@@ -127,6 +137,7 @@
               </div>
               <% } %>
     </div>
+
 </body>
 
 </html>

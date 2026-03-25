@@ -28,6 +28,8 @@ const getAllMovies = async (req, res) => {
       return res.redirect("/login");
     }
 
+    const searchQuery = req.query.search || '';
+
     const watchedEntries = await Watchlist.find({
       userId: user._id,
       wantsToWatch: true,
@@ -47,12 +49,20 @@ const getAllMovies = async (req, res) => {
     const ratingSummaries = await Review.getAllMovieRatingSummaries();
 
     let movieList = await Movie.getAllMovies();
+
+    if (searchQuery) {
+       movieList = movieList.filter(movie => 
+          movie.movieTitle.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }
+         
     return res.render("all-movies", {
       movies: movieList,
       watchlist,
       alreadyWatched,
       currentUser: req.session.user,
       ratingSummaries,
+      searchQuery
     });
   } catch (error) {
     return res.status(500).send("Error getting all movies!");

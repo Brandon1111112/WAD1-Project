@@ -16,9 +16,6 @@ const watchlistModel = new mongoose.Schema({
   addDate: {
     type: Date, default: Date.now
 },
-  hasLiked: {
-    type: Boolean, default: false
-},
   hasWatched: {
     type: Boolean, default: false
 },
