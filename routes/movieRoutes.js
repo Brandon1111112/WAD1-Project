@@ -5,7 +5,7 @@ const reviewController = require("../controllers/reviewController");
 const auth = require("../middlewares/auth-middleware");
 
 // Route to GET all movie objects
-router.get("/", auth.isLoggedIn, movieController.getAllMovies);
+router.get("/", movieController.getAllMovies);
 
 // Route to GET the create movie form
 router.get("/create", auth.isAdmin, movieController.getCreateMovieForm);

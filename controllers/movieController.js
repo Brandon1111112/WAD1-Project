@@ -15,36 +15,39 @@ async function getJson(url) {
 // Get all movies from MongoDB and check if user watched or not
 const getAllMovies = async (req, res) => {
   try {
-    const loggedUser = req.session.user.userId;
-    const user = await User.findOne({ _id: loggedUser });
+    const searchQuery = req.query.search || "";
+    const genreQuery = req.query.genre || "";
 
-    if (!loggedUser) {
-      console.log("User not logged in, redirect to /login");
-      return res.redirect("/login");
+    const genres = await Movie.getDistinctGenres();
+
+    let watchlist = [];
+    let alreadyWatched = [];
+    let currentUser = null;
+
+    if (req.session.user){
+      const user = await User.findOne({ _id: req.session.user.userId });
+
+      if (user){
+        currentUser = req.session.user;
+
+        const watchedEntries = await Watchlist.find({
+        userId: user._id,
+        wantsToWatch: true,
+        hasWatched: false,
+        });
+        
+        watchlist = watchedEntries.map((entry) => entry.movieId.toString());
+
+        const watchedMovies = await Watchlist.find({
+          userId: user._id,
+          wantsToWatch: false,
+          hasWatched: true,
+        });
+        alreadyWatched = watchedMovies.map((entry) =>
+          entry.movieId.toString(),
+        );
+      }
     }
-
-    if (!user) {
-      console.log("User does not exist, redirect to /login");
-      return res.redirect("/login");
-    }
-
-    const searchQuery = req.query.search || '';
-
-    const watchedEntries = await Watchlist.find({
-      userId: user._id,
-      wantsToWatch: true,
-      hasWatched: false,
-    });
-    const watchlist = watchedEntries.map((entry) => entry.movieId.toString());
-
-    const watchedMovies = await Watchlist.find({
-      userId: user._id,
-      wantsToWatch: false,
-      hasWatched: true,
-    });
-    const alreadyWatched = watchedMovies.map((entry) =>
-      entry.movieId.toString(),
-    );
 
     const ratingSummaries = await Review.getAllMovieRatingSummaries();
 
@@ -55,14 +58,22 @@ const getAllMovies = async (req, res) => {
           movie.movieTitle.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }
+
+    if (genreQuery) {
+       movieList = movieList.filter(movie => 
+          movie.genre.toLowerCase().includes(genreQuery.toLowerCase())
+        );
+    }
          
     return res.render("all-movies", {
       movies: movieList,
+      genres,
       watchlist,
       alreadyWatched,
-      currentUser: req.session.user,
+      currentUser,
       ratingSummaries,
-      searchQuery
+      searchQuery,
+      genreQuery
     });
   } catch (error) {
     return res.status(500).send("Error getting all movies!");

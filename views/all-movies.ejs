@@ -29,11 +29,25 @@
           </div>
           <div class="form-search-btn">
             <button class="btn btn-primary"  type="submit">Search</button>
-          </div>  
+          </div>
+          <div>
+            Filter by genre:
+            <select name="genre">
+                <option value="">Select…</option>
+                <% genres.forEach(genre => { %>
+                  <option value="<%= genre %>" <%= genreQuery === genre ? "selected" : '' %>><%= genre %></option>
+                <% }) %>
+              </select>
+          </div>
         </form>
       
         <% if (movies.length === 0 && searchQuery) {%>
-          <p>No movies found for "<%= searchQuery %>"</p>
+          <p>
+            No movies found for "<%= searchQuery %>" 
+            <% if (genreQuery) { %>
+              in <%=genreQuery%>
+            <% } %>
+          </p>
         <% }%>
 
         <div class="movie-grid">

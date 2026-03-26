@@ -34,7 +34,7 @@ exports.loginUser = async (req, res) => {
         res.redirect('/home')
        
         
-    } catch (err) {
+    } catch (error) {
         res.render('login', { error: "Server error" })
     }
 }

@@ -72,4 +72,8 @@ Movie.getMoviesByGenres = function (genres, excludeIds) {
   }).limit(10);
 };
 
+Movie.getDistinctGenres = function() {
+  return Movie.distinct('genre');
+};
+
 module.exports = Movie;
