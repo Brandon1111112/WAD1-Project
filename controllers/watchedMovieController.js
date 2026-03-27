@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const User = require('../models/user-model');
 const Review = require("../models/review-model");
 const Movie = require("../models/movie-model");
 const Watchlist = require("../models/watchlist-model");
@@ -136,21 +137,32 @@ const showRecommendations = async (req, res) => {
       genreCount[genre] = (genreCount[genre] || 0) + 1;
     });
 
+    // get user favorutite genres
+    const userFavouriteGenres = (await User.findById({_id:req.session.user.userId})).favoriteGenres;
+
     // find top 3 genres
     const topGenres = Object.keys(genreCount)
       .sort((a, b) => genreCount[b] - genreCount[a])
+      .filter(genre => !userFavouriteGenres.includes(genre))
       .slice(0, 3);
 
     // find movies not yet watched
     const watchedMovies = watched.map((entry) => entry.movieId._id);
+    // get movies not yet watched within top 3 genres
     const recommendations = await Movie.getMoviesByGenres(
       topGenres,
+      watchedMovies,
+    );
+    
+    // get movies not yet watched from user fav genres
+    const favoriteRecommendations = await Movie.getMoviesByGenres(
+      userFavouriteGenres,
       watchedMovies,
     );
 
     const ratingSummaries = await Review.getAllMovieRatingSummaries();
 
-    res.render("recommendations", { recommendations, topGenres, ratingSummaries });
+    res.render("recommendations", { favoriteRecommendations, recommendations, topGenres, userFavouriteGenres, ratingSummaries });
   } catch (error) {
     console.log(error);
     res.status(500).send("Error showing reccomendation");
