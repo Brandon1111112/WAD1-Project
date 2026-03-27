@@ -6,9 +6,9 @@ const User = require('../models/user-model')
 //Data validation of Login details
 exports.loginUser = async (req, res) => {
     const { email, password } = req.body
-    const user = await User.findOne({ email })
-    const match = await bcrypt.compare(password, user.password);
     try {
+        const user = await User.findOne({ email })
+        const match = await bcrypt.compare(password, user.password);
         if (!user) {
             console.log("Email Not Found")
             return res.render('login', { error: "Email not found" })
