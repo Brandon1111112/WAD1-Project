@@ -43,7 +43,7 @@ const viewuserRoutes = require('./routes/viewuserRoutes');
 const movieRoutes = require('./routes/movieRoutes');
 const watchedMovieRoutes = require('./routes/watchedMoviesRoutes');
 const profileRoutes = require('./routes/profileRoutes.js');
-
+const noticeBoardRoutes= require('./routes/noticeBoardRoutes.js')
 // Use the routes
 server.use('/login', loginRoutes);   // Login routes
 server.use('/register', registerRoutes);  // Register routes
@@ -53,7 +53,7 @@ server.use('/viewusers', viewuserRoutes); //Route for admins to view users Route
 server.use('/movie', movieRoutes);
 server.use('/watched', watchedMovieRoutes); //Route for lisiting watched movies and recomandations
 server.use('/profile', profileRoutes); // Route to profile page
-
+server.use('/noticeboard',noticeBoardRoutes); // Route to Noticeboard
 
 
 

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noticeboard</title>
+</head>
+<body>
+    <h1>Noticeboard</h1>
+    <%- include('partials/navbar') %>
+    <br>
+    <% if (output.length==0) { %>
+     <p>No notices</p>
+    <% } else { %>
+      <% for (content of output) { %>
+        <%- content.username %>
+        <br>
+        <%- content.message %>
+        <br>
+        <% if (user.admin || user.superAdmin || String(user._id)==content.userID) { %>
+         <a href="/noticeboard/update/<%-content.noticeID%>">Edit</a>||<a href="/noticeboard/delete/<%-content.noticeID%>">Delete</a>
+         <br>
+        <% } %>
+    
+        <%}%>
+        <% } %>
+    
+        <form action="/noticeboard" method="post">
+            <input type="hidden" name="userID" value=<%- user._id%>>
+            <br>
+            <label for="message">Enter your message:</label><input type="text" name="message" id="message">
+            <br><br>
+            <button type="submit">post</button>
+        </form>
+<br><br>
+<% if (!result) { %>
+ <%# return %>
+<% } else if (result==='fail') { %>
+    <p>Error adding post, contact support</p>
+       <% } else {%>
+        <p>Post added successfully</p>  
+        <% } %>
+
+        
+
+    
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Post</title>
+</head>
+<body>
+    <h1>Edit Post</h1>
+    <form action="update" method="post">
+        <label for="message">Edit Post: </label>
+        <input type="text" name="message" id="message" value="<%-result.message%>">
+        <input type="hidden" name="messageID" value="<%- result._id %>">
+        <input type="hidden" name="userID" value="<%- result.userID %>">
+        <button type="submit">Edit</button>
+        <button type="button" onclick="window.open('/noticeboard','_self')">Back</button>    
+    </form>
+    <br><br>
+    <% if (msg) { %>
+     <p>Edit failed, contact support with screenshot</p>
+     <p><%- msg %></p>
+    <% } %>
+</body>
+</html>

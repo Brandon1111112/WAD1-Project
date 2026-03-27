@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Post</title>
+</head>
+<body>
+    <h1>Delete Post</h1>
+    <h2>Are you sure? This is permanent!</h2>
+    <form action="delete" method="post">
+        Delete Post:
+        <p><%-result.message%></p>
+        <input type="hidden" name="messageID" value="<%- result._id %>">
+        <input type="hidden" name="userID" value="<%- result.userID %>">
+        <button type="submit">Delete</button>
+        <button type="button" onclick="window.open('/noticeboard','_self')">Back</button>    
+
+    </form>
+    <br><br>
+    <% if (msg) { %>
+     <!-- <p>Delete failed, contact support with screenshot</p> -->
+     <p><%- msg %></p>
+    <% } %>
+</body>
+</html>
