@@ -22,8 +22,12 @@ const userModel = new mongoose.Schema({
     superAdmin: {
         type: Boolean,
         required: [false, 'User does not have to be a super admin']
-    } //Superadmin is only present to manage the demotion of admins. Admins themsevles cannot remove other admins.
-    //Superadmins will indirectly be admins 
+    },
+    favoriteGenres: {
+        type: [String],
+        required: [false, 'User does not have to have favorite genres']
+    }   
+    
 })
 
 // Model Creation

@@ -23,7 +23,22 @@
         </div>
         <div class="form-group">
           <label class="form-label">New Password</label>
-          <input class="form-input" type="password" name="password" value="<%= user.password %>" />
+          <input class="form-input" type="password" name="password" value="" placeholder="Leave blank to keep current password" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Favorite Genres</label>
+          <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            <% genreOptions.forEach(function(genre) { %>
+              <label style="display:inline-flex; align-items:center; gap:6px;">
+                <input
+                  type="checkbox"
+                  name="genres"
+                  value="<%= genre %>"
+                  <%= (user.favoriteGenres || []).includes(genre) ? 'checked' : '' %> /><%# Pre-check if genre is in user's favorites%>
+                <%= genre %>
+              </label>
+            <% }); %>
+          </div>
         </div>
         <div class="profile-actions" style="margin-top:20px;">
           <a href="/profile" class="btn btn-ghost">Back</a>

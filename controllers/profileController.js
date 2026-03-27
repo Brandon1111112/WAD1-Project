@@ -1,18 +1,21 @@
+const bcrypt = require('bcrypt');
 const User = require("../models/user-model"); // Get user model to check if watched or not
 const Watchlist = require("../models/watchlist-model");
 const Review = require("../models/review-model");
+const Movie = require("../models/movie-model");
 
 exports.editUser = async (req, res) => {
   // Extract user input from request body
   const { name, email, password } = req.body;
   const userId = req.session.user.userId;
+  let { genres } = req.body;
 
   // Validate all required fields are provided
-  if (!email || !password || !name) {
+  if (!email || !name) {
     const user = await User.findById(userId);
-    return res.render("editProfile", {
+    return res.render("editprofile", {
       user: user,
-      error: "Please Enter All Fields",
+      error: "Please Enter Name and Email",
     });
   }
 
@@ -24,18 +27,35 @@ exports.editUser = async (req, res) => {
 
   if (existingUser) {
     const user = await User.findById(userId);
-    return res.render("editProfile", {
+    return res.render("editprofile", {
       user: user,
       error: "Email already in use",
     });
   }
 
+  // only hash password if a new one is provided and is not just whitespace
+  const updateFields = { name, email };
+  if (password && password.trim().length > 0) {
+    updateFields.password = await bcrypt.hash(password, 10);
+  }
+
+  // Normalize genre value(s) from form submission:
+  // - no selection -> empty array
+  // - single genre -> wrap in array
+  // - multiple genres -> preserve array
+  if (!genres) {
+    updateFields.favoriteGenres = [];
+  } else if (!Array.isArray(genres)) {
+    updateFields.favoriteGenres = [genres];
+  } else {
+    updateFields.favoriteGenres = genres;
+  }
+
   // Update user document in database with new values
-  await User.findByIdAndUpdate(
-    userId,
-    { name, email, password },
-    { new: true, runValidators: true }, // Return updated document and run schema validation
-  );
+  await User.findByIdAndUpdate(userId, updateFields, {
+    new: true,
+    runValidators: true,
+  });
 
   // Redirect to profile after successful update
   res.redirect("/profile");
@@ -50,6 +70,7 @@ exports.getProfile = async (req, res) => {
   const reviewCount = await Review.getreviewCountbyuserID(
     req.session.user.userId,
   );
+  const genres = await Movie.getDistinctGenres()
   let totalHours = 0;
   const allWatchedMovies = await Watchlist.getAllWatchedMovies(userId);
   allWatchedMovies.forEach((watchedMovies) => {
@@ -62,6 +83,7 @@ exports.getProfile = async (req, res) => {
     watchedCount: watchedCount,
     reviewCount: reviewCount,
     totalHours: totalHours,
+    genreOptions: genres,
   });
 };
 
@@ -69,7 +91,9 @@ exports.renderEditProfile = async (req, res) => {
   // Fetch user from database using session userId
   const userId = req.session.user.userId;
   const user = await User.findById(userId);
-  res.render("editprofile", { user: user, error: "" });
+  // include genre options for manage favorites
+  const genres = await Movie.getDistinctGenres()
+  res.render("editprofile", { user: user, error: "", genreOptions:genres });
 };
 
 exports.logout = (req, res) => {

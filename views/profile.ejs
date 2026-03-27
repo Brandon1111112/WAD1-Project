@@ -35,10 +35,21 @@
             <span class="stat-label">Time Watched</span>
           </div>
         </div>
+        <% if (user.favoriteGenres && user.favoriteGenres.length > 0) { %>
+          <div class="profile-favorites" style="margin-top:16px; text-align:center;">
+            <strong>Favorite Genres:</strong> <%= user.favoriteGenres.join(', ') %>
+          </div>
+        <% } else { %>
+          <div class="profile-favorites" style="margin-top:16px; text-align:center; color:#888;">
+            No favorite genres selected yet.
+          </div>
+        <% } %>
         <div class="profile-actions">
           <a href="/profile/edit" class="btn btn-secondary">Edit Profile</a>
           <a href="/profile/logout" class="btn btn-danger">Logout</a>
         </div>
+
+        
       </div>
     </div>
   </body>
