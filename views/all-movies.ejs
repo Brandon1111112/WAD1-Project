@@ -32,7 +32,7 @@
           </div>
           <div>
             Filter by genre:
-            <select name="genre">
+            <select name="genre" onchange="this.form.submit()">
                 <option value="">Select…</option>
                 <% genres.forEach(genre => { %>
                   <option value="<%= genre %>" <%= genreQuery === genre ? "selected" : '' %>><%= genre %></option>
