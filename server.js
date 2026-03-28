@@ -29,6 +29,7 @@ server.use(session({
 // Make user available in all views //Used to help with Navbar to show different for Admin versus Users on NavBar
 server.use((req, res, next) => {
   res.locals.user = req.session.user;
+  console.log('Session user:', req.session.user); // Debug line to check if user session being set correct
   next();
 });
 

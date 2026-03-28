@@ -16,9 +16,16 @@
       <a href="/admin/create-user" class="btn btn-primary">+ Create User</a>
     </div>
 
+    <% if (error) { %> <!-- Display error message if exists -->
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+    <% if (message) { %> <!--Updated to include success message -->
+      <div class="alert alert-success"><%= message %></div>
+    <% } %>
+
     <!-- Action forms rendered outside deleteForm, as it kept causing nesting issues
          I then linked to their buttons below via the form="make/demote-admin-i being the user position in the table" attribute using the loop index. -->
-    <% Users.forEach((user, i) => { %>
+    <% Users.forEach((user, i) => { %> <!-- List of users passed through controller -->
       <% if (!user.admin) { %>
         <form id="make-admin-<%= i %>" action="/admin/make-admin" method="POST">
           <input type="hidden" name="email" value="<%= user.email %>">
@@ -42,12 +49,16 @@
           </tr>
         </thead>
         <tbody>
-        <% let loggedUser = user; %> <!-- The currently logged-in user session-->
+        <% let loggedUser = user; %> <!-- The currently logged-in user session passed originall from server.js-->
         <!--Loop below for the users display in checkboxes-->
           <!-- index i to forEach to match action form IDs above -->
           <% Users.forEach((user, i) => { %>
             <tr>
-              <td><input type="checkbox" name="emails" value="<%= user.email %>"></td>
+              <% if (loggedUser.userId.toString() === user._id.toString()) { %> <!-- Disable checkbox for currently logged-in user used toString comparing MongoDB objs. -->
+                <td><input type="checkbox" disabled></td>
+              <% } else { %>
+                <td><input type="checkbox" name="emails" value="<%= user.email %>"></td>
+              <% } %>
               <td><%= user.name %></td>
               <td style="color:var(--text-2);"><%= user.email %></td>
               <td>
