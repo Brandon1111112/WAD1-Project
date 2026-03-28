@@ -128,21 +128,27 @@
                     <div class="review-card">
                       <div class="review-card-header">
                         <span class="reviewer-name">
-                          <%= r.userId ? r.userId.name : 'Anonymous' %>
+                          <%= r.userId ? r.userId.name : '[Deleted User]' %>
                         </span>
                         <span class="review-rating">★ <%= r.rating %>/5</span>
                       </div>
                       <div class="review-text">
                         <%= r.review %>
                       </div>
-                      <% if (currentUser && r.userId && r.userId._id.toString()===currentUser.userId) { %>
-                        <div class="review-actions">
-                          <a class="btn btn-sm btn-secondary" href="/movie/review/edit/<%= r._id %>">Edit</a>
-                          <form action="/movie/review/delete/<%= r._id %>" method="POST" style="display:inline;">
-                            <button class="btn btn-sm btn-danger" type="submit">Delete</button>
-                          </form>
-                        </div>
-                        <% } %>
+                      <% const isReviewOwner=currentUser && r.userId && r.userId._id &&
+                        r.userId._id.toString()===currentUser.userId; const isReviewAdmin=currentUser &&
+                        (currentUser.admin || currentUser.superAdmin || currentUser.isSuperAdmin); %>
+
+                        <% if (isReviewOwner || isReviewAdmin) { %>
+                          <div class="review-actions">
+                            <% if (isReviewOwner) { %>
+                              <a class="btn btn-sm btn-secondary" href="/movie/review/edit/<%= r._id %>">Edit</a>
+                              <% } %>
+                                <form action="/movie/review/delete/<%= r._id %>" method="POST" style="display:inline;">
+                                  <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                                </form>
+                          </div>
+                          <% } %>
                     </div>
                     <% }) %>
                       <% } else { %>

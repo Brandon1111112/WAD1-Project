@@ -127,8 +127,19 @@ const deleteReview = async (req, res) => {
             return res.status(404).send("Review not found.");
         }
 
-        if (existingReview.userId._id.toString() !== req.session.user.userId) {
-            return res.status(403).send("You can only delete your own review.");
+        const reviewUserId =
+            existingReview.userId && existingReview.userId._id
+                ? existingReview.userId._id.toString()
+                : null;
+
+        const isOwner = reviewUserId === req.session.user.userId;
+        const isAdmin =
+            req.session.user.admin ||
+            req.session.user.superAdmin ||
+            req.session.user.isSuperAdmin;
+
+        if (!isOwner && !isAdmin) {
+            return res.status(403).send("You are not allowed to delete this review.");
         }
 
         const movieId = existingReview.movieId;
