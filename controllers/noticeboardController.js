@@ -31,33 +31,42 @@ let notices = await NoticeBoard.getAllNotice();
 
 exports.viewNotice = async (req,res) => {
     try {
-        
+        let msg=''
         let userID=req.session.user.userId;
         let output=await generateOutputforNoticeboard(userID);
         console.log(output);
         // let notices = await NoticeBoard.getAllNotice();
         let user = await User.findById(userID);
         
-        res.render('noticeboard',{output,user,result:null});
+        res.render('noticeboard',{output,user,result:null,msg:''});
     } catch (error) {
         console.error(error);
-        res.send(error, 'error contact support with screenshot');
+        res.send(error, 'error in noticeboard, contact support with screenshot');
     };
     
 };
 exports.postNotice = async (req,res)=>{
     const {userID,message}=req.body;
-    if (validator.isMissingText(message)||validator.isInvalidId(userID)){
-        console.log('message missing from notice', (validator.isMissingText(message)));
-        console.log('User ID Missing from notice', (validator.isInvalidId(userID)));
-        return res.redirect('/noticeboard');
-    };
+    
     const newPost ={
         userID:userID,
         message:message
     };
     console.log(newPost)
     try {
+        if (validator.isMissingText(message)||validator.isInvalidId(userID)){
+        let msg='';
+        msg+=('message missing from notice'+ ' ' +(validator.isMissingText(message))+`<br>`);
+        msg+=('User ID Missing from notice'+ ' ' +(validator.isInvalidId(userID))+ `<br>`);
+        let result ='fail' //if fail, no result is returned
+        let user = await User.findById(userID);
+        console.error(msg)
+
+        let output= await generateOutputforNoticeboard(userID);
+        return res.render('noticeboard',{output,user,result,msg});
+        
+
+    };
         let msg="";
         let result = await NoticeBoard.addNewPost(newPost);
         let notices = await NoticeBoard.getAllNotice();
@@ -76,7 +85,7 @@ exports.postNotice = async (req,res)=>{
         console.error(msg)
 
         let output= await generateOutputforNoticeboard(userID);
-        res.render('noticeboard',{output,user,result});
+        res.render('noticeboard',{output,user,result,msg});
     }
     
 };
@@ -86,10 +95,16 @@ exports.getToEdit= async (req,res) => {
     try {
         const postID=req.params.id;
         console.log(postID);
-        console.log(postID.typeof);
+        // console.log(postID.typeof);
         let result = await NoticeBoard.findByPostID(postID);
+        if (!result){
+            msg+='Post not found';
+            return res.status(404).render('noticeboard-update',{result:null,msg});
+        }
         if (req.session.admin||req.session.superAdmin||String(userID)==String(result.userID)){ //Remember to do type conversion
-        await res.render('noticeboard-update',{result,msg});
+        
+        console.log(result)
+        res.render('noticeboard-update',{result,msg});
         } else {
             let reason = req.session.admin ? null : 'not admin';
             reason = req.session.superAdmin ? null : 'not Super admin';
@@ -99,7 +114,8 @@ exports.getToEdit= async (req,res) => {
         }
     } catch (error) {
         console.error(error);
-        res.render('noticeboard-update',{result,msg});
+        msg+=error;
+        res.render('noticeboard-update',{result:null,msg});
     };
 };
 exports.UpdateNotice= async (req,res) => {
@@ -115,10 +131,29 @@ exports.UpdateNotice= async (req,res) => {
             console.log(msg)
             return res.status(400).render('noticeboard-update',{result,msg});
         };
+        
+        let NoticeBoardPending = await NoticeBoard.findByPostID(messageID);
+        console.log(NoticeBoardPending);
+        if (message===NoticeBoardPending.message){
+            msg='message is still the same as before';
+            console.error(msg);
+            let result = await NoticeBoard.findByPostID(messageID);
+            return res.render('noticeboard-update',{result,msg})
+        }
         let result = await NoticeBoard.UpdateNotice(messageID,userID,message);
-        res.redirect('/noticeboard')
+        console.log(result);
+        if (result.modifiedCount===1){
+            result = await NoticeBoard.findByPostID(messageID);
+            res.render('noticeboard-update',{result,msg:'edit successful'});
+        
+        } else {
+        result = await NoticeBoard.findByPostID(messageID);
+        console.error('unknown edit error')
+        res.render('noticeboard-update',{result,msg:'unknown edit error'});
+        }
     } catch (error) {
         console.error('error in editing post,',error);
+        msg+=error;
         result = await NoticeBoard.findByPostID(messageID);
         res.render('noticeboard-update',{result,msg});
     };
@@ -131,8 +166,12 @@ exports.getToDelete= async (req,res) => {
     try {
         const postID=req.params.id;
         console.log(postID);
-        console.log(postID.typeof);
+        // console.log(postID.typeof);
         let result = await NoticeBoard.findByPostID(postID);
+        if (!result){
+            msg+='Post not found';
+            return res.status(404).render('noticeboard-delete',{result:null,msg});
+        };
         if (req.session.admin||req.session.superAdmin||String(userID)==String(result.userID)){ //Remember to do type conversion
         await res.render('noticeboard-delete',{result,msg});
         } else {
@@ -143,8 +182,15 @@ exports.getToDelete= async (req,res) => {
             return res.redirect('/home');
         }
     } catch (error) {
-        console.error(error);
-        res.render('noticeboard-delete',{result,msg});
+        console.error('error in deleting post,',error);
+        msg+=error;
+        try {
+            result = (await NoticeBoard.findByPostID(messageID));
+            res.render('noticeboard-delete',{result,msg});
+        } catch (error) {
+            result=null
+            res.render('noticeboard-delete',{result,msg});
+        };
     };
 };
 exports.deletePost = async (req,res) => {
@@ -154,14 +200,17 @@ exports.deletePost = async (req,res) => {
         let result = await NoticeBoard.deleteNotice(messageID);
         console.log(result);
     if (result.deletedCount===1){
-        res.render('noticeboard-deletesuccess')
-    }
+        res.render('noticeboard-deletesuccess');
+    } else {
+        console.error('unknown delete error')
+        res.render('noticeboard-delete',{result,msg:'unknown delete error'})
+    };
 
     } catch (error) {
         console.error(error)
         msg=error
         res.render('noticeboard-delete',{result,msg})
-    }
+    };
     
     
 

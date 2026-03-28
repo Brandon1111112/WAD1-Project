@@ -1,4 +1,5 @@
 const mongoose=require('mongoose');
+// const { options } = require('../routes/noticeBoardRoutes');
 
 // messages schema
 const noticeBoardModel = new mongoose.Schema({
@@ -30,15 +31,15 @@ NoticeBoard.getAllNotice =  function() {
 //get one notice
 NoticeBoard.findByPostID=function(postID){
 
-    return NoticeBoard.findById(postID);
+    return NoticeBoard.findOne({_id:postID});
 };
 // edit notice
 NoticeBoard.UpdateNotice = function(postID,userID,message) {
-    NoticeBoard.findByIdAndUpdate({postID:postID},{userID:userID},{message:message});
-    // return NoticeBoard.updateOne({postID:postID},{userID:userID},{message:message})
+    // return NoticeBoard.findByIdAndUpdate(postID,{message:message},{returnDocument:'after'}); // logging edits
+    return NoticeBoard.updateOne({_id:postID},{userID:userID,message:message})
 };
 // delete notice
-NoticeBoard.deleteNotice = function(messageID){
-    return NoticeBoard.findByIdAndDelete(messageID)
+NoticeBoard.deleteNotice = function(postID){
+    return NoticeBoard.deleteOne({_id:postID});
 };
 module.exports=NoticeBoard;

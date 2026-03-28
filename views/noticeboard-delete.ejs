@@ -6,21 +6,28 @@
     <title>Delete Post</title>
 </head>
 <body>
-    <h1>Delete Post</h1>
+    <% if (result) { %>
+     <h1>Delete Post</h1>
     <h2>Are you sure? This is permanent!</h2>
-    <form action="delete" method="post">
+    <form action="/noticeboard/delete/<%= result._id %>" method="post">
         Delete Post:
         <p><%-result.message%></p>
         <input type="hidden" name="messageID" value="<%- result._id %>">
         <input type="hidden" name="userID" value="<%- result.userID %>">
         <button type="submit">Delete</button>
+        <button type="button" onclick="window.open('/noticeboard','_self')">Back</button>  
+    <% } else {%>
+    <form action="delete" method="post">
+        
         <button type="button" onclick="window.open('/noticeboard','_self')">Back</button>    
-
+        <% } %>
     </form>
     <br><br>
-    <% if (msg) { %>
-     <!-- <p>Delete failed, contact support with screenshot</p> -->
+    <% if (msg=='edit successful') { %>
      <p><%- msg %></p>
-    <% } %>
+    <% } else if (msg) { %>
+        <p>Delete failed, contact support with screenshot</p>
+     <p><%- msg %></p>
+     <% } %>
 </body>
 </html>
