@@ -130,6 +130,11 @@ const showRecommendations = async (req, res) => {
       hasWatched: true,
     }).populate("movieId");
 
+    const inWatchlist = await Watchlist.find({
+      userId: req.session.user.userId,
+      wantsToWatch: true,
+    });
+
     // count genres
     const genreCount = {};
     watched.forEach((entry) => {
@@ -137,27 +142,37 @@ const showRecommendations = async (req, res) => {
       genreCount[genre] = (genreCount[genre] || 0) + 1;
     });
 
-    // get user favorutite genres
-    const userFavouriteGenres = (await User.findById({_id:req.session.user.userId})).favoriteGenres;
+    // get user favourite genres
+    const rawUserFavouriteGenres = (await User.findById(req.session.user.userId)).favoriteGenres;
 
     // find top 3 genres
-    const topGenres = Object.keys(genreCount)
+    const rawTopGenres = Object.keys(genreCount)
       .sort((a, b) => genreCount[b] - genreCount[a])
-      .filter(genre => !userFavouriteGenres.includes(genre))
+      .filter(genre => !rawUserFavouriteGenres.includes(genre))
       .slice(0, 3);
 
-    // find movies not yet watched
-    const watchedMovies = watched.map((entry) => entry.movieId._id);
+    // get all movies watched or in watchlist
+    const excludedMovies = [
+      ...inWatchlist.map((entry) => entry.movieId._id),
+      ...watched.map((entry) => entry.movieId._id)
+    ];
     // get movies not yet watched within top 3 genres
     const recommendations = await Movie.getMoviesByGenres(
-      topGenres,
-      watchedMovies,
+      rawTopGenres,
+      excludedMovies,
     );
-    
     // get movies not yet watched from user fav genres
     const favoriteRecommendations = await Movie.getMoviesByGenres(
-      userFavouriteGenres,
-      watchedMovies,
+      rawUserFavouriteGenres,
+      excludedMovies,
+    );
+
+    // Filter to not show genres that have no movie available for recommendation
+    const userFavouriteGenres = rawUserFavouriteGenres.filter(genre => 
+      favoriteRecommendations.some(movie => movie.genre === genre)
+    );
+     const topGenres = rawTopGenres.filter(genre =>
+      recommendations.some(movie => movie.genre === genre)
     );
 
     const ratingSummaries = await Review.getAllMovieRatingSummaries();
@@ -165,7 +180,7 @@ const showRecommendations = async (req, res) => {
     res.render("recommendations", { favoriteRecommendations, recommendations, topGenres, userFavouriteGenres, ratingSummaries });
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error showing reccomendation");
+    res.status(500).send("Error showing recommendations");
   }
 };
 

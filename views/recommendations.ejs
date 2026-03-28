@@ -12,13 +12,14 @@
       <h1 class="page-title">Recommended for You</h1>
     </div>
 
-    <% if (userFavouriteGenres.length > 0) { %>
+    
+    <% if (favoriteRecommendations.length > 0) { %>
+      <% if (userFavouriteGenres.length > 0) { %>
       <p style="font-size:13px;color:var(--text-2);margin-bottom:10px;">Based on your favourite genre<%= userFavouriteGenres.length === 1 ? '' : 's'%> you seem to enjoy:</p>
       <div class="genre-chips">
         <% userFavouriteGenres.forEach(genre => { %><span class="genre-chip"><%= genre %></span><% }) %>
       </div>
-    <% } %>
-    <% if (userFavouriteGenres.length > 0) { %>
+      <% } %>
       <div class="movie-grid">
         <% favoriteRecommendations.forEach(movie => { %>
           <div class="movie-card">
@@ -57,13 +58,14 @@
       </div>
     <% } %>
 
-    <% if (topGenres.length > 0) { %>
-      <p style="font-size:13px;color:var(--text-2);margin-bottom:10px;">Based on your watchhistory you seem to enjoy:</p>
+    
+    <% if (recommendations.length > 0) { %>
+      <% if (topGenres.length > 0) { %>
+      <p style="font-size:13px;color:var(--text-2);margin-bottom:10px;">Based on what you have watched you seem to enjoy:</p>
       <div class="genre-chips">
         <% topGenres.forEach(genre => { %><span class="genre-chip"><%= genre %></span><% }) %>
       </div>
-    <% } %>
-    <% if (recommendations.length > 0) { %>
+      <% } %>
       <div class="movie-grid">
         <% recommendations.forEach(movie => { %>
           <div class="movie-card">
@@ -102,7 +104,7 @@
       </div>
     <% } %>
 
-    <% if (userFavouriteGenres.length === 0 && topGenres.length === 0){%>
+    <% if (favoriteRecommendations.length === 0 && recommendations.length === 0){%>
       <div class="empty-state">
         <p>No recommendations yet. <a href="/movie">Watch more movies</a> or <a href="/profile/edit">select your favourite genres</a> to get personalised picks!</p>
       </div>
