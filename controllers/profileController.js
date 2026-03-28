@@ -13,7 +13,7 @@ exports.editUser = async (req, res) => {
   // Validate all required fields are provided
   if (!email || !name) {
     const user = await User.findById(userId);
-    return res.render("editprofile", {
+    return res.render("edit-profile", {
       user: user,
       error: "Please Enter Name and Email",
     });
@@ -27,7 +27,7 @@ exports.editUser = async (req, res) => {
 
   if (existingUser) {
     const user = await User.findById(userId);
-    return res.render("editprofile", {
+    return res.render("edit-profile", {
       user: user,
       error: "Email already in use",
     });
@@ -93,7 +93,7 @@ exports.renderEditProfile = async (req, res) => {
   const user = await User.findById(userId);
   // include genre options for manage favorites
   const genres = await Movie.getDistinctGenres()
-  res.render("editprofile", { user: user, error: "", genreOptions:genres });
+  res.render("edit-profile", { user: user, error: "", genreOptions:genres });
 };
 
 exports.logout = (req, res) => {

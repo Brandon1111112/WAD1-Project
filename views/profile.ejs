@@ -8,48 +8,60 @@
   </head>
   <body>
     <%- include('partials/navbar') %>
-    <div class="profile-page">
-      <div class="profile-card">
-        <img
-          src="/img/default-profile.jpg"
-          class="profile-img"
-          alt="Profile picture"
-        />
-        <div class="profile-name"><%= user.name %></div>
-        <div class="profile-email"><%= user.email %></div>
-        <div class="profile-stats">
-          <div class="stat">
-            <span class="stat-val"><%=watchedCount%></span>
-            <span class="stat-label">Watched</span>
-          </div>
-          <div class="stat">
-            <span class="stat-val"><%=reviewCount%></span>
-            <span class="stat-label">Reviews</span>
-          </div>
-          <div class="stat">
-            <span class="stat-val"><%=watchlistCount%></span>
-            <span class="stat-label">Watchlist</span>
-          </div>
-          <div class="stat">
-            <span class="stat-val"><%=totalHours%> hrs</span>
-            <span class="stat-label">Time Watched</span>
-          </div>
-        </div>
-        <% if (user.favoriteGenres && user.favoriteGenres.length > 0) { %>
-          <div class="profile-favorites" style="margin-top:16px; text-align:center;">
-            <strong>Favorite Genres:</strong> <%= user.favoriteGenres.join(', ') %>
-          </div>
-        <% } else { %>
-          <div class="profile-favorites" style="margin-top:16px; text-align:center; color:#888;">
-            No favorite genres selected yet.
-          </div>
-        <% } %>
-        <div class="profile-actions">
-          <a href="/profile/edit" class="btn btn-secondary">Edit Profile</a>
-          <a href="/profile/logout" class="btn btn-danger">Logout</a>
-        </div>
+    <div class="page-container-sm">
+      <div class="profile-header">
+        <h1 class="page-title">My Profile</h1>
+        <p class="page-subtitle">Manage your account and preferences</p>
+      </div>
 
-        
+      <div class="profile-card-enhanced">
+        <div class="profile-cover"></div>
+        <div class="profile-content">
+          <img src="/img/default-profile.jpg" class="profile-img-large" alt="Profile" />
+          <div class="profile-info">
+            <h2 class="profile-name"><%= user.name %></h2>
+            <p class="profile-email"><%= user.email %></p>
+          </div>
+
+          <div class="profile-stats-grid">
+            <div class="stat-card">
+              <div class="stat-number"><%=watchedCount%></div>
+              <div class="stat-label">Movies Watched</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number"><%=reviewCount%></div>
+              <div class="stat-label">Reviews Written</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number"><%=watchlistCount%></div>
+              <div class="stat-label">In Watchlist</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number"><%=totalHours%></div>
+              <div class="stat-label">Hours Watched</div>
+            </div>
+          </div>
+
+          <% if (user.favoriteGenres && user.favoriteGenres.length > 0) { %>
+            <div class="profile-section">
+              <h3 class="profile-section-title">Favorite Genres</h3>
+              <div class="genre-badges">
+                <% user.favoriteGenres.forEach(genre => { %>
+                  <span class="genre-badge-item"><%= genre %></span>
+                <% }); %>
+              </div>
+            </div>
+          <% } else { %>
+            <div class="profile-section">
+              <p class="profile-empty">No favorite genres selected yet. <a href="/profile/edit">Add some →</a></p>
+            </div>
+          <% } %>
+
+          <div class="profile-actions-bottom">
+            <a href="/profile/edit" class="btn btn-secondary btn-lg" style="flex:1;">✎ Edit Profile</a>
+            <a href="/profile/logout" class="btn btn-danger btn-lg" style="flex:1;">Logout</a>
+          </div>
+        </div>
       </div>
     </div>
   </body>
