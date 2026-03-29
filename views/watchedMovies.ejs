@@ -19,13 +19,12 @@
         <a href="/watched/recommended" class="btn btn-secondary">Discover →</a>
       </div>
       <form action="/watched/list" method="GET" class="searchbar-inline">
-        <div class="form-group">
+        <div class="form-group form-search">
           <input class="form-input searchbar-input" type="text" name="search" placeholder="Search your watchlist..."
           value="<%= searchQuery || '' %>">
-        </div>
-        <div class="form-search-btn">
           <button class="btn btn-primary searchbar-btn" type="submit">Search</button>
         </div>
+       
       </form>
       <% if (watchlist.length === 0 && searchQuery) {%>
         <p>No movies found in the Watchlist for "<%= searchQuery %>"</p>

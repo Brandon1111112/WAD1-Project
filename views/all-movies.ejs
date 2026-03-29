@@ -23,16 +23,14 @@
         </div>
 
         <form action="/movie" method="GET">
-          <div class="form-group">
+          <div class="form-group form-search">
             <input  class="form-input" type="text" name="search" placeholder="Search movies..."
             value="<%= searchQuery || '' %>">
-          </div>
-          <div class="form-search-btn">
             <button class="btn btn-primary"  type="submit">Search</button>
           </div>
-          <div>
-            Filter by genre:
-            <select name="genre" onchange="this.form.submit()">
+          <div class="form-group form-filter">
+            <label class="form-label">Filter by genre: </label>
+            <select class="form-select" name="genre" onchange="this.form.submit()">
                 <option value="">Select…</option>
                 <% genres.forEach(genre => { %>
                   <option value="<%= genre %>" <%= genreQuery === genre ? "selected" : '' %>><%= genre %></option>
