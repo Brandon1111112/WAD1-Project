@@ -82,7 +82,7 @@ exports.getProfile = async (req, res) => {
     watchlistCount: watchlistCount,
     watchedCount: watchedCount,
     reviewCount: reviewCount,
-    totalHours: totalHours,
+    totalHours: totalHours.toFixed(1),
     genreOptions: genres,
   });
 };

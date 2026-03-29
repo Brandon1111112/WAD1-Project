@@ -232,6 +232,7 @@ const deleteMovie = async (req, res) => {
     }
 
     await Movie.deleteMovieById(movieId);
+    await Watchlist.deleteMany({ movieId: movieId });
     // Redirect to all movies page after deletion
     return res.redirect("/movie");
   } catch (error) {

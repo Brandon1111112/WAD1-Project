@@ -39,8 +39,10 @@
           </div>
         </form>
 
-        <% if (!genres.includes(genreQuery)) { %>
+        <% if (genreQuery != '') { %>
+          <% if (!genres.includes(genreQuery)){ %>
           <p>Unfortunately we don't have <strong><%= genreQuery %></strong> as a genre in our selection. Please select a valid genre.</p>
+          <% } %>
         <% } %>
       
         <% if (movies.length === 0 && searchQuery) {%>
