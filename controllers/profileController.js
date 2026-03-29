@@ -107,8 +107,9 @@ exports.deleteUser = async (req, res) => {
 
     req.session.destroy((err) => {
         console.error('Session destroy error after delete:', err);
-      }
-      res.redirect('/register');
+        
+        res.redirect('/register')
+      
     });
   } catch (error) {
     console.error('Delete user error:', error);
