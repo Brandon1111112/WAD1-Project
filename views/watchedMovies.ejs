@@ -16,9 +16,9 @@
           <h1 class="page-title">My Watchlist</h1>
           <p class="page-subtitle">Movies you've saved to watch</p>
         </div>
-        <a href="/watched/recommended" class="btn btn-secondary">Discover →</a>
+        <a href="/watchlist/recommended" class="btn btn-secondary">Discover →</a>
       </div>
-      <form action="/watched/list" method="GET" class="searchbar-inline">
+      <form action="/watchlist" method="GET" class="searchbar-inline">
         <div class="form-group form-search">
           <input class="form-input searchbar-input" type="text" name="search" placeholder="Search your watchlist..."
           value="<%= searchQuery || '' %>">
@@ -71,11 +71,11 @@
                       Added <%= time %>
                 </div>
                 <div class="actions">
-                  <form action="/watched/watch" method="POST">
+                  <form action="/watchlist/watch" method="POST">
                     <input type="hidden" name="movieId" value="<%= entry.movieId._id %>">
                     <button class="btn btn-sm btn-ghost" type="submit">✓ Mark as Watched</button>
                   </form>
-                  <form action="/watched/remove" method="POST">
+                  <form action="/watchlist/remove" method="POST">
                     <input type="hidden" name="movieId" value="<%= entry.movieId._id %>">
                     <button class="btn btn-sm btn-ghost" type="submit">Remove</button>
                   </form>
@@ -129,7 +129,7 @@
                       </div>
                       <span class="watched-badge">✓ Watched</span>
                       <div class="actions">
-                        <form action="/watched/unwatch" method="POST">
+                        <form action="/watchlist/unwatch" method="POST">
                           <input type="hidden" name="movieId" value="<%= entry.movieId._id %>">
                           <button class="btn btn-sm btn-ghost" type="submit">Unmark</button>
                         </form>

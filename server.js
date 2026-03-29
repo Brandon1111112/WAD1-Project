@@ -46,7 +46,7 @@ const noticeBoardRoutes = require('./routes/noticeBoardRoutes.js')
 server.use('/', userRoutes);   // Login routes
 server.use('/admin', adminRoutes); // Admin Routes
 server.use('/movie', movieRoutes); // Route for visiting movie page
-server.use('/watched', watchedMovieRoutes); // Route for lisiting watched movies and recomandations
+server.use('/watchlist', watchedMovieRoutes); // Route for lisiting watched movies and recomandations
 server.use('/noticeboard', noticeBoardRoutes); // Route to Noticeboard
 
 

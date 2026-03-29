@@ -47,7 +47,7 @@
                   <% } %>
                 </div>
               <div class="actions">
-                <form action="/watched/add" method="POST">
+                <form action="/watchlist/add" method="POST">
                   <input type="hidden" name="movieId" value="<%= movie._id %>">
                   <button class="btn btn-sm btn-secondary" type="submit">+ Watchlist</button>
                 </form>
@@ -93,7 +93,7 @@
                   <% } %>
                 </div>
               <div class="actions">
-                <form action="/watched/add" method="POST">
+                <form action="/watchlist/add" method="POST">
                   <input type="hidden" name="movieId" value="<%= movie._id %>">
                   <button class="btn btn-sm btn-secondary" type="submit">+ Watchlist</button>
                 </form>
@@ -110,7 +110,7 @@
       </div>
     <% } %>
     <div style="margin-top:16px;display:flex;gap:12px;">
-      <a href="/watched/list" class="btn btn-ghost btn-sm">← Watchlist</a>
+      <a href="/watchlist" class="btn btn-ghost btn-sm">← Watchlist</a>
       <a href="/home" class="btn btn-ghost btn-sm">Home</a>
     </div>
   </div>
