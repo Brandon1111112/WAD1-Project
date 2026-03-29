@@ -20,7 +20,7 @@ server.use(express.json())
 
 // Set EJS as view engine for rendering dynamic HTML pages
 const secret = process.env.SECRET; // get SECRET from config.env
-server.use(session({ 
+server.use(session({
     secret,
     resave: false,
     saveUninitialized: false
@@ -28,33 +28,26 @@ server.use(session({
 
 // Make user available in all views //Used to help with Navbar to show different for Admin versus Users on NavBar
 server.use((req, res, next) => {
-  res.locals.user = req.session.user;
-  console.log('Session user:', req.session.user); // Debug line to check if user session being set correct
-  next();
+    res.locals.user = req.session.user;
+    console.log('Session user:', req.session.user); // Debug line to check if user session being set correct
+    next();
 });
 
 server.set("view engine", "ejs")
 
 // Import route files
-const loginRoutes = require('./routes/loginRoutes');
-const registerRoutes = require('./routes/registerRoutes');
-const homeRoutes = require('./routes/homeRoutes');
+const userRoutes = require('./routes/userRoutes.js');
 const adminRoutes = require('./routes/adminRoutes');
-const viewuserRoutes = require('./routes/viewuserRoutes');
 const movieRoutes = require('./routes/movieRoutes');
 const watchedMovieRoutes = require('./routes/watchedMoviesRoutes');
-const profileRoutes = require('./routes/profileRoutes.js');
-const noticeBoardRoutes= require('./routes/noticeBoardRoutes.js')
+const noticeBoardRoutes = require('./routes/noticeBoardRoutes.js')
+
 // Use the routes
-server.use('/login', loginRoutes);   // Login routes
-server.use('/register', registerRoutes);  // Register routes
-server.use('/home', homeRoutes);
-server.use('/admin', adminRoutes); //admin Routes
-server.use('/viewusers', viewuserRoutes); //Route for admins to view users Routes
-server.use('/movie', movieRoutes);
-server.use('/watched', watchedMovieRoutes); //Route for lisiting watched movies and recomandations
-server.use('/profile', profileRoutes); // Route to profile page
-server.use('/noticeboard',noticeBoardRoutes); // Route to Noticeboard
+server.use('/', userRoutes);   // Login routes
+server.use('/admin', adminRoutes); // Admin Routes
+server.use('/movie', movieRoutes); // Route for visiting movie page
+server.use('/watched', watchedMovieRoutes); // Route for lisiting watched movies and recomandations
+server.use('/noticeboard', noticeBoardRoutes); // Route to Noticeboard
 
 
 
