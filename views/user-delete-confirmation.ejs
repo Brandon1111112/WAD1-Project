@@ -7,36 +7,17 @@
 </head>
 <body>
   <%- include('partials/navbar') %>
-  <div class="page-container-xs" style="padding-top:48px;">
-    <% if (result && result.length > 0) { %>
-      <div class="confirm-card">
-        <div class="confirm-title">Confirm User Deletion</div>
-        <p style="font-size:13px;color:var(--text-2);margin-bottom:12px;">The following <%= result.length %> user<%= result.length > 1 ? 's' : '' %> will be permanently deleted:</p>
-        <table class="admin-table" style="margin-bottom:0;">
-          <thead><tr><th>Name</th><th>Email</th></tr></thead>
-          <tbody>
-            <% result.forEach(user => { %>
-              <tr><td><%= user.name %></td><td style="color:var(--text-2)"><%= user.email %></td></tr>
-            <% }) %>
-          </tbody>
-        </table>
-        <div class="confirm-warning">This action is permanent and cannot be undone.</div>
-        <form action="/admin/delete-users" method="POST">
-          <% result.forEach(user => { %>
-            <input type="hidden" name="emails" value="<%= user.email %>">
-          <% }) %>
-          <div class="confirm-actions">
-            <a href="/admin" class="btn btn-ghost">Cancel</a>
-            <button class="btn btn-danger" type="submit">Confirm Delete</button>
-          </div>
+  <div class="page-container-xs" style="padding-top:48px; text-align:center;">
+    <div class="confirm-card" style="max-width:420px; margin:0 auto;">
+      <h2 style="margin-bottom:12px;">Confirm Account Deletion</h2>
+      <p style="margin-bottom:20px;">Are you sure you want to delete your account?</p>
+      <div style="display:flex; justify-content:center; gap:10px;">
+        <form action="/profile/delete" method="POST" style="margin:0;">
+          <button class="btn btn-danger" type="submit">Yes, delete</button>
         </form>
+        <a href="/profile" class="btn btn-secondary">No, go back</a>
       </div>
-    <% } else { %>
-      <div class="empty-state">
-        <p>No users were selected.</p>
-        <a href="/admin" class="btn btn-ghost" style="margin-top:16px;display:inline-flex;">Back to Admin</a>
-      </div>
-    <% } %>
+    </div>
   </div>
 </body>
 </html>

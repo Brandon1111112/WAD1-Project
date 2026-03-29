@@ -96,6 +96,26 @@ exports.renderEditProfile = async (req, res) => {
   res.render("edit-profile", { user: user, error: "", genreOptions:genres });
 };
 
+exports.renderDeleteUser = async (req, res) => {
+  res.render("user-delete-confirmation");
+}
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const userId = req.session.user.userId;
+    await User.findByIdAndDelete(userId);
+
+    req.session.destroy((err) => {
+        console.error('Session destroy error after delete:', err);
+      }
+      res.redirect('/register');
+    });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).render('profile', { error: 'Unable to delete account. Please try again.' });
+  }
+};
+
 exports.logout = (req, res) => {
   req.session.destroy((err) => {
     if (err) {

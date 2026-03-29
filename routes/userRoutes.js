@@ -37,4 +37,10 @@ router.post("/profile/edit", profileController.editUser); // Route to POST the p
 
 router.get('/profile/logout', profileController.logout); // Route to logout
 
+router.get('/profile/delete', auth.isLoggedIn, profileController.renderDeleteUser); // Route to render delete confirmation page
+
+router.post('/profile/delete', auth.isLoggedIn, profileController.deleteUser); // Route to delete user account
+
+
+
 module.exports = router;
