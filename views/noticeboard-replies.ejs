@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noticeboard Replies</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="page-container">
+    <div class="page-header">
+    <%- include('partials/navbar') %>
+    <h1 class="'page-title">Replies</h1>
+    <% if (output) { %>
+     <% output.forEach(reply => { %>
+     <%= reply.username%>
+     <br>
+     <%= reply.reply %>
+     <br>
+     <%= reply.timeCreated %>
+     <br>
+     <% if ((user.admin || user.superAdmin || String(user._id)==content.userID)) { %>
+      <a href="/noticeboard/<%= reply.replyID %>/reply/edit">Edit</a>||<a href="/noticeboard/<%= reply.replyID %>/reply/delete">Delete</a>
+     <% } %>
+     
+     <br>
+    <% }) %>
+    <% } else { %>
+        <p>No Replies</p>
+        <% } %>
+    <form action="/noticeboard/<%=postID %>/replies" method="post">
+        <label for="reply">Enter reply here:</label>
+        <br>
+        <textarea name="reply" id="reply" cols="30" rows="10"></textarea>
+        <br>
+        <button type="submit">Post reply</button>
+    </form>
+    <% if (msg) { %>
+     <%- msg %>
+    <% } %>
+</body>
+</html>

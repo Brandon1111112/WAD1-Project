@@ -1,4 +1,5 @@
 const mongoose=require('mongoose');
+const NoticeBoardReply = require('./noticeboardreply-model');
 // const { options } = require('../routes/noticeBoardRoutes');
 
 // messages schema
@@ -11,7 +12,13 @@ const noticeBoardModel = new mongoose.Schema({
     message:{
         type: String,
         required:[true,'Please write something for post, please']
-    }
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+
+
 });
 
 // Model creation
@@ -25,7 +32,7 @@ NoticeBoard.addNewPost= function(newPost) {
 
 // get all notice
 NoticeBoard.getAllNotice =  function() {
-    return NoticeBoard.find();
+    return NoticeBoard.find().populate();
 };
 
 //get one notice
@@ -38,6 +45,7 @@ NoticeBoard.UpdateNotice = function(postID,userID,message) {
     // return NoticeBoard.findByIdAndUpdate(postID,{message:message},{returnDocument:'after'}); // logging edits
     return NoticeBoard.updateOne({_id:postID},{userID:userID,message:message})
 };
+
 // delete notice
 NoticeBoard.deleteNotice = function(postID){
     return NoticeBoard.deleteOne({_id:postID});

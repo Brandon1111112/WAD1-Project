@@ -10,19 +10,43 @@ let notices = await NoticeBoard.getAllNotice();
         const admin=User.admin;
         const superAdmin=User.superAdmin;
 
-        // console.log(notices.length)
+        console.log(notices)
         let output=[];
-        for (notice of notices){
-            let userData=await User.findById(notice.userID);
+        for (const notice of notices){
+            try {
+                let userData=await User.findById(notice.userID);
             // let username=
             let content= {
                 noticeID:notice._id,
-                userID:userData._id,
-                username:userData.name,
-                message:notice.message
+                userID:userData._id? userData._id:"Account Not Found",
+                username:userData.name? userData.name:'Account Not Found',
+                message:notice.message,
+                timeCreated:notice.createdAt
             };
             output.push(content);
             console.log(output);
+            } catch (error) {
+                let content= {
+                noticeID:notice._id,
+                userID:"Account Not Found",
+                username:'Account Not Found',
+                message:notice.message,
+                timeCreated:notice.createdAt
+            };
+            output.push(content);
+            console.log(output);
+            }
+            // let userData=await User.findById(notice.userID);
+            // // let username=
+            // let content= {
+            //     noticeID:notice._id,
+            //     userID:userData._id? userData._id",
+            //     username:userData.name? userData.name,
+            //     message:notice.message,
+            //     timeCreated:notice.createdAt
+            // };
+            // output.push(content);
+            // console.log(output);
         };
         return output;
 };
@@ -94,6 +118,8 @@ exports.getToEdit= async (req,res) => {
     let msg=''
     try {
         const postID=req.params.id;
+        const admin=req.session.admin;
+        const superAdmin=req.session.superAdmin;
         console.log(postID);
         // console.log(postID.typeof);
         let result = await NoticeBoard.findByPostID(postID);
@@ -101,7 +127,7 @@ exports.getToEdit= async (req,res) => {
             msg+='Post not found';
             return res.status(404).render('noticeboard-update',{result:null,msg});
         }
-        if (req.session.admin||req.session.superAdmin||String(userID)==String(result.userID)){ //Remember to do type conversion
+        if (auth.isAdmin||auth.isSuperAdmin||(String(userID)==String(result.userID))){ //Remember to do type conversion
         
         console.log(result)
         res.render('noticeboard-update',{result,msg});
@@ -172,7 +198,7 @@ exports.getToDelete= async (req,res) => {
             msg+='Post not found';
             return res.status(404).render('noticeboard-delete',{result:null,msg});
         };
-        if (req.session.admin||req.session.superAdmin||String(userID)==String(result.userID)){ //Remember to do type conversion
+        if (auth.isAdmin||auth.isSuperAdmin||String(userID)==String(result.userID)){ //Remember to do type conversion
         await res.render('noticeboard-delete',{result,msg});
         } else {
             let reason = req.session.admin ? null : 'not admin';

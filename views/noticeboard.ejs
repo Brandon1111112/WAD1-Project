@@ -9,19 +9,23 @@
 <body>
     <div class="page-container">
     <div class="page-header">
-    <h1 class="page-title">Noticeboard</h1>
     <%- include('partials/navbar') %>
-    <br>
+    <h1 class="page-title">Noticeboard</h1>
+    
     <% if (output.length==0) { %>
      <p>No notices</p>
     <% } else { %>
       <% for (content of output) { %>
-        <%- content.username %>
+        <%= content.username %>
         <br>
-        <%- content.message %>
+        <%= content.message %>
+        <br>
+        <%= content.timeCreated %>
+        <br>
+        <a href="/noticeboard/<%=content.noticeID%>/replies">Replies</a>
         <br>
         <% if (user.admin || user.superAdmin || String(user._id)==content.userID) { %>
-         <a href="/noticeboard/update/<%-content.noticeID%>">Edit</a>||<a href="/noticeboard/delete/<%-content.noticeID%>">Delete</a>
+         <a href="/noticeboard/update/<%=content.noticeID%>">Edit</a>||<a href="/noticeboard/delete/<%-content.noticeID%>">Delete</a>
          <br>
         <% } %>
     

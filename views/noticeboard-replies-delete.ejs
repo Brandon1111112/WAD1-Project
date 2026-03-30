@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Reply</title>
+</head>
+<body>
+    <% if (result) { %>
+     <h1>Delete Reply</h1>
+     <h2>Are you sure? This is ireversible!</h2>
+    <form action="/noticeboard/<%=result._id %>/reply/delete" method="post">
+        <!-- <form action="/noticeboard/update" method="post"></form> -->
+        <label for="reply">Delete Reply: </label>
+        <input type="text" name="reply" id="reply" value="<%-result.reply%>">
+        <input type="hidden" name="replyID" value="<%- result._id %>">
+        <input type="hidden" name="userID" value="<%- userID %>">
+        <button type="submit">Delete</button>
+        <button type="button" onclick="window.open('/noticeboard/<%=String(result.parentPostID)%>/replies','_self')">Back</button>    
+    </form>
+    <br><br>
+    <% } else {%>
+
+        <button type="button" onclick="window.open('/noticeboard','_self')">Back</button>
+        <% } %>
+    
+    <% if (msg=='Delete successful') { %>
+     <p><%- msg %></p>
+    <% } else if (msg) { %>
+        <p>Delete failed, contact support with screenshot</p>
+     <p><%- msg %></p>
+     <% } %>
+</body>
+</html>

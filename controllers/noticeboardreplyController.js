@@ -1,0 +1,231 @@
+const User=require('../models/user-model');
+const validator = require("./utils/validation");
+const auth = require('../middlewares/auth-middleware');
+// get models (both)
+const NoticeBoard=require('../models/noticeboard-model');
+const NoticeBoardReply=require('../models/noticeboardreply-model')
+const generateRepliesToPost = async function (postID) {
+    let output =[];
+    const replies= await NoticeBoardReply.getAllReply(postID);
+    for (const reply of replies){
+        try {
+            let userData=await User.findById(reply.userID);
+            console.log(userData)
+            let content= {
+                replyID:reply._id,
+                userID:userData._id,
+                username:userData.name,
+                reply:reply.reply,
+                timeCreated:reply.createdAt
+            };
+        output.push(content)
+        } catch (error) {
+          let content= {
+                replyID:reply._id,
+                userID:'Account not found',
+                username:'Account not found',
+                reply:reply.reply,
+                timeCreated:reply.createdAt
+            };
+        output.push(content)  
+        }
+        // let content= {
+                
+        //         userID:'Account not found',
+        //         username:userData.name,
+        //         message:notice.message,
+        //         timeCreated:notice.createdAt
+        //     };
+        // output.push(reply)
+    };
+    return output
+}
+
+
+exports.viewReplesToPost = async (req,res)=>{
+const userID=req.session._id
+const postID=req.params.id //get post ID from url
+console.log(postID)
+try {
+    output= await generateRepliesToPost(postID)
+    console.log(output)
+    const user = await User.findById(userID);
+    res.render('noticeboard-replies',{output,userID,postID,msg:''});
+} catch (error) {
+    console.error('error in replies',error)
+    return res.send(`error,contact support with screenshot ${error}`)
+};
+};
+exports.replyToPost = async (req,res) => {
+    const postID=req.params.id
+    const data=req.body.reply
+    const userID=req.session.user.userId
+    try {
+        const reply={
+            userID:userID,
+            parentPostID:postID,
+            reply:data
+        }
+        if (validator.isMissingText(reply.reply)||validator.isInvalidId(userID)){
+                let msg='';
+                msg+=('message missing from notice'+ ' ' +(validator.isMissingText(reply.reply))+`<br>`);
+                msg+=('User ID Missing from notice'+ ' ' +(validator.isInvalidId(userID))+ `<br>`);
+                let result ='fail' //if fail, no result is returned
+                let user = await User.findById(userID);
+                console.error(msg)
+                let output= await generateRepliesToPost(postID);
+                
+                return res.render('noticeboard-replies',{output,postID,userID,user,msg});
+            };
+        await NoticeBoardReply.addNewReply(reply);
+        let user = await User.findById(userID)
+        output= await generateRepliesToPost(postID)
+        let msg='Reply Successful'
+    console.log(output)
+    res.render('noticeboard-replies',{output,userID,postID,msg,user});
+        
+    } catch (error) {
+        console.error('error in replies',error)
+    return res.send(`error,contact support with screenshot ${error}`)
+    }
+
+};
+exports.getToEditReply = async (req,res) =>{
+let userID=req.session.user.userId;
+    let msg=''
+    try {
+        const replyID=req.params.id;
+       
+        console.log(replyID);
+        // console.log(postID.typeof);
+        let result = await NoticeBoardReply.findByReplyID(replyID);
+        console.log(result);
+        if (!result){
+            msg+='Reply not found';
+            return res.status(404).render('noticeboard-replies-update',{result:null,msg});
+        }
+        if (auth.isAdmin||auth.isSuperAdmin||(String(userID)==String(result.userID._id))){ //Remember to do type conversion
+        
+        console.log(result)
+        res.render('noticeboard-replies-update',{result,userID,msg});
+        } else {
+            let reason = req.session.admin ? null : 'not admin';
+            reason = req.session.superAdmin ? null : 'not Super admin';
+            reason = String(userID)==String(result.userID._id)? reason :'wrong user';
+            console.log(reason, 'no edit rights');
+            return res.redirect('/home');
+        }
+    } catch (error) {
+        console.error(error);
+        msg+=error;
+        res.render('noticeboard-replies-update',{result:null,msg});
+    };
+};
+exports.postEditedReply = async (req,res) => {
+const replyID=req.body.replyID;
+    const reply = req.body.reply;
+    const userID = req.body.userID;
+    let msg=''
+    try {
+        let result = await NoticeBoardReply.findByReplyID(replyID);
+        if (auth.isAdmin||auth.isSuperAdmin||(String(userID)==String(result.userID._id))){
+            if (validator.isMissingText(reply)||validator.isInvalidId(userID)){
+            msg+=('message missing from notice'+ ' ' +(validator.isMissingText(reply))+`<br>`);
+            msg+=('User ID Missing from notice'+ ' ' +(validator.isInvalidId(userID))+ `<br>`);
+            let result = await NoticeBoardReply.findByReplyID(replyID);
+            console.log(msg)
+            return res.status(400).render('noticeboard-replies-update',{result,userID,msg});
+        };
+        let ReplyPending = await NoticeBoardReply.findByReplyID(replyID);
+        console.log(ReplyPending);
+        if (reply===ReplyPending.reply){
+            msg='reply is still the same as before';
+            console.error(msg);
+            let result = await NoticeBoardReply.findByReplyID(replyID);
+            return res.render('noticeboard-replies-update',{result,userID,msg})
+        }
+        let result = await NoticeBoardReply.UpdateReply(replyID,reply);
+        console.log(result);
+        if (result.modifiedCount===1){
+            result = await NoticeBoardReply.findByReplyID(replyID);
+            res.render('noticeboard-replies-update',{result,userID,msg:'edit successful'});
+        
+        } else {
+        result = await NoticeBoard.findByPostID(messageID);
+        console.error('unknown edit error')
+        res.render('noticeboard-replies-update',{result,userID,msg:'unknown edit error'});
+        }
+        } else {
+            let reason = req.session.admin ? null : 'not admin';
+            reason = req.session.superAdmin ? null : 'not Super admin';
+            reason = String(userID)==String(postID)? reason :'wrong user';
+            console.log(reason, 'no edit rights');
+            return res.redirect('/home');
+        }
+        
+        
+    } catch (error) {
+        console.error('error in editing post,',error);
+        msg+=error;
+        result = await NoticeBoardReply.findByReplyID(replyID);
+        res.render('noticeboard-update',{result,msg});
+    };
+};
+
+exports.getToDeleteReply = async (req,res) =>{
+let userID=req.session.user.userId;
+    let msg=''
+    try {
+        const replyID=req.params.id;
+       
+        console.log(replyID);
+        // console.log(postID.typeof);
+        let result = await NoticeBoardReply.findByReplyID(replyID);
+        console.log(result);
+        if (!result){
+            msg+='Reply not found';
+            return res.status(404).render('noticeboard-replies-delete',{result:null,userID,msg});
+        }
+        if (auth.isAdmin||auth.isSuperAdmin||(String(userID)==String(result.userID._id))){ //Remember to do type conversion
+        
+        console.log(result)
+        res.render('noticeboard-replies-delete',{result,userID,msg});
+        } else {
+            let reason = req.session.admin ? null : 'not admin';
+            reason = req.session.superAdmin ? null : 'not Super admin';
+            reason = String(userID)==String(result.userID._id)? reason :'wrong user';
+            console.log(reason, 'no delete rights');
+            return res.redirect('/home');
+        }
+    } catch (error) {
+        console.error(error);
+        msg+=error;
+        res.render('noticeboard-replies-delete',{result:null,userID,msg});
+    };
+};
+exports.deleteReply = async (req,res) => {
+    const replyID=req.body.replyID;
+    const userID = req.body.userID;
+    try {
+        let result = await NoticeBoardReply.deleteReply(replyID);
+        console.log(result);
+    if (result.deletedCount===1){
+        res.render('noticeboard-replies-deletesuccess');
+    } else {
+        console.error('unknown delete error')
+        res.render('noticeboard-repiles-delete',{result,userID,msg:'unknown delete error'})
+    };
+
+    } catch (error) {
+        console.error(error)
+        msg=error
+        res.render('noticeboard-replies-delete',{result,msg})
+    };
+    
+    
+
+
+};
+
+
+
