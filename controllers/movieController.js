@@ -4,6 +4,7 @@ const validator = require("./utils/validation");
 const User = require("../models/user-model");
 const Watchlist = require("../models/watchlist-model");
 
+//Fetch the API response from the URL and return the JSON response
 async function getJson(url) {
   const response = await fetch(url);
   if (!response.ok) {
@@ -15,21 +16,24 @@ async function getJson(url) {
 // Get all movies from MongoDB and check if user watched or not
 const getAllMovies = async (req, res) => {
   try {
+    //get the search and genre queries to filter and search
     const searchQuery = req.query.search || "";
     const genreQuery = req.query.genre || "";
 
+    //get all genres
     const genres = await Movie.getDistinctGenres();
 
     let watchlist = [];
     let alreadyWatched = [];
     let currentUser = null;
 
+    //get currently logged in user and their data about their watched movies
     if (req.session.user){
       const user = await User.findOne({ _id: req.session.user.userId });
 
       if (user){
         currentUser = req.session.user;
-
+        //get movies that user wants to watch but has not watched to create the watchlist
         const watchedEntries = await Watchlist.find({
         userId: user._id,
         wantsToWatch: true,
@@ -38,6 +42,7 @@ const getAllMovies = async (req, res) => {
         
         watchlist = watchedEntries.map((entry) => entry.movieId.toString());
 
+        //get movies that user has watched to create the already watched list
         const watchedMovies = await Watchlist.find({
           userId: user._id,
           wantsToWatch: false,
@@ -87,6 +92,7 @@ const getMovieById = async (req, res) => {
   }
 
   try {
+    //get the movies by the given movie id
     const movie = await Movie.findMoveById(req.params.id);
     const error = req.session.error || null;
     req.session.error = null;
@@ -150,6 +156,7 @@ const getCreateMovieForm = (req, res) => {
 const createMovie = async (req, res) => {
   const { movieTitle, movieDescription, releaseDate, genre } = req.body;
 
+  //Validations to check for missing values
   if (
     validator.isMissingText(movieTitle) ||
     validator.isMissingText(movieDescription) ||
@@ -162,17 +169,20 @@ const createMovie = async (req, res) => {
   try {
     let moviePoster = "";
     let runTime = 0;
-    const omdbApiKey = process.env.OMDB_API_KEY;
+    const omdbApiKey = process.env.OMDB_API_KEY; //get API key from .env
 
     if (omdbApiKey) {
+      // call the API endpoint by passing in the API key and title as arguments
       const url = `https://www.omdbapi.com/?apikey=${omdbApiKey}&t=${movieTitle.trim()}`;
       try {
         let data = await getJson(url);
+        // if json response has a poster and poster not N/A then set poster value
         if (data.Poster && data.Poster !== "N/A") {
           moviePoster = data.Poster;
         } else if (data.Error) {
           console.log("OMDb lookup skipped:", data.Error, "for", movieTitle);
         }
+        // get the movie runtime value as well from the API
         if (data.Runtime && data.Runtime !== "N/A") {
           runTime = validator.convertToNum(data.Runtime);
         } else if (data.Error) {
@@ -204,17 +214,19 @@ const createMovie = async (req, res) => {
 const getMovieToBeDeleted = async (req, res) => {
   const movieId = req.params.id;
 
+  //if invalid movie id return the status and message
   if (validator.isInvalidId(movieId)) {
     return res.status(400).send("Invalid movie id.");
   }
 
   try {
+    //get the movie to be deleted by it's id
     const movie = await Movie.findMoveById(movieId);
 
     if (!movie) {
       return res.status(404).send("Movie not found!");
     }
-
+    //render the delete confirmation page
     res.render("movie-delete", { movie: movie });
   } catch (error) {
     res.status(500).send("Error fetching the movie to be deleted");
@@ -230,7 +242,7 @@ const deleteMovie = async (req, res) => {
     if (!movieFound) {
       return res.status(404).send("Movie not found!");
     }
-
+    //delete the movie and all its references from both te movies and the watchlist pages
     await Movie.deleteMovieById(movieId);
     await Watchlist.deleteMany({ movieId: movieId });
     // Redirect to all movies page after deletion
@@ -243,14 +255,14 @@ const deleteMovie = async (req, res) => {
 // Get the movie info to edit movie and render the edit movie form
 const getMovieToEdit = async (req, res) => {
   const movieId = req.params.id;
-
+  //get the movie by it's id to be edited
   try {
     let movieDetails = await Movie.findMoveById(movieId);
 
     if (!movieDetails) {
       return res.status(404).send("Movie not found!");
     }
-
+    //render the edit movie form
     res.render("edit-movie", { movie: movieDetails });
   } catch (error) {
     res.status(500).send("Error fetching movie by ID");
@@ -262,10 +274,12 @@ const updateMovieDetails = async (req, res) => {
   const movieId = req.params.id;
   const { movieTitle, genre, movieDescription, releaseDate } = req.body;
 
+  //validate for invalid movie id
   if (validator.isInvalidId(movieId)) {
     return res.status(400).send("Invalid movie id.");
   }
 
+  //validate for empty text fields
   if (
     validator.isMissingText(movieTitle) ||
     validator.isMissingText(movieDescription) ||
