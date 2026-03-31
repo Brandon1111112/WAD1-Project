@@ -11,9 +11,9 @@
     <form action="/noticeboard/update/<%=result._id %>" method="post">
         <!-- <form action="/noticeboard/update" method="post"></form> -->
         <label for="message">Edit Post: </label>
-        <input type="text" name="message" id="message" value="<%-result.message%>">
-        <input type="hidden" name="messageID" value="<%- result._id %>">
-        <input type="hidden" name="userID" value="<%- result.userID %>">
+        <input type="text" name="message" id="message" value="<%=result.message%>">
+        <!-- <input type="hidden" name="messageID" value="<%# result._id %>"> -->
+        <input type="hidden" name="userID" value="<%= result.userID %>">
         <button type="submit">Edit</button>
         <button type="button" onclick="window.open('/noticeboard','_self')">Back</button>    
     </form>
@@ -23,11 +23,13 @@
         <button type="button" onclick="window.open('/noticeboard','_self')">Back</button>
         <% } %>
     
-    <% if (msg=='edit successful') { %>
-     <p><%- msg %></p>
+    <% if (msg==['edit successful']) { %>
+     <p><%= msg %></p>
     <% } else if (msg) { %>
         <p>Edit failed, contact support with screenshot</p>
-     <p><%- msg %></p>
+        <% msg.forEach(message => { %>
+         <p><%= msg %></p>
+        <% }) %>
      <% } %>
 </body>
 </html>

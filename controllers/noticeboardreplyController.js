@@ -7,19 +7,22 @@ const NoticeBoardReply=require('../models/noticeboardreply-model')
 const generateRepliesToPost = async function (postID) {
     let output =[];
     const replies= await NoticeBoardReply.getAllReply(postID);
+    console.log(replies);
     for (const reply of replies){
         try {
-            let userData=await User.findById(reply.userID);
-            console.log(userData)
+            // let userData=await User.findById(reply.userID);
+            // console.log(userData)
             let content= {
                 replyID:reply._id,
-                userID:userData._id,
-                username:userData.name,
+                userID:reply.userID._id,
+                username:reply.userID.name,
                 reply:reply.reply,
                 timeCreated:reply.createdAt
             };
+            console.log(content);
         output.push(content)
         } catch (error) {
+            console.error(error);
           let content= {
                 replyID:reply._id,
                 userID:'Account not found',
@@ -43,46 +46,49 @@ const generateRepliesToPost = async function (postID) {
 
 
 exports.viewReplesToPost = async (req,res)=>{
-const userID=req.session._id
-const postID=req.params.id //get post ID from url
-console.log(postID)
+const userID=req.session.user_id;
+const admin = req.session.user.admin;
+const superAdmin = req.session.user.superAdmin;
+const postID=req.params.id; //get post ID from url
+// console.log(postID)
 try {
     output= await generateRepliesToPost(postID)
     console.log(output)
-    const user = await User.findById(userID);
-    res.render('noticeboard-replies',{output,userID,postID,msg:''});
+    
+    res.render('noticeboard-replies',{output,userID,postID,admin,superAdmin,msg:''});
 } catch (error) {
     console.error('error in replies',error)
     return res.send(`error,contact support with screenshot ${error}`)
 };
 };
 exports.replyToPost = async (req,res) => {
-    const postID=req.params.id
-    const data=req.body.reply
-    const userID=req.session.user.userId
+    const postID=req.params.id;
+    const data=req.body.reply;
+    const userID=req.session.user.userId;
+    const admin=req.session.user.admin;
+    const superAdmin=req.session.user.superAdmin;
     try {
         const reply={
             userID:userID,
             parentPostID:postID,
             reply:data
         }
-        if (validator.isMissingText(reply.reply)||validator.isInvalidId(userID)){
-                let msg='';
-                msg+=('message missing from notice'+ ' ' +(validator.isMissingText(reply.reply))+`<br>`);
-                msg+=('User ID Missing from notice'+ ' ' +(validator.isInvalidId(userID))+ `<br>`);
+        if (validator.isMissingText(data)||validator.isInvalidId(userID)){
+                let msg=[];
+                msg.push('message missing from notice'+ ' ' +(validator.isMissingText(reply.reply)));
+                msg.push('User ID Missing from notice'+ ' ' +(validator.isInvalidId(userID)));
                 let result ='fail' //if fail, no result is returned
-                let user = await User.findById(userID);
+                // let user = await User.findById(userID);
                 console.error(msg)
                 let output= await generateRepliesToPost(postID);
                 
-                return res.render('noticeboard-replies',{output,postID,userID,user,msg});
+                return res.render('noticeboard-replies',{output,userID,postID,admin,superAdmin,msg});
             };
         await NoticeBoardReply.addNewReply(reply);
-        let user = await User.findById(userID)
         output= await generateRepliesToPost(postID)
         let msg='Reply Successful'
     console.log(output)
-    res.render('noticeboard-replies',{output,userID,postID,msg,user});
+    res.render('noticeboard-replies',{output,userID,postID,admin,superAdmin,msg:''});
         
     } catch (error) {
         console.error('error in replies',error)
@@ -92,6 +98,8 @@ exports.replyToPost = async (req,res) => {
 };
 exports.getToEditReply = async (req,res) =>{
 let userID=req.session.user.userId;
+const admin = req.session.user.admin;
+const superAdmin = req.session.user.superAdmin
     let msg=''
     try {
         const replyID=req.params.id;
@@ -104,14 +112,14 @@ let userID=req.session.user.userId;
             msg+='Reply not found';
             return res.status(404).render('noticeboard-replies-update',{result:null,msg});
         }
-        if (auth.isAdmin||auth.isSuperAdmin||(String(userID)==String(result.userID._id))){ //Remember to do type conversion
+        if (admin||superAdmin||(String(userID)==String(result.userID._id))){ //Remember to do type conversion
         
         console.log(result)
         res.render('noticeboard-replies-update',{result,userID,msg});
         } else {
             let reason = req.session.admin ? null : 'not admin';
-            reason = req.session.superAdmin ? null : 'not Super admin';
-            reason = String(userID)==String(result.userID._id)? reason :'wrong user';
+            reason += req.session.superAdmin ? null : 'not Super admin';
+            reason += String(userID)==String(result.userID._id)? reason :'wrong user';
             console.log(reason, 'no edit rights');
             return res.redirect('/home');
         }
@@ -124,17 +132,17 @@ let userID=req.session.user.userId;
 exports.postEditedReply = async (req,res) => {
 const replyID=req.body.replyID;
     const reply = req.body.reply;
-    const userID = req.body.userID;
-    let msg=''
+    const userID = req.session.user._id;
+    let msg=[]
     try {
         let result = await NoticeBoardReply.findByReplyID(replyID);
-        if (auth.isAdmin||auth.isSuperAdmin||(String(userID)==String(result.userID._id))){
+        if (admin||superAdmin||(String(userID)==String(result.userID._id))){ //Remember to do type conversion
             if (validator.isMissingText(reply)||validator.isInvalidId(userID)){
-            msg+=('message missing from notice'+ ' ' +(validator.isMissingText(reply))+`<br>`);
-            msg+=('User ID Missing from notice'+ ' ' +(validator.isInvalidId(userID))+ `<br>`);
+            msg.push('message missing from notice'+ ' ' +(validator.isMissingText(reply))+`<br>`);
+            msg.push('User ID Missing from notice'+ ' ' +(validator.isInvalidId(userID))+ `<br>`);
             let result = await NoticeBoardReply.findByReplyID(replyID);
             console.log(msg)
-            return res.status(400).render('noticeboard-replies-update',{result,userID,msg});
+            return res.status(400).render('noticeboard-replies-update',{result,msg});
         };
         let ReplyPending = await NoticeBoardReply.findByReplyID(replyID);
         console.log(ReplyPending);
@@ -142,13 +150,13 @@ const replyID=req.body.replyID;
             msg='reply is still the same as before';
             console.error(msg);
             let result = await NoticeBoardReply.findByReplyID(replyID);
-            return res.render('noticeboard-replies-update',{result,userID,msg})
+            return res.render('noticeboard-replies-update',{result,msg})
         }
         let result = await NoticeBoardReply.UpdateReply(replyID,reply);
         console.log(result);
         if (result.modifiedCount===1){
             result = await NoticeBoardReply.findByReplyID(replyID);
-            res.render('noticeboard-replies-update',{result,userID,msg:'edit successful'});
+            res.render('noticeboard-replies-update',{result,msg:'edit successful'});
         
         } else {
         result = await NoticeBoard.findByPostID(messageID);
@@ -156,9 +164,9 @@ const replyID=req.body.replyID;
         res.render('noticeboard-replies-update',{result,userID,msg:'unknown edit error'});
         }
         } else {
-            let reason = req.session.admin ? null : 'not admin';
-            reason = req.session.superAdmin ? null : 'not Super admin';
-            reason = String(userID)==String(postID)? reason :'wrong user';
+            let reason = req.session.user.admin ? null : 'not admin';
+            reason += req.session.user.superAdmin ? null : 'not Super admin';
+            reason += String(userID)==String(postID)? null :'wrong user';
             console.log(reason, 'no edit rights');
             return res.redirect('/home');
         }
@@ -174,7 +182,7 @@ const replyID=req.body.replyID;
 
 exports.getToDeleteReply = async (req,res) =>{
 let userID=req.session.user.userId;
-    let msg=''
+    let msg=[]
     try {
         const replyID=req.params.id;
        
@@ -186,14 +194,15 @@ let userID=req.session.user.userId;
             msg+='Reply not found';
             return res.status(404).render('noticeboard-replies-delete',{result:null,userID,msg});
         }
-        if (auth.isAdmin||auth.isSuperAdmin||(String(userID)==String(result.userID._id))){ //Remember to do type conversion
+                if (admin||superAdmin||(String(userID)==String(result.userID._id))){ //Remember to do type conversion
+
         
         console.log(result)
         res.render('noticeboard-replies-delete',{result,userID,msg});
         } else {
-            let reason = req.session.admin ? null : 'not admin';
-            reason = req.session.superAdmin ? null : 'not Super admin';
-            reason = String(userID)==String(result.userID._id)? reason :'wrong user';
+            let reason = req.session.user.admin ? null : 'not admin ';
+            reason += req.session.user.superAdmin ? null : 'not Super admin ';
+            reason += String(userID)==String(result.userID._id)? null :'wrong user ';
             console.log(reason, 'no delete rights');
             return res.redirect('/home');
         }
@@ -205,7 +214,7 @@ let userID=req.session.user.userId;
 };
 exports.deleteReply = async (req,res) => {
     const replyID=req.body.replyID;
-    const userID = req.body.userID;
+    const userID = req.session.user.userId;
     try {
         let result = await NoticeBoardReply.deleteReply(replyID);
         console.log(result);

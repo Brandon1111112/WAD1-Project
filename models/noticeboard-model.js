@@ -17,6 +17,10 @@ const noticeBoardModel = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    edited:{
+        type: Boolean,
+        default: false
+    }
 
 
 });
@@ -32,18 +36,18 @@ NoticeBoard.addNewPost= function(newPost) {
 
 // get all notice
 NoticeBoard.getAllNotice =  function() {
-    return NoticeBoard.find().populate();
+    return NoticeBoard.find().populate('userID');
 };
 
 //get one notice
 NoticeBoard.findByPostID=function(postID){
 
-    return NoticeBoard.findOne({_id:postID});
+    return NoticeBoard.findOne({_id:postID}).populate('userID');
 };
 // edit notice
-NoticeBoard.UpdateNotice = function(postID,userID,message) {
+NoticeBoard.UpdateNotice = function(postID,message) {
     // return NoticeBoard.findByIdAndUpdate(postID,{message:message},{returnDocument:'after'}); // logging edits
-    return NoticeBoard.updateOne({_id:postID},{userID:userID,message:message})
+    return NoticeBoard.updateOne({_id:postID},{message:message,edited:true})
 };
 
 // delete notice

@@ -19,7 +19,7 @@
      <br>
      <%= reply.timeCreated %>
      <br>
-     <% if ((user.admin || user.superAdmin || String(user._id)==content.userID)) { %>
+     <% if ((admin || superAdmin || String(userID)==content.userID)) { %>
       <a href="/noticeboard/<%= reply.replyID %>/reply/edit">Edit</a>||<a href="/noticeboard/<%= reply.replyID %>/reply/delete">Delete</a>
      <% } %>
      
@@ -36,7 +36,11 @@
         <button type="submit">Post reply</button>
     </form>
     <% if (msg) { %>
-     <%- msg %>
+     <% Array.isArray(msg)? msg:[msg] %>
+     <% msg.forEach(message => { %>
+      <%= message %>
+      <br>
+     <% }) %>
     <% } %>
 </body>
 </html>

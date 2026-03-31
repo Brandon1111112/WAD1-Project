@@ -22,9 +22,11 @@
         <br>
         <%= content.timeCreated %>
         <br>
+        <%= content.edited? 'edited':'' %>
+        <br>
         <a href="/noticeboard/<%=content.noticeID%>/replies">Replies</a>
         <br>
-        <% if (user.admin || user.superAdmin || String(user._id)==content.userID) { %>
+        <% if (user.admin || user.superAdmin || String(user._id)==String(content.userID)) { %>
          <a href="/noticeboard/update/<%=content.noticeID%>">Edit</a>||<a href="/noticeboard/delete/<%-content.noticeID%>">Delete</a>
          <br>
         <% } %>
@@ -44,7 +46,7 @@
  <%# return %>
 <% } else if (result==='fail') { %>
     <p>Error adding post, contact support</p>
-    <p><%- msg %></p>
+    <p><%= msg %></p>
        <% } else {%>
         <p>Post added successfully</p>  
         <% } %>
