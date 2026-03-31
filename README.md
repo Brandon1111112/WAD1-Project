@@ -100,11 +100,12 @@ To create an admin account manually, register a normal account first, then use t
 
 ## User Roles
 
-The application has three levels of access:
+The application has four levels of access:
 
 | Role | Access |
 |---|---|
-| **User** | Can browse movies, write and manage their own reviews, manage their watchlist, view recommendations, and edit their profile |
+| **Not Logged User** | Can browse movies and homepage |
+| **Logged User** | Can browse movies, write and manage their own reviews, manage their watchlist, view recommendations, and edit their profile |
 | **Admin** | All user permissions, plus access to the admin panel: view all users, create new user accounts, promote users to admin, and delete users |
 | **Super Admin** | *(To be implemented)* — Intended to have elevated permissions above admin, such as managing admin accounts |
 
@@ -161,12 +162,12 @@ When a user with `admin: true` logs in, they are automatically redirected to `/a
 
 | Method | Path | Description |
 |---|---|---|
-| GET | `/watched/list` | Displays the user's watchlist and already-watched movies. Requires login |
-| POST | `/watched/add` | Adds a movie to the user's watchlist |
-| POST | `/watched/remove` | Removes a movie from the user's watchlist |
-| POST | `/watched/watch` | Marks a movie as watched |
-| POST | `/watched/unwatch` | Unmarks a movie as watched |
-| GET | `/watched/recommended` | Displays personalised movie recommendations based on the user's watch history |
+| GET | `/watchlist` | Displays the user's watchlist and already-watched movies. Requires login |
+| POST | `/watchlist/add` | Adds a movie to the user's watchlist |
+| POST | `/watchlist/remove` | Removes a movie from the user's watchlist |
+| POST | `/watchlist/watch` | Marks a movie as watched |
+| POST | `/watchlist/unwatch` | Unmarks a movie as watched |
+| GET | `/watchlist/recommended` | Displays personalised movie recommendations based on the user's watch history and/or favourite genre (optional in profile page) |
 
 ---
 
