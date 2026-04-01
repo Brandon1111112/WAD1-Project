@@ -77,7 +77,7 @@ exports.postNotice = async (req,res)=>{
     const {message}=req.body;
     
     const newPost ={
-        userID:userID,
+        userID:req.session.user.userID,
         message:message
     };
     console.log(newPost)
@@ -109,7 +109,7 @@ exports.postNotice = async (req,res)=>{
         console.error(error)
         let msg=error
         let result ='fail' //if fail, no result is returned
-        let user = await User.findById(userID);
+        let user = await User.findById(req.session.user.userID);
         console.error(msg)
 
         let output= await generateOutputforNoticeboard();
