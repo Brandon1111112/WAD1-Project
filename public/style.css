@@ -1327,3 +1327,19 @@ input[type="date"].fi {
 .success-link:hover {
   color: #d13f2a;
 }
+
+/* ── Log Action Links ───────────────────────────────────────────── */
+.log-link {
+  color: var(--text);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.log-link:hover {
+  color: white;
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
