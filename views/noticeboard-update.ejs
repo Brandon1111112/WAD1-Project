@@ -23,10 +23,12 @@
         <button type="button" onclick="window.open('/noticeboard','_self')">Back</button>
         <% } %>
     
-    <% if (msg==['edit successful']) { %>
+    <% if (msg=='edit successful') { %>
      <p><%= msg %></p>
     <% } else if (msg) { %>
         <p>Edit failed, contact support with screenshot</p>
+        <% Array.isArray(msg)? msg:[msg] %>
+        
         <% msg.forEach(message => { %>
          <p><%= msg %></p>
         <% }) %>

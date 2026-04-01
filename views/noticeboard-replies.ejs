@@ -19,7 +19,9 @@
      <br>
      <%= reply.timeCreated %>
      <br>
-     <% if ((admin || superAdmin || String(userID)==content.userID)) { %>
+     <%= reply.edited? 'edited':'' %>
+     <br>
+     <% if ((admin || superAdmin || String(userID)==content.userID._id)) { %>
       <a href="/noticeboard/<%= reply.replyID %>/reply/edit">Edit</a>||<a href="/noticeboard/<%= reply.replyID %>/reply/delete">Delete</a>
      <% } %>
      

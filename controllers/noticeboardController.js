@@ -74,8 +74,8 @@ exports.viewNotice = async (req,res) => {
     
 };
 exports.postNotice = async (req,res)=>{
-    const {message}=req.body;
-    
+    const message=req.body.message;
+    const userID=req.session.user.userId;
     const newPost ={
         userID:req.session.user.userID,
         message:message
@@ -98,7 +98,7 @@ exports.postNotice = async (req,res)=>{
         let msg="";
         let result = await NoticeBoard.addNewPost(newPost);
         let notices = await NoticeBoard.getAllNotice();
-        let user = req.session;
+        let user = req.session.user;
         // const admin=req.session.admin
         // const superAdmin=req.session.superAdmin;
 
@@ -109,7 +109,7 @@ exports.postNotice = async (req,res)=>{
         console.error(error)
         let msg=error
         let result ='fail' //if fail, no result is returned
-        let user = await User.findById(req.session.user.userID);
+        let user = req.session.user
         console.error(msg)
 
         let output= await generateOutputforNoticeboard();
@@ -119,7 +119,7 @@ exports.postNotice = async (req,res)=>{
 };
 exports.getToEdit= async (req,res) => {
     let userID=req.session.user.userId;
-    let msg=[]
+    let msg=''
     try {
         const postID=req.params.id;
         const admin=req.session.user.admin;
@@ -128,6 +128,7 @@ exports.getToEdit= async (req,res) => {
         // console.log(postID.typeof);
         let result = await NoticeBoard.findByPostID(postID);
         if (!result){
+            msg=[];
             msg.push('Post not found');
             console.log(msg);
             return res.status(404).render('noticeboard-update',{result:null,msg});
@@ -139,8 +140,8 @@ exports.getToEdit= async (req,res) => {
         console.log(result)
         res.render('noticeboard-update',{result,msg});
         } else {
-            let reason = req.session.admin ? null : 'not admin ';
-            reason += req.session.superAdmin ? null : 'not Super Admin ';
+            let reason = req.session.user.admin ? null : 'not admin ';
+            reason += req.session.user.superAdmin ? null : 'not Super Admin ';
             reason += String(userID)==String(postID)? null :'wrong user';
             console.log(reason, 'no edit rights');
             return res.redirect('/');
@@ -155,9 +156,10 @@ exports.UpdateNotice= async (req,res) => {
     const messageID=req.params.id;
     const message = req.body.message;
     const userID = req.session.user.userId;
-    let msg=[]
+    let msg=''
     try {
         if (validator.isMissingText(message)||validator.isInvalidId(userID)){
+            msg=[];
             msg.push('message missing from notice'+ ' ' +(validator.isMissingText(message)));
             msg.push('User ID Missing from notice'+ ' ' +(validator.isInvalidId(userID)));
             let result = await NoticeBoard.findByPostID(messageID);
@@ -177,7 +179,7 @@ exports.UpdateNotice= async (req,res) => {
         console.log(result);
         if (result.modifiedCount===1){
             result = await NoticeBoard.findByPostID(messageID);
-            res.render('noticeboard-update',{result,msg:['edit successful']});
+            res.render('noticeboard-update',{result,msg:'edit successful'});
         
         } else {
         result = await NoticeBoard.findByPostID(messageID);

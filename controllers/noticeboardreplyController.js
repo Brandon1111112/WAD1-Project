@@ -17,9 +17,10 @@ const generateRepliesToPost = async function (postID) {
                 userID:reply.userID._id,
                 username:reply.userID.name,
                 reply:reply.reply,
-                timeCreated:reply.createdAt
+                timeCreated:reply.createdAt,
+                edited:reply.edited
             };
-            console.log(content);
+            // console.log(content);
         output.push(content)
         } catch (error) {
             console.error(error);
@@ -28,7 +29,8 @@ const generateRepliesToPost = async function (postID) {
                 userID:'Account not found',
                 username:'Account not found',
                 reply:reply.reply,
-                timeCreated:reply.createdAt
+                timeCreated:reply.createdAt,
+                edited:reply.edited
             };
         output.push(content)  
         }
@@ -46,7 +48,7 @@ const generateRepliesToPost = async function (postID) {
 
 
 exports.viewReplesToPost = async (req,res)=>{
-const userID=req.session.user_id;
+const userID=req.session.user.userId;
 const admin = req.session.user.admin;
 const superAdmin = req.session.user.superAdmin;
 const postID=req.params.id; //get post ID from url
@@ -132,7 +134,9 @@ const superAdmin = req.session.user.superAdmin
 exports.postEditedReply = async (req,res) => {
 const replyID=req.body.replyID;
     const reply = req.body.reply;
-    const userID = req.session.user._id;
+    const userID = req.session.user.userId;
+    const admin = req.session.user.admin;
+    const superAdmin = req.session.user.superAdmin;
     let msg=[]
     try {
         let result = await NoticeBoardReply.findByReplyID(replyID);
@@ -181,8 +185,10 @@ const replyID=req.body.replyID;
 };
 
 exports.getToDeleteReply = async (req,res) =>{
-let userID=req.session.user.userId;
-    let msg=[]
+    const userID=req.session.user.userId;
+    const admin = req.session.user.admin;
+    const superAdmin = req.session.user.superAdmin;
+    let msg=''
     try {
         const replyID=req.params.id;
        
