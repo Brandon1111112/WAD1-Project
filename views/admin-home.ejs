@@ -20,7 +20,7 @@
       <div class="alert alert-error"><%= error %></div>
     <% } %>
     <% if (message) { %> <!--Updated to include success message -->
-      <div class="alert alert-success"><%= message %></div>
+      <div class="alert alert-success"><%= message %></div> <!--Divs added here to display success/error message -->
     <% } %>
 
     <!-- Action forms rendered outside deleteForm, as it kept causing nesting issues
@@ -30,7 +30,7 @@
         <form id="make-admin-<%= i %>" action="/admin/make-admin" method="POST">
           <input type="hidden" name="email" value="<%= user.email %>">
         </form>
-      <% } else if (user.admin && !user.superAdmin) { %>
+      <% } else if (user.admin && !user.superAdmin) { %> <!-- Only show demote option for regular admins, not superadmins -->
         <form id="demote-admin-<%= i %>" action="/admin/demote-admin" method="POST">
           <input type="hidden" name="email" value="<%= user.email %>">
         </form>
@@ -54,8 +54,10 @@
           <!-- index i to forEach to match action form IDs above -->
           <% Users.forEach((user, i) => { %>
             <tr>
-              <% if (loggedUser.userId.toString() === user._id.toString()) { %> <!-- Disable checkbox for currently logged-in user used toString comparing MongoDB objs. -->
-                <td><input type="checkbox" disabled></td>
+              <% const isCurrentUser = loggedUser.userId.toString() === user._id.toString(); %> <!-- Check for current user. -->
+              <% const isProtected = isCurrentUser || user.superAdmin || (!loggedUser.superAdmin && user.admin); %> <!-- Check if the user is protected (current user cannot delete themselves, superadmin against super admins but super admins can delete admins, or admin against admins) -->
+              <% if (isProtected) { %>
+                <td><input type="checkbox" disabled title="Cannot delete this user"></td>
               <% } else { %>
                 <td><input type="checkbox" name="emails" value="<%= user.email %>"></td>
               <% } %>
@@ -82,8 +84,7 @@
                     <button class="btn btn-sm btn-danger" type="submit" form="demote-admin-<%= i %>">Remove Admin</button>
                     <% } %>
                 <% } else if (loggedUser.admin) { %> <!-- If user is an admin: Show make Admin option but not demote admin option -->
-                    <% if (!user.admin && !user.superAdmin) { %>
-                    <!-- If user is an admin: Show make Admin option but not demote admin option -->
+                    <% if (!user.admin && !user.superAdmin) { %> <!-- Only show make admin option for regular users, not other admins or superadmins -->
                     <button class="btn btn-sm btn-secondary" type="submit" form="make-admin-<%= i %>">Make Admin</button>
                     <% } %>
                 <% } %>
@@ -93,7 +94,7 @@
         </tbody>
       </table>
       <div style="margin-top:16px;display:flex;justify-content:flex-end;">
-        <button class="btn btn-danger" type="submit">Delete Selected Users</button>
+        <button class="btn btn-danger" type="submit">Delete Selected Users</button> <!-- Button to submit the form for deleting selected users which directs to route for confirm-delete page to be rendered by controller which gets emails from checboxes of users being passed through then redirects to the admin delete confirmation -->
       </div>
     </form>
   </div>

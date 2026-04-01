@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirm Deletion – IAMdb</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <%- include('partials/navbar') %>
+  <div class="page-container-xs" style="padding-top:48px;">
+    <% if (result && result.length > 0) { %> <!-- Check if there are users to display before rendering the confirmation card -->
+      <div class="confirm-card">
+        <div class="confirm-title">Confirm User Deletion</div>
+        <p style="font-size:13px;color:var(--text-2);margin-bottom:12px;">
+          The following <%= result.length %> user<%= result.length > 1 ? 's' : '' %> will be permanently deleted: <!-- If its 1 or 2 user or users -->
+        </p>
+        <table class="admin-table" style="margin-bottom:0;"> <!-- Table for displaying user information those users selected for deletion-->
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% result.forEach(user => { %>
+              <tr>
+                <td><%= user.name %></td>
+                <td style="color:var(--text-2)"><%= user.email %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <div class="confirm-warning"><p>This action is permanent and cannot be undone.</p></div>
+        <form action="/admin/delete-users" method="POST">
+          <% result.forEach(user => { %>
+            <input type="hidden" name="emails" value="<%= user.email %>"> <!-- Hidden input to submit user emails for deletion -->
+          <% }) %>
+          <div class="confirm-actions">
+            <a href="/admin" class="btn btn-ghost">Cancel</a>
+            <button class="btn btn-danger" type="submit">Confirm Delete</button>
+          </div>
+        </form> <!-- Form to submit the emails of users to be deleted handled by delete-user route which calls upon the .deleteuser with the form information -->
+      </div>
+    <% } else { %> <!-- If no users were selected, show an empty state message, error handling if they were to click delete selected users with no checkbox submitted. -->
+      <div class="empty-state">
+        <p>No users were selected.</p>
+        <a href="/admin" class="btn btn-ghost" style="margin-top:16px;display:inline-flex;">Back to Admin</a>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>

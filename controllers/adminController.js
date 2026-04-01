@@ -24,7 +24,7 @@ exports.getMarkedUsers = async (req, res) => {
     }
     
     let users = await User.find({email: {$in: emails}}); // Searched it is a MongoDB operator that searches for values inside an array. So it finds users with matching emails
-    res.render('user-delete-confirmation', {result: users});
+    res.render('admin-delete-confirmation', {result: users});
   } catch (error) {
     console.error(error);
     let users = await User.find();
