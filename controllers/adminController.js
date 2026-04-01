@@ -10,10 +10,40 @@ const Watchlist = require('../models/watchlist-model');
 exports.showAdminHome = async (req, res) => {
   try {
     let users = await User.find();
-    res.render('admin-home', {Users: users, error: null, message: null});
+    
+    // Get filter parameters
+    const { search, roles } = req.query;
+    let filtered = users;
+    
+    // Filter by search term (email or name)
+    if (search && search.trim()) { //Trim whitespace and check if search is not empty to prevent unnecessary filtering when search is just spaces. //As long as it returns false it will not filter and just return all users. So only when there is an actual search term it will filter.
+      filtered = filtered.filter(u => //u is each user from the filtered array and it checks if either email or name includes the search term. If it returns true it's kept in filtered results. Else if false, user is excluded from results.
+        u.email.toLowerCase().includes(search.toLowerCase()) || //This allows for search operator to match either email or name.
+        u.name.toLowerCase().includes(search.toLowerCase()) 
+      );
+    }
+    
+    // Filter by roles
+    if (roles && roles.length) { //Only filter if at least one role is selected. If not just return all users.
+      const roleArray = Array.isArray(roles) ? roles : [roles]; //If only one role is selected then it will be a string, so check and then convert to array for single string else it would already be array. Simple check.
+      filtered = filtered.filter(u => { //Each person in the filtered array is checked against the selected roles. If any of the conditions match.
+        if (roleArray.includes('superadmin') && u.superAdmin) return true; 
+        if (roleArray.includes('admin') && u.admin && !u.superAdmin) return true;
+        if (roleArray.includes('user') && !u.admin) return true;
+        return false; // Exclude users that don't match any selected role
+      });
+    }
+    
+    res.render('admin-home', {
+      Users: filtered, 
+      error: null, 
+      message: null,
+      searchQuery: search || '', // OR empty string if search is undefined to prevent issues in EJS template
+      selectedRoles: Array.isArray(roles) ? roles : (roles ? [roles] : []) // Always convert to array so checkboxes stay checked
+    }); // If Roles is an array, use it, else if string convert to array else prepare for undefined case therefore return empty array. 
   } catch (error) {
     console.error(error);
-    res.render('admin-home', {Users: [], error: 'Error reading database'});
+    res.render('admin-home', {Users: [], error: 'Error reading database', searchQuery: '', selectedRoles: []});
   }
 };
 

@@ -23,6 +23,62 @@
       <div class="alert alert-success"><%= message %></div> <!--Divs added here to display success/error message -->
     <% } %>
 
+    <!-- Filter Form -->
+    <div style="background: var(--surface); padding: 20px; border-radius: 8px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <form method="GET" action="/admin"> <!-- Form to filter users by search and role, submits to re-render same page with query parameters -->
+        <div style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">
+
+          <!-- Search Input -->
+          <div style="flex: 1; min-width: 200px;">
+            <label style="display: block; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px;">Search by Name or Email (Case-Insensitive)</label>
+            <!-- value of input is set to the search query parameter displaying what is being searched-->
+            <input 
+              type="text" 
+              name="search" 
+              placeholder="Enter name or email..." 
+              value="<%= searchQuery %>" 
+              style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background: white;">
+          </div>
+
+          <!-- Role Filters -->
+          <div style="display: flex; gap: 12px;">
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--text); cursor: pointer;">
+              <!-- Super Admin Checkbox -->
+              <input 
+                type="checkbox" 
+                name="roles" 
+                value="superadmin"
+                <%= Array.isArray(selectedRoles) && selectedRoles.includes('superadmin') ? 'checked' : '' %>>
+              Super Admin
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--text); cursor: pointer;">
+              <!-- Admin Checkbox -->
+              <input 
+                type="checkbox" 
+                name="roles" 
+                value="admin"
+                <%= Array.isArray(selectedRoles) && selectedRoles.includes('admin') ? 'checked' : '' %>>
+              Admin
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--text); cursor: pointer;">
+              <!-- User Checkbox -->
+              <input 
+                type="checkbox" 
+                name="roles" 
+                value="user"
+                <%= Array.isArray(selectedRoles) && selectedRoles.includes('user') ? 'checked' : '' %>>
+              User
+            </label>
+            <!-- Array.isArray safety check + includes method; checkbox checked if 'user' is selected -->
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary" style="white-space: nowrap;">Filter</button>
+          <a href="/admin" class="btn btn-secondary" style="white-space: nowrap; text-decoration: none; display: inline-flex; align-items: center;">Clear Filters</a>
+        </div>
+      </form>
+    </div>
+
     <!-- Action forms rendered outside deleteForm, as it kept causing nesting issues
          I then linked to their buttons below via the form="make/demote-admin-i being the user position in the table" attribute using the loop index. -->
     <% Users.forEach((user, i) => { %> <!-- List of users passed through controller -->
