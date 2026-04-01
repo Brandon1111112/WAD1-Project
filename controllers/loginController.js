@@ -8,11 +8,11 @@ exports.loginUser = async (req, res) => {
     const { email, password } = req.body
     try {
         const user = await User.findOne({ email })
-        const match = await bcrypt.compare(password, user.password);
         if (!user) {
             console.log("Email Not Found")
             return res.render('login', { error: "Email not found" })
         }
+        const match = await bcrypt.compare(password, user.password); // user is undefined if email not valid
         if (!match) {
             console.log("Wrong Password")
             return res.render('login', { error: "Wrong password" })
