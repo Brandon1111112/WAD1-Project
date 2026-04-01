@@ -1,8 +1,10 @@
 const fs = require('fs/promises');
 const bcrypt = require('bcrypt');
-const User = require('../models/user-model.js')
-const Movie = require('../models/movie-model.js')
-const Review = require('../models/review-model.js')
+const User = require('../models/user-model.js');
+const Movie = require('../models/movie-model.js');
+const Review = require('../models/review-model.js');
+const Logs = require('../models/logs-model.js');
+const Watchlist = require('../models/watchlist-model');
 
 // Show admin page with all users
 exports.showAdminHome = async (req, res) => {
@@ -40,7 +42,15 @@ exports.deleteUsers = async (req, res) => {
       emails = [emails]; //Handle when only one email 
       //Convert single email to array if only one user was selected for deletion, so it can be processed by $in operator in deleteMany. If multiple users were selected, it is already an array and will be processed correctly.
     }
-    
+    // Find users to be deleted and delete from watchlist
+    const usersToDelete = await User.find({ email: { $in: emails } });
+    const userIds = usersToDelete.map(user => user._id);
+
+    await Watchlist.deleteMany({ userId: { $in: userIds } });
+    await Logs.deleteMany({ userId: { $in: userIds } });
+
+    await Logs.createALog(req.session.user.userId, `Deleted ${userIds.length} user/s`, 'admin');
+
     let success = await User.deleteMany({email: {$in: emails}}); // Delete users with matching emails with email as the key. 
     
     if (success.deletedCount > 0) { //deleteMany provides deletedCount to indicate how many were deleted built-in 
@@ -89,8 +99,8 @@ exports.createUser = async (req, res) => {
         password: hashedPassword, // Use 'password' field to match schema
         admin: false
     });
-    
     let result = await User.addUser(newUser);
+    await Logs.createALog(req.session.user.userId, `Added a new user ${newUser.name}`, 'admin', result._id, 'User');
     console.log("User created:" + result);
     let users = await User.find();
     res.render('admin-home', { message: 'User created successfully!', Users: users, error: null });
@@ -108,8 +118,9 @@ exports.makeUserAdmin = async (req, res) => {
   try {
     let success = await User.updateAdminStatus(email, true);
     console.log(success);
-    
+    const userToPromote = await User.findOne({ email:email });
     if (success.modifiedCount > 0) {
+      await Logs.createALog(req.session.user.userId, `Promoted ${userToPromote.name} to admin`, 'admin', userToPromote._id, 'User');
       res.render('admin-status-success', {message: 'User is now an admin'});
     } else {
       let users = await User.find();
@@ -132,6 +143,9 @@ exports.demoteUserAdmin = async (req, res) => {
     return res.render('admin-home', {Users: users, error: 'Only super admin can demote admins', message: null});
   }
   
+  const userToDemote = await User.findOne({ email:email });
+  await Logs.createALog(currentUser.userId, `Demoted ${userToDemote.name} to user`, 'admin', userToDemote._id, 'User');
+
   let success = await User.updateAdminStatus(email, false);
   
   if (success.modifiedCount > 0) {
@@ -139,4 +153,20 @@ exports.demoteUserAdmin = async (req, res) => {
   } else {
     res.render('admin-home', {Users: users, error: 'Could not update user', message: null});
   }
+};
+
+exports.showLogs = async (req,res) => {
+  try {
+    const userId = req.params.userID;
+
+    const user = await User.findById(userId);
+    const userLogs = await Logs.find({userId:userId})
+        .sort({ createdAt: -1 });
+
+    res.render('logs', {userLogs, user})
+  } catch(error){
+    console.log(error);
+    res.status(500).send('Error fetching logs');
+  }
+  
 };

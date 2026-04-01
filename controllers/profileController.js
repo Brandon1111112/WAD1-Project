@@ -1,10 +1,10 @@
 const bcrypt = require('bcrypt');
+const Logs = require('../models/logs-model');
 const User = require("../models/user-model"); // Get user model to check if watched or not
 const Watchlist = require("../models/watchlist-model");
 const Review = require("../models/review-model");
 const Movie = require("../models/movie-model");
 
-// Get the user info to render the profile page
 exports.getProfile = async (req, res) => {
   const userId = req.session.user.userId;
   // Fetch user from database using session userId
@@ -94,7 +94,7 @@ exports.editUser = async (req, res) => {
     new: true, // Return the updated document
     runValidators: true, // Ensure validation rules are applied to updated fields
   });
-
+  await Logs.createALog(req.session.user.userId, `User details were edited`, 'profile');
   // Redirect to profile after successful update
   res.redirect("/profile");
 };
@@ -109,6 +109,9 @@ exports.deleteUser = async (req, res) => {
   try {
     const userId = req.session.user.userId;
     await User.findByIdAndDelete(userId);
+    await Watchlist.findByIdAndDelete(userId);
+
+    await Logs.createALog(userId, 'Account was deleted', 'profile');
     // Destroy session after deleting user
     req.session.destroy((err) => {
       if (err) {
@@ -122,7 +125,8 @@ exports.deleteUser = async (req, res) => {
 };
 
 // Logout user by destroying session
-exports.logout = (req, res) => {
+exports.logout = async (req, res) => {
+  await Logs.createALog(req.session.user.userId, `User logged out`, 'profile');
   req.session.destroy((err) => {
     if (err) {
       return res.send("Error logging out");

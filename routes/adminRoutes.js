@@ -13,5 +13,6 @@ router.get('/create-user', auth.isAdmin, adminController.showCreateUserForm);
 router.post('/create-user', auth.isAdmin, adminController.createUser);
 router.post('/make-admin', auth.isAdmin, adminController.makeUserAdmin); // Both superadmin and normal admins can promote.
 router.post('/demote-admin', auth.isSuperAdmin, adminController.demoteUserAdmin);
+router.get('/logs/:userID', auth.isAdmin, adminController.showLogs);
 
 module.exports = router;

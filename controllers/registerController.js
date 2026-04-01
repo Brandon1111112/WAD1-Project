@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user-model');
+const Logs = require('../models/logs-model');
 
 // Register new user with validation
 exports.registerUser = async (req, res) => {
@@ -28,6 +29,8 @@ exports.registerUser = async (req, res) => {
         });
 
         await newUser.save();
+
+        await Logs.createALog(newUser._id, `${newUser.name} has created an account`, 'profile');
         return res.redirect('/');
 
     } catch (err) {

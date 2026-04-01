@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+const Logs = require('../models/logs-model');
 const User = require('../models/user-model');
 const Review = require("../models/review-model");
 const Movie = require("../models/movie-model");
@@ -47,6 +47,7 @@ const showWatchlist = async (req, res) => {
 const addToWatchlist = async (req, res) => {
   try {
     const movieId = req.body.movieId;
+    const movieTitle = (await Movie.findById(movieId)).movieTitle;
 
     await Watchlist.findOneAndUpdate(
       { userId: req.session.user.userId, movieId: movieId },
@@ -59,6 +60,7 @@ const addToWatchlist = async (req, res) => {
       { upsert: true },
     );
     console.log("Successfully added to watchlist");
+    await Logs.createALog(req.session.user.userId, `Added ${movieTitle} to watchlist`, 'watchlist');
     return res.redirect(req.headers.referer || "/movie");
   } catch (error) {
     console.log(error);
@@ -69,6 +71,7 @@ const addToWatchlist = async (req, res) => {
 const removeFromWatchlist = async (req, res) => {
   try {
     const movieId = req.body.movieId;
+    const movieTitle = (await Movie.findById(movieId)).movieTitle;
 
     await Watchlist.updateOne(
       { userId: req.session.user.userId, movieId: movieId },
@@ -76,6 +79,7 @@ const removeFromWatchlist = async (req, res) => {
     );
 
     console.log("Successfully removed from watchlist");
+    await Logs.createALog(req.session.user.userId, `Removed ${movieTitle} from watchlist`, 'watchlist');
     return res.redirect(req.headers.referer || "/movie");
   } catch (error) {
     console.log(error);
@@ -88,6 +92,7 @@ const markAsWatched = async (req, res) => {
     const movieId = req.body.movieId;
     const movie = await Movie.findMoveById(movieId);
     const movieRunTime = movie.runTime;
+    
     await Watchlist.updateOne(
       { userId: req.session.user.userId, movieId: movieId },
       {
@@ -100,6 +105,7 @@ const markAsWatched = async (req, res) => {
     );
 
     console.log("Successfully marked as watched");
+    await Logs.createALog(req.session.user.userId, `Marked ${movie.movieTitle} as watched`, 'watchlist');
     return res.redirect(req.headers.referer || "/movie");
   } catch (error) {
     console.log(error);
@@ -110,12 +116,15 @@ const markAsWatched = async (req, res) => {
 const unmarkAsWatched = async (req, res) => {
   try {
     const movieId = req.body.movieId;
+    const movieTitle = (await Movie.findById(movieId)).movieTitle;
+
     await Watchlist.updateOne(
       { userId: req.session.user.userId, movieId: movieId },
       { wantsToWatch: false, hasWatched: false, watchTime: 0 },
     );
 
     console.log("Successfully unmarked as watched");
+    await Logs.createALog(req.session.user.userId, `Unmarked ${movieTitle} as watched`, 'watchlist');
     return res.redirect(req.headers.referer || "/movie");
   } catch (error) {
     console.log(error);

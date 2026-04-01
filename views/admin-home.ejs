@@ -45,6 +45,7 @@
             <th>Name</th>
             <th>Email</th>
             <th>Role</th>
+            <th>Logs</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -73,6 +74,7 @@
                   <span class = "user-badge">User</span>
                 <% } %>
               </td>
+              <td><a href="/admin/logs/<%= user._id %>">View Logs</a></td>
               <td>
                 <% if (loggedUser.superAdmin) { %> 
                     <!-- Show make admin/demote admin options if current user is a superadmin -->

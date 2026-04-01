@@ -1,7 +1,7 @@
-const fs = require('fs/promises')
 const bcrypt = require('bcrypt');
 //Get Model
-const User = require('../models/user-model')
+const Logs = require('../models/logs-model');
+const User = require('../models/user-model');
 
 //Data validation of Login details
 exports.loginUser = async (req, res) => {
@@ -14,10 +14,7 @@ exports.loginUser = async (req, res) => {
         if (!user) {
             return res.render('login', { error: "Email not found" })
         }
-        //Compare password with hashed password in database
-        const match = await bcrypt.compare(password, user.password); // user is undefined if email not valid
-        
-        //If password does not match, render login page with error message
+        const match = await bcrypt.compare(password, user.password);
         if (!match) {
             return res.render('login', { error: "Wrong password" })
         }
@@ -28,7 +25,7 @@ exports.loginUser = async (req, res) => {
             admin: user.admin,
             superAdmin: user.superAdmin
         }
-
+        await Logs.createALog(req.session.user.userId, `User logged in`, 'profile');
         //If user is admin, redirect to admin page, else redirect to home page
         if (user.admin === true){
             return res.redirect('/admin')

@@ -3,6 +3,7 @@ const Review = require("../models/review-model");
 const validator = require("./utils/validation");
 const User = require("../models/user-model");
 const Watchlist = require("../models/watchlist-model");
+const Logs = require('../models/logs-model');
 
 //Fetch the API response from the URL and return the JSON response
 async function getJson(url) {
@@ -203,6 +204,7 @@ const createMovie = async (req, res) => {
     };
 
     const createdMovie = await Movie.createMovie(newMovie);
+    await Logs.createALog(req.session.user.userId, `The movie ${newMovie.movieTitle} was added`, 'movie', createdMovie._id, 'Movie');
     // Redirect to the new movie's page
     return res.redirect(`/movie/${createdMovie._id}`);
   } catch (err) {
@@ -245,6 +247,7 @@ const deleteMovie = async (req, res) => {
     //delete the movie and all its references from both te movies and the watchlist pages
     await Movie.deleteMovieById(movieId);
     await Watchlist.deleteMany({ movieId: movieId });
+    await Logs.createALog(req.session.user.userId, `The movie ${movieFound.movieTitle} was deleted`, 'movie', movieId);
     // Redirect to all movies page after deletion
     return res.redirect("/movie");
   } catch (error) {
@@ -297,6 +300,7 @@ const updateMovieDetails = async (req, res) => {
       movieDescription.trim(),
       releaseDate,
     );
+    await Logs.createALog(req.session.user.userId, `The movie ${movieTitle} was edited`, 'movie', movieId, 'Movie');
     // Redirect to the updated movie's page
     return res.redirect(`/movie/${movieId}`);
   } catch (error) {
