@@ -121,7 +121,7 @@ const superAdmin = req.session.user.superAdmin
             reason += req.session.superAdmin ? null : 'not Super admin';
             reason += String(userID)==String(result.userID._id)? reason :'wrong user';
             console.log(reason, 'no edit rights');
-            return res.redirect('/home');
+            return res.redirect('/');
         }
     } catch (error) {
         console.error(error);
@@ -168,7 +168,7 @@ const replyID=req.body.replyID;
             reason += req.session.user.superAdmin ? null : 'not Super admin';
             reason += String(userID)==String(postID)? null :'wrong user';
             console.log(reason, 'no edit rights');
-            return res.redirect('/home');
+            return res.redirect('/');
         }
         
         
@@ -204,7 +204,7 @@ let userID=req.session.user.userId;
             reason += req.session.user.superAdmin ? null : 'not Super admin ';
             reason += String(userID)==String(result.userID._id)? null :'wrong user ';
             console.log(reason, 'no delete rights');
-            return res.redirect('/home');
+            return res.redirect('/');
         }
     } catch (error) {
         console.error(error);

@@ -4,7 +4,7 @@ const auth = require('../middlewares/auth-middleware');
 
 
 // HOME
-router.get('/home', (req, res) => { // Render index page (with auth)
+router.get('/', (req, res) => { // Render index page (with auth)
     res.render('home');
 });
 

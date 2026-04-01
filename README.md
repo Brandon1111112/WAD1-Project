@@ -109,7 +109,7 @@ The application has four levels of access:
 | **Admin** | All user permissions, plus access to the admin panel: view all users, create new user accounts, promote users to admin, and delete users |
 | **Super Admin** | *(To be implemented)* — Intended to have elevated permissions above admin, such as managing admin accounts |
 
-When a user with `admin: true` logs in, they are automatically redirected to `/admin` instead of `/home`.
+When a user with `admin: true` logs in, they are automatically redirected to `/admin` instead of `/`.
 
 ---
 
@@ -120,17 +120,17 @@ When a user with `admin: true` logs in, they are automatically redirected to `/a
 | Method | Path | Description |
 |---|---|---|
 | GET | `/login` | Renders the login page |
-| POST | `/login` | Validates credentials and creates a session. Admins are redirected to `/admin`, regular users to `/home` |
+| POST | `/login` | Validates credentials and creates a session. Admins are redirected to `/admin`, regular users to `/` |
 | GET | `/register` | Renders the registration page |
 | POST | `/register` | Creates a new user account and redirects to login |
 
 ---
 
-### Home — `/home`
+### Home — `/`
 
 | Method | Path | Description |
 |---|---|---|
-| GET | `/home` | Renders the landing page. Requires login — redirects to `/login` if not authenticated |
+| GET | `/` | Renders the landing page. Requires login — redirects to `/login` if not authenticated |
 
 ---
 
@@ -184,7 +184,7 @@ When a user with `admin: true` logs in, they are automatically redirected to `/a
 
 ### Admin Panel — `/admin`
 
-All admin routes require the user to be logged in and have `admin: true`. Non-admins are redirected to `/home`.
+All admin routes require the user to be logged in and have `admin: true`. Non-admins are redirected to `/`.
 
 | Method | Path | Description |
 |---|---|---|

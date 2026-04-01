@@ -12,8 +12,8 @@ const isAdmin = (req,res,next) => {
         return res.redirect('/login')
     }
     if (!req.session.user.admin) {
-        console.log('Not an admin user, redirecting to /home')
-        return res.redirect('/home')
+        console.log('Not an admin user, redirecting to homepage')
+        return res.redirect('/')
     }
     next();
 }
@@ -24,8 +24,8 @@ const isSuperAdmin = (req,res,next) => {
         return res.redirect('/login')
     }
     if (!req.session.user.superAdmin) {
-        console.log('Not a super admin user, redirecting to /home')
-        return res.redirect('/home')
+        console.log('Not a super admin user, redirecting to homepage')
+        return res.redirect('/')
     }
     next();
 }   

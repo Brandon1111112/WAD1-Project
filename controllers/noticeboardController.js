@@ -143,7 +143,7 @@ exports.getToEdit= async (req,res) => {
             reason += req.session.superAdmin ? null : 'not Super Admin ';
             reason += String(userID)==String(postID)? null :'wrong user';
             console.log(reason, 'no edit rights');
-            return res.redirect('/home');
+            return res.redirect('/');
         }
     } catch (error) {
         console.error(error);
@@ -214,7 +214,7 @@ exports.getToDelete= async (req,res) => {
             reason += req.session.user.superAdmin ? null : 'not Super admin';
             reason += String(userID)==String(result.userID._id)? null :'wrong user';
             console.log(reason, 'no edit rights');
-            return res.redirect('/home');
+            return res.redirect('/');
         }
     } catch (error) {
         console.error('error in deleting post,',error);

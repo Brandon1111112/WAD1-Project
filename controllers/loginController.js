@@ -31,7 +31,7 @@ exports.loginUser = async (req, res) => {
             console.log('admin')
             return res.redirect('/admin')
         }
-        res.redirect('/home')
+        res.redirect('/')
        
         
     } catch (error) {

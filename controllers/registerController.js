@@ -28,7 +28,7 @@ exports.registerUser = async (req, res) => {
         });
 
         await newUser.save();
-        return res.redirect('/home');
+        return res.redirect('/');
 
     } catch (err) {
         console.error('Server error:', err);
