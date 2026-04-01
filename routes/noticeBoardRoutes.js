@@ -16,5 +16,5 @@ router.post('/:id/replies',auth.isLoggedIn,NoticeBoardReply.replyToPost); //hand
 router.get('/:id/reply/edit',auth.isLoggedIn,NoticeBoardReply.getToEditReply);// get reply to edit
 router.post('/:id/reply/edit',auth.isLoggedIn,NoticeBoardReply.postEditedReply); //handle display after editing
 router.get('/:id/reply/delete',auth.isLoggedIn,NoticeBoardReply.getToDeleteReply); //get reply to delete
-router.post('/:id/reply/delete',auth.isLoggedIn,NoticeBoardReply.deleteReply) //delets selected
+router.post('/:id/reply/delete',auth.isLoggedIn,NoticeBoardReply.deleteReply) //deletes selected
 module.exports=router;
