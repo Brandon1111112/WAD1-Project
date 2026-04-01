@@ -27,7 +27,7 @@
      <p><%= msg %></p>
     <% } else if (msg) { %>
         <p>Edit failed, contact support with screenshot</p>
-        <% Array.isArray(msg)? msg:[msg] %>
+        <% Array.isArray(msg)? msg:msg=[msg] %>
         
         <% msg.forEach(message => { %>
          <p><%= msg %></p>

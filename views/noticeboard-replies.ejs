@@ -21,7 +21,7 @@
      <br>
      <%= reply.edited? 'edited':'' %>
      <br>
-     <% if ((admin || superAdmin || String(userID)==content.userID._id)) { %>
+     <% if ((admin || superAdmin || String(userID)===String(reply.userID._id))) { %>
       <a href="/noticeboard/<%= reply.replyID %>/reply/edit">Edit</a>||<a href="/noticeboard/<%= reply.replyID %>/reply/delete">Delete</a>
      <% } %>
      
@@ -38,7 +38,7 @@
         <button type="submit">Post reply</button>
     </form>
     <% if (msg) { %>
-     <% Array.isArray(msg)? msg:[msg] %>
+     <% Array.isArray(msg)? msg:msg=[msg] %>
      <% msg.forEach(message => { %>
       <%= message %>
       <br>

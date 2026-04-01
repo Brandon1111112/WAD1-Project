@@ -89,7 +89,8 @@ exports.replyToPost = async (req,res) => {
         await NoticeBoardReply.addNewReply(reply);
         output= await generateRepliesToPost(postID)
         let msg='Reply Successful'
-    console.log(output)
+    console.log(output);
+    
     res.render('noticeboard-replies',{output,userID,postID,admin,superAdmin,msg:''});
         
     } catch (error) {

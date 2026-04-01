@@ -46,7 +46,7 @@
  <%# return %>
 <% } else if (result==='fail') { %>
     <p>Error adding post, contact support</p>
-    <% Array.isArray(msg)? msg:[msg] %>
+    <% Array.isArray(msg)? msg:msg=[msg] %>
     <% msg.forEach(message => { %>
      <p><%= message %></p>
     <% }) %>

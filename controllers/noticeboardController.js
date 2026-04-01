@@ -77,7 +77,7 @@ exports.postNotice = async (req,res)=>{
     const message=req.body.message;
     const userID=req.session.user.userId;
     const newPost ={
-        userID:req.session.user.userID,
+        userID:userID,
         message:message
     };
     console.log(newPost)
@@ -87,7 +87,7 @@ exports.postNotice = async (req,res)=>{
         msg.push('message missing from notice'+ ' ' +(validator.isMissingText(message)));
         msg.push('User ID Missing from notice'+ ' ' +(validator.isInvalidId(userID)));
         let result ='fail' //if fail, no result is returned
-        let user = req.session;
+        let user = req.session.user;
         console.error(msg)
 
         let output= await generateOutputforNoticeboard();
