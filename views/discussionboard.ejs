@@ -55,7 +55,7 @@
                   <% if (content.edited) { %><span class="nb-edited-badge">edited</span><% } %>
                 </div>
               </div>
-              <% if (user.isAdmin || user.superAdmin || String(user.userId) === String(content.userID)) { %>
+              <% if (user.admin || user.superAdmin || String(user.userId) === String(content.userID)) { %>
                 <div class="nb-card-actions">
                   <a class="btn btn-sm btn-ghost" href="/discussionboard/update/<%= content.noticeID %>">Edit</a>
                   <a class="btn btn-sm btn-danger" href="/discussionboard/delete/<%= content.noticeID %>">Delete</a>

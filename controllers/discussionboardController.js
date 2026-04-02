@@ -5,18 +5,14 @@ const auth = require('../middlewares/auth-middleware');
 // get models (both)
 const DiscussionBoard=require('../models/discussionboard-model');
 
-let generateOutputforDiscussionboard= async function(){
+let generateOutputforDiscussionboard= async function(){ // function to get output
 let notices = await DiscussionBoard.getAllNotice();
-        // let user = await User.findById(userID);
         const admin=User.admin;
         const superAdmin=User.superAdmin;
 
-        console.log(notices)
         let output=[];
         for (const notice of notices){
             try {
-                // let userData=await User.findById(notice.userID);
-            // let username=
             let content= {
                 noticeID:notice._id,
                 userID:notice.userID._id ? notice.userID._id:"Account Not Found",
@@ -38,19 +34,8 @@ let notices = await DiscussionBoard.getAllNotice();
                 edited:notice.edited
             };
             output.push(content);
-            console.log(output);
             }
-            // let userData=await User.findById(notice.userID);
-            // // let username=
-            // let content= {
-            //     noticeID:notice._id,
-            //     userID:userData._id? userData._id",
-            //     username:userData.name? userData.name,
-            //     message:notice.message,
-            //     timeCreated:notice.createdAt
-            // };
-            // output.push(content);
-            // console.log(output);
+            
         };
         return output;
 };
@@ -63,9 +48,6 @@ exports.viewNotice = async (req,res) => {
         let user=req.session.user;
 
         let output=await generateOutputforDiscussionboard();
-        console.log(output);
-        // let notices = await DiscussionBoard.getAllNotice();
-        // let user = await User.findById(userID);
         
         res.render('discussionboard',{output,user,result:null,msg:[]});
     } catch (error) {
@@ -81,7 +63,6 @@ exports.postNotice = async (req,res)=>{
         userID:userID,
         message:message
     };
-    console.log(newPost)
     try {
         if (validator.isMissingText(message)||validator.isInvalidId(userID)){
         let msg=[];
@@ -100,10 +81,7 @@ exports.postNotice = async (req,res)=>{
         let result = await DiscussionBoard.addNewPost(newPost);
         let notices = await DiscussionBoard.getAllNotice();
         let user = req.session.user;
-        // const admin=req.session.admin
-        // const superAdmin=req.session.superAdmin;
         await Logs.createALog(req.session.user.userId, 'Added a new post', 'post', result._id);
-        // console.log(notices.length)
         let output= await generateOutputforDiscussionboard();
         res.render('discussionboard',{output,user,result: result||null,msg});
     } catch (error) {
@@ -118,7 +96,7 @@ exports.postNotice = async (req,res)=>{
     }
     
 };
-exports.getToEdit= async (req,res) => {
+exports.getToEdit= async (req,res) => { //get specific post to edit
     let userID=req.session.user.userId;
     let msg=''
     try {
@@ -126,7 +104,6 @@ exports.getToEdit= async (req,res) => {
         const admin=req.session.user.admin;
         const superAdmin=req.session.user.superAdmin;
 
-        // console.log(postID.typeof);
         let result = await DiscussionBoard.findByPostID(postID);
         if (!result){
             msg=[];
@@ -135,7 +112,7 @@ exports.getToEdit= async (req,res) => {
             return res.status(404).render('discussionboard-update',{result:null,msg});
         }
 
-        if (admin||superAdmin||(String(req.session.user.userId)==String(result.userID._id))){ //Remember to do type conversion, population
+        if (admin||superAdmin||(String(req.session.user.userId)==String(result.userID._id))){ //Remember to do type conversion
         
         res.render('discussionboard-update',{result,msg});
         } else {
@@ -143,10 +120,11 @@ exports.getToEdit= async (req,res) => {
             reason += req.session.user.superAdmin ? null : 'not Super Admin ';
             reason += String(userID)==String(postID)? null :'wrong user';
             console.log(reason, 'no edit rights');
-            return res.redirect('/');
+            return res.redirect('/'); // kick out people who force their way in
         }
     } catch (error) {
         console.error(error);
+        msg=[];
         msg.push(error);
         res.render('discussionboard-update',{result:null,msg});
     };
@@ -157,7 +135,7 @@ exports.UpdateNotice= async (req,res) => {
     const userID = req.session.user.userId;
     let msg=''
     try {
-        if (validator.isMissingText(message)||validator.isInvalidId(userID)){
+        if (validator.isMissingText(message)||validator.isInvalidId(userID)){ //no blank notices allowed
             msg=[];
             msg.push('message missing from notice'+ ' ' +(validator.isMissingText(message)));
             msg.push('User ID Missing from notice'+ ' ' +(validator.isInvalidId(userID)));
@@ -202,8 +180,6 @@ exports.getToDelete= async (req,res) => {
     let msg=''
     try {
         const postID=req.params.id;
-        console.log(postID);
-        // console.log(postID.typeof);
         let result = await DiscussionBoard.findByPostID(postID);
         if (!result){
             msg+='Post not found';
@@ -235,7 +211,6 @@ exports.deletePost = async (req,res) => {
     const userID = req.body.userID;
     try {
         let result = await DiscussionBoard.deleteNotice(messageID);
-        console.log(result);
     if (result.deletedCount===1){
         await Logs.createALog(req.session.user.userId, 'Deleted a post', 'post', messageID, true);
         res.render('discussionboard-deletesuccess');

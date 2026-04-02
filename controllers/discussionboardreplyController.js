@@ -8,11 +8,8 @@ const DiscussionBoardReply=require('../models/discussionboardreply-model')
 const generateRepliesToPost = async function (postID) {
     let output =[];
     const replies= await DiscussionBoardReply.getAllReply(postID);
-    console.log(replies);
     for (const reply of replies){
         try {
-            // let userData=await User.findById(reply.userID);
-            // console.log(userData)
             let content= {
                 replyID:reply._id,
                 userID:reply.userID._id,
@@ -21,7 +18,6 @@ const generateRepliesToPost = async function (postID) {
                 timeCreated:reply.createdAt,
                 edited:reply.edited
             };
-            // console.log(content);
         output.push(content)
         } catch (error) {
             console.error(error);
@@ -35,14 +31,7 @@ const generateRepliesToPost = async function (postID) {
             };
         output.push(content)  
         }
-        // let content= {
-                
-        //         userID:'Account not found',
-        //         username:userData.name,
-        //         message:notice.message,
-        //         timeCreated:notice.createdAt
-        //     };
-        // output.push(reply)
+        
     };
     return output
 }
@@ -53,10 +42,8 @@ const userID=req.session.user.userId;
 const admin = req.session.user.admin;
 const superAdmin = req.session.user.superAdmin;
 const postID=req.params.id; //get post ID from url
-// console.log(postID)
 try {
     output= await generateRepliesToPost(postID)
-    console.log(output)
     
     res.render('discussionboard-replies',{output,userID,postID,admin,superAdmin,msg:''});
 } catch (error) {
@@ -81,7 +68,6 @@ exports.replyToPost = async (req,res) => {
                 msg.push('message missing from notice'+ ' ' +(validator.isMissingText(reply.reply)));
                 msg.push('User ID Missing from notice'+ ' ' +(validator.isInvalidId(userID)));
                 let result ='fail' //if fail, no result is returned
-                // let user = await User.findById(userID);
                 console.error(msg)
                 let output= await generateRepliesToPost(postID);
                 
@@ -107,8 +93,6 @@ const superAdmin = req.session.user.superAdmin
     try {
         const replyID=req.params.id;
        
-        console.log(replyID);
-        // console.log(postID.typeof);
         let result = await DiscussionBoardReply.findByReplyID(replyID);
 
         if (!result){
@@ -194,7 +178,6 @@ exports.getToDeleteReply = async (req,res) =>{
         const replyID=req.params.id;
        
         
-        // console.log(postID.typeof);
         let result = await DiscussionBoardReply.findByReplyID(replyID);
         
         if (!result){
@@ -204,7 +187,6 @@ exports.getToDeleteReply = async (req,res) =>{
                 if (admin||superAdmin||(String(userID)==String(result.userID._id))){ //Remember to do type conversion
 
         
-        console.log(result)
         res.render('discussionboard-replies-delete',{result,userID,msg});
         } else {
             let reason = req.session.user.admin ? null : 'not admin ';
