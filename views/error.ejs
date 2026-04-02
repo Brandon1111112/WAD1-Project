@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Error – IAMdb</title>
+    <link rel="stylesheet" href="/style.css" />
+</head>
+
+<body>
+    <%- include('partials/navbar') %>
+        <div class="page-container-xs" style="padding-top:48px;">
+            <div class="confirm-card">
+                <div class="confirm-title">Error</div>
+                <div class="confirm-warning">
+                    <%= error %>
+                </div>
+                <div class="confirm-actions">
+                    <a href="/" class="btn btn-ghost">Back to home</a>
+                </div>
+                
+            </div>
+        </div>
+</body>
+
+</html>
