@@ -132,9 +132,16 @@
                         </span>
                         <span class="review-rating">★ <%= r.rating %>/5</span>
                       </div>
+                      <div class="nb-time">
+                        <%= new Date(r.createdAt).toLocaleDateString('en-GB',
+                          {day:'numeric',month:'short',year:'numeric'}) %>
+                          &nbsp;·&nbsp;
+                          <%= new Date(r.createdAt).toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'}) %>
+                      </div>
                       <div class="review-text">
                         <%= r.review %>
                       </div>
+
                       <% const isReviewOwner=currentUser && r.userId && r.userId._id &&
                         r.userId._id.toString()===currentUser.userId; const isReviewAdmin=currentUser &&
                         (currentUser.admin || currentUser.superAdmin || currentUser.isSuperAdmin); %>
