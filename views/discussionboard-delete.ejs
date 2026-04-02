@@ -18,11 +18,11 @@
         </div>
         <div class="confirm-warning">This action is permanent and cannot be undone.</div>
         <% if (msg) { %><div class="alert alert-error" style="margin-top:10px;"><%= msg %></div><% } %>
-        <form action="/noticeboard/delete/<%= result._id %>" method="POST">
+        <form action="/discussionboard/delete/<%= result._id %>" method="POST">
           <input type="hidden" name="messageID" value="<%= result._id %>">
           <input type="hidden" name="userID" value="<%= result.userID %>">
           <div class="confirm-actions">
-            <a href="/noticeboard" class="btn btn-ghost">Cancel</a>
+            <a href="/discussionboard" class="btn btn-ghost">Cancel</a>
             <button class="btn btn-danger" type="submit">Delete Post</button>
           </div>
         </form>
@@ -30,7 +30,7 @@
     <% } else { %>
       <div class="empty-state">
         <p>Post not found.</p>
-        <a href="/noticeboard" class="btn btn-ghost" style="margin-top:16px;display:inline-flex;">Back to Noticeboard</a>
+        <a href="/discussionboard" class="btn btn-ghost" style="margin-top:16px;display:inline-flex;">Back to Discussionboard</a>
       </div>
     <% } %>
   </div>

@@ -11,7 +11,7 @@
   <div class="page-container">
 
     <div class="page-header" style="display:flex;align-items:center;gap:14px;">
-      <a href="/noticeboard" class="btn btn-ghost btn-sm">← Back</a>
+      <a href="/discussionboard" class="btn btn-ghost btn-sm">← Back</a>
       <div>
         <h1 class="page-title">Thread Replies</h1>
         <p class="page-subtitle">Join the conversation</p>
@@ -26,7 +26,7 @@
           <% if (Array.isArray(msg)) { %><%= msg.join(' · ') %><% } else { %><%= msg %><% } %>
         </div>
       <% } %>
-      <form action="/noticeboard/<%= postID %>/replies" method="POST">
+      <form action="/discussionboard/<%= postID %>/replies" method="POST">
         <div class="form-group">
           <textarea class="form-textarea" name="reply" placeholder="Write your reply…" required rows="3"></textarea>
         </div>
@@ -58,8 +58,8 @@
               </div>
               <% if (admin || superAdmin || String(userID) === String(reply.userID)) { %>
                 <div class="nb-card-actions">
-                  <a class="btn btn-sm btn-ghost" href="/noticeboard/<%= reply.replyID %>/reply/edit">Edit</a>
-                  <a class="btn btn-sm btn-danger" href="/noticeboard/<%= reply.replyID %>/reply/delete">Delete</a>
+                  <a class="btn btn-sm btn-ghost" href="/discussionboard/<%= reply.replyID %>/reply/edit">Edit</a>
+                  <a class="btn btn-sm btn-danger" href="/discussionboard/<%= reply.replyID %>/reply/delete">Delete</a>
                 </div>
               <% } %>
             </div>

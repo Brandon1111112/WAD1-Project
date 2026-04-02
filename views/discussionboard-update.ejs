@@ -11,7 +11,7 @@
   <div class="page-container-sm">
 
     <div class="page-header" style="display:flex;align-items:center;gap:14px;">
-      <a href="/noticeboard" class="btn btn-ghost btn-sm">← Back</a>
+      <a href="/discussionboard" class="btn btn-ghost btn-sm">← Back</a>
       <h1 class="page-title">Edit Post</h1>
     </div>
 
@@ -24,14 +24,14 @@
 
     <% if (result) { %>
       <div class="form-card">
-        <form action="/noticeboard/update/<%= result._id %>" method="POST">
+        <form action="/discussionboard/update/<%= result._id %>" method="POST">
           <div class="form-group">
             <label class="form-label">Your Post</label>
             <textarea class="form-textarea" name="message" required rows="4"><%= result.message %></textarea>
           </div>
           <input type="hidden" name="userID" value="<%= result.userID %>">
           <div class="form-actions">
-            <a href="/noticeboard" class="btn btn-ghost">Cancel</a>
+            <a href="/discussionboard" class="btn btn-ghost">Cancel</a>
             <button class="btn btn-primary" type="submit">Save Changes</button>
           </div>
         </form>
@@ -39,7 +39,7 @@
     <% } else { %>
       <div class="empty-state">
         <p>Post not found.</p>
-        <a href="/noticeboard" class="btn btn-ghost" style="margin-top:16px;display:inline-flex;">Back to Noticeboard</a>
+        <a href="/discussionboard" class="btn btn-ghost" style="margin-top:16px;display:inline-flex;">Back to Discussionboard</a>
       </div>
     <% } %>
 

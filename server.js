@@ -40,14 +40,14 @@ const userRoutes = require('./routes/userRoutes.js');
 const adminRoutes = require('./routes/adminRoutes');
 const movieRoutes = require('./routes/movieRoutes');
 const watchedMovieRoutes = require('./routes/watchedMoviesRoutes');
-const noticeBoardRoutes = require('./routes/noticeBoardRoutes.js')
+const discussionBoardRoutes = require('./routes/discussionBoardRoutes.js')
 
 // Use the routes
 server.use('/', userRoutes);   // Login routes
 server.use('/admin', adminRoutes); // Admin Routes
 server.use('/movie', movieRoutes); // Route for visiting movie page
 server.use('/watchlist', watchedMovieRoutes); // Route for lisiting watched movies and recomandations
-server.use('/noticeboard', noticeBoardRoutes); // Route to Noticeboard
+server.use('/discussionboard', discussionBoardRoutes); // Route to Discussionboard
 
 // Route for wrong URL
 server.use((req, res) => {

@@ -81,10 +81,10 @@
                     <% if (log.isDeleted) {%>
                       <p style="color:var(--text-3);font-size:13px;">Post was deleted</p>
                     <% } else { %>
-                      <a class="btn btn-sm btn-secondary" href="/noticeboard">View Post</a>
+                      <a class="btn btn-sm btn-secondary" href="/discussionboard">View Post</a>
                     <% } %>
                   <% } else if (log.targetId && log.category === 'reply') { %>
-                    <a class="btn btn-sm btn-secondary" href="/noticeboard/<%= log.targetId %>/replies">View Reply</a>
+                    <a class="btn btn-sm btn-secondary" href="/discussionboard/<%= log.targetId %>/replies">View Reply</a>
                   <% } else { %>
                     <span style="color:var(--text-3);font-size:13px;">—</span>
                   <% } %>

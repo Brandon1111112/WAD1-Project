@@ -12,9 +12,9 @@
 
     <div class="page-header" style="display:flex;align-items:center;gap:14px;">
       <% if (result) { %>
-        <a href="/noticeboard/<%= String(result.parentPostID) %>/replies" class="btn btn-ghost btn-sm">← Back</a>
+        <a href="/discussionboard/<%= String(result.parentPostID) %>/replies" class="btn btn-ghost btn-sm">← Back</a>
       <% } else { %>
-        <a href="/noticeboard" class="btn btn-ghost btn-sm">← Back</a>
+        <a href="/discussionboard" class="btn btn-ghost btn-sm">← Back</a>
       <% } %>
       <h1 class="page-title">Edit Reply</h1>
     </div>
@@ -28,14 +28,14 @@
 
     <% if (result) { %>
       <div class="form-card">
-        <form action="/noticeboard/<%= result._id %>/reply/edit" method="POST">
+        <form action="/discussionboard/<%= result._id %>/reply/edit" method="POST">
           <div class="form-group">
             <label class="form-label">Your Reply</label>
             <textarea class="form-textarea" name="reply" required rows="4"><%= result.reply %></textarea>
           </div>
           <input type="hidden" name="replyID" value="<%= result._id %>">
           <div class="form-actions">
-            <a href="/noticeboard/<%= String(result.parentPostID) %>/replies" class="btn btn-ghost">Cancel</a>
+            <a href="/discussionboard/<%= String(result.parentPostID) %>/replies" class="btn btn-ghost">Cancel</a>
             <button class="btn btn-primary" type="submit">Save Changes</button>
           </div>
         </form>
@@ -43,7 +43,7 @@
     <% } else { %>
       <div class="empty-state">
         <p>Reply not found.</p>
-        <a href="/noticeboard" class="btn btn-ghost" style="margin-top:16px;display:inline-flex;">Back to Noticeboard</a>
+        <a href="/discussionboard" class="btn btn-ghost" style="margin-top:16px;display:inline-flex;">Back to Discussionboard</a>
       </div>
     <% } %>
 

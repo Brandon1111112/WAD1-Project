@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Noticeboard – IAMdb</title>
+  <title>Discussionboard – IAMdb</title>
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
@@ -11,7 +11,7 @@
   <div class="page-container">
 
     <div class="page-header">
-      <h1 class="page-title">Noticeboard</h1>
+      <h1 class="page-title">Discussionboard</h1>
       <p class="page-subtitle">Community posts and announcements</p>
     </div>
 
@@ -24,7 +24,7 @@
     <%# Post compose form %>
     <div class="nb-compose">
       <h2 class="nb-compose-title">Post something</h2>
-      <form action="/noticeboard" method="POST">
+      <form action="/discussionboard" method="POST">
         <input type="hidden" name="userID" value="<%= user.userId %>">
         <div class="form-group">
           <textarea class="form-textarea" name="message" placeholder="Write a notice or announcement…" required rows="3"></textarea>
@@ -57,14 +57,14 @@
               </div>
               <% if (user.isAdmin || user.superAdmin || String(user.userId) === String(content.userID)) { %>
                 <div class="nb-card-actions">
-                  <a class="btn btn-sm btn-ghost" href="/noticeboard/update/<%= content.noticeID %>">Edit</a>
-                  <a class="btn btn-sm btn-danger" href="/noticeboard/delete/<%= content.noticeID %>">Delete</a>
+                  <a class="btn btn-sm btn-ghost" href="/discussionboard/update/<%= content.noticeID %>">Edit</a>
+                  <a class="btn btn-sm btn-danger" href="/discussionboard/delete/<%= content.noticeID %>">Delete</a>
                 </div>
               <% } %>
             </div>
             <div class="nb-message"><%= content.message %></div>
             <div class="nb-card-footer">
-              <a class="nb-reply-link" href="/noticeboard/<%= content.noticeID %>/replies">💬 View replies</a>
+              <a class="nb-reply-link" href="/discussionboard/<%= content.noticeID %>/replies">💬 View replies</a>
             </div>
           </div>
         <% } %>
