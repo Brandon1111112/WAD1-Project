@@ -1,60 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noticeboard</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Noticeboard – IAMdb</title>
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-    <div class="page-container">
-    <div class="page-header">
-    <%- include('partials/navbar') %>
-    <h1 class="page-title">Noticeboard</h1>
-    
-    <% if (output.length==0) { %>
-     <p>No notices</p>
-    <% } else { %>
-      <% for (content of output) { %>
-        <%= content.username %>
-        <br>
-        <%= content.message %>
-        <br>
-        <%= content.timeCreated %>
-        <br>
-        <%= content.edited? 'edited':'' %>
-        <br>
-        <a href="/noticeboard/<%=content.noticeID%>/replies">Replies</a>
-        <br>
-        <% if (user.admin || user.superAdmin || String(user.userId)==String(content.userID)) { %>
-         <a href="/noticeboard/update/<%=content.noticeID%>">Edit</a>||<a href="/noticeboard/delete/<%-content.noticeID%>">Delete</a>
-         <br>
-        <% } %>
-    
-        <%}%>
-        <% } %>
-    
-        <form action="/noticeboard" method="post">
-            <input type="hidden" name="userID" value=<%- user._id%>>
-            <br>
-            <label for="message">Enter your message:</label><input type="text" name="message" id="message">
-            <br><br>
-            <button type="submit">post</button>
-        </form>
-<br><br>
-<% if (!result) { %>
- <%# return %>
-<% } else if (result==='fail') { %>
-    <p>Error adding post, contact support</p>
-    <% Array.isArray(msg)? msg:msg=[msg] %>
-    <% msg.forEach(message => { %>
-     <p><%= message %></p>
-    <% }) %>
-       <% } else {%>
-        <p>Post added successfully</p>  
-        <% } %>
-        
+  <%- include('partials/navbar') %>
+  <div class="page-container">
 
-    
+    <div class="page-header">
+      <h1 class="page-title">Noticeboard</h1>
+      <p class="page-subtitle">Community posts and announcements</p>
+    </div>
+
+    <% if (result === 'fail') { %>
+      <div class="alert alert-error">
+        <% if (Array.isArray(msg)) { %><%= msg.join(' · ') %><% } else { %><%= msg %><% } %>
+      </div>
+    <% } %>
+
+    <%# Post compose form %>
+    <div class="nb-compose">
+      <h2 class="nb-compose-title">Post something</h2>
+      <form action="/noticeboard" method="POST">
+        <input type="hidden" name="userID" value="<%= user.userId %>">
+        <div class="form-group">
+          <textarea class="form-textarea" name="message" placeholder="Write a notice or announcement…" required rows="3"></textarea>
+        </div>
+        <div style="display:flex;justify-content:flex-end;">
+          <button class="btn btn-primary" type="submit">Post</button>
+        </div>
+      </form>
+    </div>
+
+    <%# Feed %>
+    <% if (output.length === 0) { %>
+      <div class="empty-state" style="margin-top:32px;">
+        <p>No posts yet. Be the first to share something above!</p>
+      </div>
+    <% } else { %>
+      <div class="nb-feed">
+        <% for (const content of output) { %>
+          <div class="nb-card">
+            <div class="nb-card-header">
+              <div class="nb-avatar"><%= content.username ? content.username.charAt(0).toUpperCase() : '?' %></div>
+              <div style="flex:1;min-width:0;">
+                <div class="nb-author"><%= content.username %></div>
+                <div class="nb-time">
+                  <%= new Date(content.timeCreated).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) %>
+                  &nbsp;·&nbsp;
+                  <%= new Date(content.timeCreated).toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'}) %>
+                  <% if (content.edited) { %><span class="nb-edited-badge">edited</span><% } %>
+                </div>
+              </div>
+              <% if (user.isAdmin || user.superAdmin || String(user.userId) === String(content.userID)) { %>
+                <div class="nb-card-actions">
+                  <a class="btn btn-sm btn-ghost" href="/noticeboard/update/<%= content.noticeID %>">Edit</a>
+                  <a class="btn btn-sm btn-danger" href="/noticeboard/delete/<%= content.noticeID %>">Delete</a>
+                </div>
+              <% } %>
+            </div>
+            <div class="nb-message"><%= content.message %></div>
+            <div class="nb-card-footer">
+              <a class="nb-reply-link" href="/noticeboard/<%= content.noticeID %>/replies">💬 View replies</a>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    <% } %>
+
+  </div>
 </body>
 </html>

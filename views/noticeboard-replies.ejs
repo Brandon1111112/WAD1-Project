@@ -1,48 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noticeboard Replies</title>
-    <link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Replies – IAMdb</title>
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-    <div class="page-container">
-    <div class="page-header">
-    <%- include('partials/navbar') %>
-    <h1 class="'page-title">Replies</h1>
-    <% if (output) { %>
-     <% output.forEach(reply => { %>
-     <%= reply.username%>
-     <br>
-     <%= reply.reply %>
-     <br>
-     <%= reply.timeCreated %>
-     <br>
-     <%= reply.edited? 'edited':'' %>
-     <br>
-     <% if ((admin || superAdmin || String(userID)===String(reply.userID._id))) { %>
-      <a href="/noticeboard/<%= reply.replyID %>/reply/edit">Edit</a>||<a href="/noticeboard/<%= reply.replyID %>/reply/delete">Delete</a>
-     <% } %>
-     
-     <br>
-    <% }) %>
+  <%- include('partials/navbar') %>
+  <div class="page-container">
+
+    <div class="page-header" style="display:flex;align-items:center;gap:14px;">
+      <a href="/noticeboard" class="btn btn-ghost btn-sm">← Back</a>
+      <div>
+        <h1 class="page-title">Thread Replies</h1>
+        <p class="page-subtitle">Join the conversation</p>
+      </div>
+    </div>
+
+    <%# Reply compose %>
+    <div class="nb-compose">
+      <h2 class="nb-compose-title">Add a reply</h2>
+      <% if (msg && ((Array.isArray(msg) && msg.length > 0) || (!Array.isArray(msg) && msg !== ''))) { %>
+        <div class="alert alert-error">
+          <% if (Array.isArray(msg)) { %><%= msg.join(' · ') %><% } else { %><%= msg %><% } %>
+        </div>
+      <% } %>
+      <form action="/noticeboard/<%= postID %>/replies" method="POST">
+        <div class="form-group">
+          <textarea class="form-textarea" name="reply" placeholder="Write your reply…" required rows="3"></textarea>
+        </div>
+        <div style="display:flex;justify-content:flex-end;">
+          <button class="btn btn-primary" type="submit">Post Reply</button>
+        </div>
+      </form>
+    </div>
+
+    <%# Replies list %>
+    <% if (!output || output.length === 0) { %>
+      <div class="empty-state" style="margin-top:24px;">
+        <p>No replies yet. Be the first to respond above!</p>
+      </div>
     <% } else { %>
-        <p>No Replies</p>
-        <% } %>
-    <form action="/noticeboard/<%=postID %>/replies" method="post">
-        <label for="reply">Enter reply here:</label>
-        <br>
-        <textarea name="reply" id="reply" cols="30" rows="10"></textarea>
-        <br>
-        <button type="submit">Post reply</button>
-    </form>
-    <% if (msg) { %>
-     <% Array.isArray(msg)? msg:msg=[msg] %>
-     <% msg.forEach(message => { %>
-      <%= message %>
-      <br>
-     <% }) %>
+      <div class="nb-feed" style="margin-top:24px;">
+        <% output.forEach(reply => { %>
+          <div class="nb-card nb-reply-card">
+            <div class="nb-card-header">
+              <div class="nb-avatar nb-avatar-sm"><%= reply.username ? reply.username.charAt(0).toUpperCase() : '?' %></div>
+              <div style="flex:1;min-width:0;">
+                <div class="nb-author"><%= reply.username %></div>
+                <div class="nb-time">
+                  <%= new Date(reply.timeCreated).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) %>
+                  &nbsp;·&nbsp;
+                  <%= new Date(reply.timeCreated).toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'}) %>
+                  <% if (reply.edited) { %><span class="nb-edited-badge">edited</span><% } %>
+                </div>
+              </div>
+              <% if (admin || superAdmin || String(userID) === String(reply.userID)) { %>
+                <div class="nb-card-actions">
+                  <a class="btn btn-sm btn-ghost" href="/noticeboard/<%= reply.replyID %>/reply/edit">Edit</a>
+                  <a class="btn btn-sm btn-danger" href="/noticeboard/<%= reply.replyID %>/reply/delete">Delete</a>
+                </div>
+              <% } %>
+            </div>
+            <div class="nb-message"><%= reply.reply %></div>
+          </div>
+        <% }) %>
+      </div>
     <% } %>
+
+  </div>
 </body>
 </html>

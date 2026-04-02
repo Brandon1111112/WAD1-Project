@@ -1,33 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delete Post</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delete Post – IAMdb</title>
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
+  <%- include('partials/navbar') %>
+  <div class="page-container-xs" style="padding-top:48px;">
     <% if (result) { %>
-     <h1>Delete Post</h1>
-    <h2>Are you sure? This is permanent!</h2>
-    <form action="/noticeboard/delete/<%= result._id %>" method="post">
-        Delete Post:
-        <p><%-result.message%></p>
-        <input type="hidden" name="messageID" value="<%- result._id %>">
-        <input type="hidden" name="userID" value="<%- result.userID %>">
-        <button type="submit">Delete</button>
-        <button type="button" onclick="window.open('/noticeboard','_self')">Back</button>  
-    <% } else {%>
-    <form action="delete" method="post">
-        
-        <button type="button" onclick="window.open('/noticeboard','_self')">Back</button>    
-        <% } %>
-    </form>
-    <br><br>
-    <% if (msg=='edit successful') { %>
-     <p><%= msg %></p>
-    <% } else if (msg) { %>
-        <p>Delete failed, contact support with screenshot</p>
-     <p><%= msg %></p>
-     <% } %>
+      <div class="confirm-card">
+        <div class="confirm-title">Delete Post</div>
+        <p style="font-size:13px;color:var(--text-2);margin:10px 0 4px;">The following post will be permanently removed:</p>
+        <div class="nb-card" style="text-align:left;margin:14px 0;">
+          <div class="nb-message"><%= result.message %></div>
+        </div>
+        <div class="confirm-warning">This action is permanent and cannot be undone.</div>
+        <% if (msg) { %><div class="alert alert-error" style="margin-top:10px;"><%= msg %></div><% } %>
+        <form action="/noticeboard/delete/<%= result._id %>" method="POST">
+          <input type="hidden" name="messageID" value="<%= result._id %>">
+          <input type="hidden" name="userID" value="<%= result.userID %>">
+          <div class="confirm-actions">
+            <a href="/noticeboard" class="btn btn-ghost">Cancel</a>
+            <button class="btn btn-danger" type="submit">Delete Post</button>
+          </div>
+        </form>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <p>Post not found.</p>
+        <a href="/noticeboard" class="btn btn-ghost" style="margin-top:16px;display:inline-flex;">Back to Noticeboard</a>
+      </div>
+    <% } %>
+  </div>
 </body>
 </html>

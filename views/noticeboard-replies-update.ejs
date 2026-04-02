@@ -1,33 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Reply</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Reply – IAMdb</title>
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-    <% if (result) { %>
-     <h1>Edit Reply</h1>
-    <form action="/noticeboard/<%=result._id %>/reply/edit" method="post">
-        <!-- <form action="/noticeboard/update" method="post"></form> -->
-        <label for="reply">Edit Reply: </label>
-        <input type="text" name="reply" id="reply" value="<%=result.reply%>">
-        <input type="hidden" name="replyID" value="<%= result._id %>">
-        <!-- <input type="hidden" name="userID" value="<%# userID %>"> -->
-        <button type="submit">Edit</button>
-        <button type="button" onclick="window.open('/noticeboard/<%=String(result.parentPostID)%>/replies','_self')">Back</button>    
-    </form>
-    <br><br>
-    <% } else {%>
+  <%- include('partials/navbar') %>
+  <div class="page-container-sm">
 
-        <button type="button" onclick="window.open('/noticeboard','_self')">Back</button>
-        <% } %>
-    
-    <% if (msg=='edit successful') { %>
-     <p><%= msg %></p>
-    <% } else if (msg) { %>
-        <p>Edit failed, contact support with screenshot</p>
-     <p><%= msg %></p>
-     <% } %>
+    <div class="page-header" style="display:flex;align-items:center;gap:14px;">
+      <% if (result) { %>
+        <a href="/noticeboard/<%= String(result.parentPostID) %>/replies" class="btn btn-ghost btn-sm">← Back</a>
+      <% } else { %>
+        <a href="/noticeboard" class="btn btn-ghost btn-sm">← Back</a>
+      <% } %>
+      <h1 class="page-title">Edit Reply</h1>
+    </div>
+
+    <% const msgVal = Array.isArray(msg) ? msg.join(' · ') : (msg || ''); %>
+    <% if (msgVal === 'edit successful') { %>
+      <div class="alert alert-success">Reply updated successfully.</div>
+    <% } else if (msgVal) { %>
+      <div class="alert alert-error"><%= msgVal %></div>
+    <% } %>
+
+    <% if (result) { %>
+      <div class="form-card">
+        <form action="/noticeboard/<%= result._id %>/reply/edit" method="POST">
+          <div class="form-group">
+            <label class="form-label">Your Reply</label>
+            <textarea class="form-textarea" name="reply" required rows="4"><%= result.reply %></textarea>
+          </div>
+          <input type="hidden" name="replyID" value="<%= result._id %>">
+          <div class="form-actions">
+            <a href="/noticeboard/<%= String(result.parentPostID) %>/replies" class="btn btn-ghost">Cancel</a>
+            <button class="btn btn-primary" type="submit">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <p>Reply not found.</p>
+        <a href="/noticeboard" class="btn btn-ghost" style="margin-top:16px;display:inline-flex;">Back to Noticeboard</a>
+      </div>
+    <% } %>
+
+  </div>
 </body>
 </html>
