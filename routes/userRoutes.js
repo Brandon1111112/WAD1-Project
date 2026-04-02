@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middlewares/auth-middleware');
-
+const userController = require("../controllers/userController");
 
 // HOME
 router.get('/', (req, res) => { // Render index page (with auth)
@@ -9,37 +9,33 @@ router.get('/', (req, res) => { // Render index page (with auth)
 });
 
 // LOGIN
-const { loginUser } = require("../controllers/loginController");
-
 router.get('/login', (req, res) => { //Render login page
     res.render('login', { error: null });
 });
 
-router.post('/login', loginUser) //Handle login form submission
+router.post('/login', userController.loginUser) //Handle login form submission
 
 // REGISTER
-const { registerUser } = require("../controllers/registerController");
 
 router.get('/register', (req, res) => { //Render register page
     res.render('register', { error: null });
 });
 
-router.post('/register', registerUser) //Handle register form submission
+router.post('/register', userController.registerUser) //Handle register form submission
 
 // PROFILE
-const profileController = require("../controllers/profileController");
 
-router.get('/profile', auth.isLoggedIn, profileController.getProfile); //Render profile page
+router.get('/profile', auth.isLoggedIn, userController.getProfile); //Render profile page
 
-router.get('/profile/edit', auth.isLoggedIn, profileController.renderEditProfile); //Render profile edit page
+router.get('/profile/edit', auth.isLoggedIn, userController.renderEditProfile); //Render profile edit page
 
-router.post("/profile/edit", profileController.editUser); // Route to POST the profile edit
+router.post("/profile/edit", userController.editUser); // Route to POST the profile edit
 
-router.get('/profile/logout', profileController.logout); // Route to logout
+router.get('/profile/logout', userController.logout); // Route to logout
 
-router.get('/profile/delete', auth.isLoggedIn, profileController.renderDeleteUser); // Route to render delete confirmation page
+router.get('/profile/delete', auth.isLoggedIn, userController.renderDeleteUser); // Route to render delete confirmation page
 
-router.post('/profile/delete', auth.isLoggedIn, profileController.deleteUser); // Route to delete user account
+router.post('/profile/delete', auth.isLoggedIn, userController.deleteUser); // Route to delete user account
 
 
 
