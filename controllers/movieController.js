@@ -32,15 +32,15 @@ const getAllMovies = async (req, res) => {
     if (req.session.user){
       const user = await User.findOne({ _id: req.session.user.userId });
 
-      if (user){
+      if (user) {
         currentUser = req.session.user;
         // Get movies that user wants to watch but has not watched yet
         const watchedEntries = await Watchlist.find({
-        userId: user._id,
-        wantsToWatch: true,
-        hasWatched: false,
+          userId: user._id,
+          wantsToWatch: true,
+          hasWatched: false,
         });
-        
+
         watchlist = watchedEntries.map((entry) => entry.movieId.toString());
 
         // Get movies that user has already watched 
@@ -61,17 +61,17 @@ const getAllMovies = async (req, res) => {
 
     // Filter movie selection by the query of search bar
     if (searchQuery) {
-       movieList = movieList.filter(movie => 
-          movie.movieTitle.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+      movieList = movieList.filter(movie =>
+        movie.movieTitle.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     }
     // Filter movie selection by the genre
     if (genreQuery) {
-       movieList = movieList.filter(movie => 
-          movie.genre.toLowerCase().includes(genreQuery.toLowerCase())
-        );
+      movieList = movieList.filter(movie =>
+        movie.genre.toLowerCase().includes(genreQuery.toLowerCase())
+      );
     }
-         
+
     return res.render("all-movies", {
       movies: movieList,
       genres,
@@ -83,14 +83,13 @@ const getAllMovies = async (req, res) => {
       genreQuery
     });
   } catch (error) {
-    return res.status(500).send("Error getting all movies!");
+    return res.status(500).render("error", { error: "Error getting all movies!", statusCode: 500 });
   }
 };
 
-// Get the movie by its ObjectID and render the movie page
 const getMovieById = async (req, res) => {
   if (validator.isInvalidId(req.params.id)) {
-    return res.status(400).send("Invalid movie id.");
+    return res.status(400).render("error", { error: "Invalid movie id.", statusCode: 400 });
   }
 
   try {
@@ -100,7 +99,7 @@ const getMovieById = async (req, res) => {
     req.session.error = null;
 
     if (!movie) {
-      return res.send("No movie found!");
+      return res.render("error", { error: "No movie found!", statusCode: 404 });
     }
 
     const reviews = await Review.getReviewsByMovieId(req.params.id);
@@ -145,53 +144,46 @@ const getMovieById = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).send("Error fetching movie by ID");
+    return res.status(500).render("error", { error: "Error fetching movie by ID", statusCode: 500 });
   }
 };
 
-// Get the create movie form
 const getCreateMovieForm = (req, res) => {
   return res.render("create-movie");
 };
 
-// Get the input from the movie form and create the movie object in MongoDB
 const createMovie = async (req, res) => {
   const { movieTitle, movieDescription, releaseDate, genre } = req.body;
 
-  //Validations to check for missing values
   if (
     validator.isMissingText(movieTitle) ||
     validator.isMissingText(movieDescription) ||
     validator.isMissingText(releaseDate) ||
     validator.isMissingText(genre)
   ) {
-    return res.status(400).send("All fields are required");
+    return res.status(400).render("error", { error: "All fields are required", statusCode: 400 });
   }
 
   try {
     let moviePoster = "";
     let runTime = 0;
-    const omdbApiKey = process.env.OMDB_API_KEY; //get API key from .env
+    const omdbApiKey = process.env.OMDB_API_KEY;
 
     if (omdbApiKey) {
-      // call the API endpoint by passing in the API key and title as arguments
       const url = `https://www.omdbapi.com/?apikey=${omdbApiKey}&t=${movieTitle.trim()}`;
       try {
         let data = await getJson(url);
-        // if json response has a poster and poster not N/A then set poster value
         if (data.Poster && data.Poster !== "N/A") {
           moviePoster = data.Poster;
         } else if (data.Error) {
           console.log("OMDb lookup skipped:", data.Error, "for", movieTitle);
         }
-        // get the movie runtime value as well from the API
         if (data.Runtime && data.Runtime !== "N/A") {
           runTime = validator.convertToNum(data.Runtime);
         } else if (data.Error) {
           console.log("OMDb lookup skipped:", data.Error, "for", movieTitle);
         }
       } catch (fetchError) {
-        // If poster lookup fails, still create movie without poster.
         console.log("OMDb lookup failed:", fetchError.message);
       }
     }
@@ -209,41 +201,37 @@ const createMovie = async (req, res) => {
     // Redirect to the new movie's page
     return res.redirect(`/movie/${createdMovie._id}`);
   } catch (err) {
-    return res.status(500).send("Error creating movie :(");
+    return res.status(500).render("error", { error: "Error creating movie :(", statusCode: 500 });
   }
 };
 
-// Get the movie object to be deleted and render the delete movie confirmation form
 const getMovieToBeDeleted = async (req, res) => {
   const movieId = req.params.id;
 
-  //if invalid movie id return the status and message
   if (validator.isInvalidId(movieId)) {
-    return res.status(400).send("Invalid movie id.");
+    return res.status(400).render("error", { error: "Invalid movie id.", statusCode: 400 });
   }
 
   try {
-    //get the movie to be deleted by it's id
     const movie = await Movie.findMoveById(movieId);
 
     if (!movie) {
-      return res.status(404).send("Movie not found!");
+      return res.status(404).render("error", { error: "Movie not found!", statusCode: 404 });
     }
-    //render the delete confirmation page
+
     res.render("movie-delete", { movie: movie });
   } catch (error) {
-    res.status(500).send("Error fetching the movie to be deleted");
+    return res.status(500).render("error", { error: "Error fetching the movie to be deleted", statusCode: 500 });
   }
 };
 
-// Get the confirmation and delete the movie from MongoDB
 const deleteMovie = async (req, res) => {
   try {
     const movieId = req.params.id;
     const movieFound = await Movie.findMoveById(movieId);
 
     if (!movieFound) {
-      return res.status(404).send("Movie not found!");
+      return res.status(404).render("error", { error: "Movie not found!", statusCode: 404 });
     }
     // Delete the movie and all its references from both the movies and the watchlist collections
     await Movie.deleteMovieById(movieId);
@@ -255,45 +243,41 @@ const deleteMovie = async (req, res) => {
     // Redirect to all movies page after deletion
     return res.redirect("/movie");
   } catch (error) {
-    return res.status(500).send("Movie could not be deleted!");
+    return res.status(500).render("error", { error: "Movie could not be deleted!", statusCode: 500 });
   }
 };
 
-// Get the movie info to edit movie and render the edit movie form
 const getMovieToEdit = async (req, res) => {
   const movieId = req.params.id;
-  //get the movie by it's id to be edited
+
   try {
     let movieDetails = await Movie.findMoveById(movieId);
 
     if (!movieDetails) {
-      return res.status(404).send("Movie not found!");
+      return res.status(404).render("error", { error: "Movie not found!", statusCode: 404 });
     }
-    //render the edit movie form
+
     res.render("edit-movie", { movie: movieDetails });
   } catch (error) {
-    res.status(500).send("Error fetching movie by ID");
+    return res.status(500).render("error", { error: "Error fetching movie by ID", statusCode: 500 });
   }
 };
 
-// Update the movie by getting the new info from the fields
 const updateMovieDetails = async (req, res) => {
   const movieId = req.params.id;
   const { movieTitle, genre, movieDescription, releaseDate } = req.body;
 
-  //validate for invalid movie id
   if (validator.isInvalidId(movieId)) {
-    return res.status(400).send("Invalid movie id.");
+    return res.status(400).render("error", { error: "Invalid movie id.", statusCode: 400 });
   }
 
-  //validate for empty text fields
   if (
     validator.isMissingText(movieTitle) ||
     validator.isMissingText(movieDescription) ||
     validator.isMissingText(releaseDate) ||
     validator.isMissingText(genre)
   ) {
-    return res.status(400).send("All fields are required.");
+    return res.status(400).render("error", { error: "All fields are required.", statusCode: 400 });
   }
 
   try {
@@ -308,7 +292,7 @@ const updateMovieDetails = async (req, res) => {
     // Redirect to the updated movie's page
     return res.redirect(`/movie/${movieId}`);
   } catch (error) {
-    return res.status(500).send("Movie details could not be updated!");
+    return res.status(500).render("error", { error: "Movie details could not be updated!", statusCode: 500 });
   }
 };
 

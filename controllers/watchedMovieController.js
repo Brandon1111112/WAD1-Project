@@ -41,7 +41,10 @@ const showWatchlist = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error to fetch movies watched");
+    return res.status(500).render("error", {
+      error: "Error to fetch movies watched",
+      statusCode: 500,
+    });
   }
 };
 
@@ -70,7 +73,10 @@ const addToWatchlist = async (req, res) => {
     return res.redirect(req.headers.referer || "/movie");
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error to add movie from watchlist");
+    return res.status(500).render("error", {
+      error: "Error to add movie from watchlist",
+      statusCode: 500,
+    });
   }
 };
 
@@ -89,7 +95,10 @@ const removeFromWatchlist = async (req, res) => {
     return res.redirect(req.headers.referer || "/movie");
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error to remove movie from watchlist");
+    return res.status(500).render("error", {
+      error: "Error to remove movie from watchlist",
+      statusCode: 500,
+    });
   }
 };
 
@@ -119,7 +128,10 @@ const markAsWatched = async (req, res) => {
     return res.redirect(req.headers.referer || "/movie");
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error to mark movie as watched");
+    return res.status(500).render("error", {
+      error: "Error to mark movie as watched",
+      statusCode: 500,
+    });
   }
 };
 
@@ -138,7 +150,10 @@ const unmarkAsWatched = async (req, res) => {
     return res.redirect(req.headers.referer || "/movie");
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error to mark movie as unwatched");
+    return res.status(500).render("error", {
+      error: "Error to mark movie as unwatched",
+      statusCode: 500,
+    });
   }
 };
 
@@ -188,19 +203,29 @@ const showRecommendations = async (req, res) => {
     );
 
     // Filter to not show genres that have no movie available for recommendation
-    const userFavouriteGenres = rawUserFavouriteGenres.filter(genre => 
+    const userFavouriteGenres = rawUserFavouriteGenres.filter(genre =>
       favoriteRecommendations.some(movie => movie.genre === genre)
     );
-     const topGenres = rawTopGenres.filter(genre =>
+
+    const topGenres = rawTopGenres.filter(genre =>
       recommendations.some(movie => movie.genre === genre)
     );
 
     const ratingSummaries = await Review.getAllMovieRatingSummaries();
 
-    res.render("recommendations", { favoriteRecommendations, recommendations, topGenres, userFavouriteGenres, ratingSummaries });
+    return res.render("recommendations", {
+      favoriteRecommendations,
+      recommendations,
+      topGenres,
+      userFavouriteGenres,
+      ratingSummaries
+    });
   } catch (error) {
     console.log(error);
-    res.status(500).send("Error showing recommendations");
+    return res.status(500).render("error", {
+      error: "Error showing recommendations",
+      statusCode: 500,
+    });
   }
 };
 

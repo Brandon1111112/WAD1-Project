@@ -49,7 +49,13 @@ server.use('/movie', movieRoutes); // Route for visiting movie page
 server.use('/watchlist', watchedMovieRoutes); // Route for lisiting watched movies and recomandations
 server.use('/noticeboard', noticeBoardRoutes); // Route to Noticeboard
 
-
+// Route for wrong URL
+server.use((req, res) => {
+    res.status(404).render("error", {
+        error: "Invalid URI",
+        statusCode: 404
+    });
+});
 
 // async function to connect to DB
 async function connectDB() {
