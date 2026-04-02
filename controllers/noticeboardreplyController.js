@@ -1,4 +1,5 @@
 const User=require('../models/user-model');
+const Logs = require('../models/logs-model');
 const validator = require("./utils/validation");
 const auth = require('../middlewares/auth-middleware');
 // get models (both)
@@ -86,11 +87,10 @@ exports.replyToPost = async (req,res) => {
                 
                 return res.render('noticeboard-replies',{output,userID,postID,admin,superAdmin,msg});
             };
-        await NoticeBoardReply.addNewReply(reply);
+        const newReply = await NoticeBoardReply.addNewReply(reply);
         output= await generateRepliesToPost(postID)
         let msg='Reply Successful'
-    console.log(output);
-    
+        await Logs.createALog(req.session.user.userId, 'Added a reply to a post', 'post', newReply._id, 'NoticeBoard');
     res.render('noticeboard-replies',{output,userID,postID,admin,superAdmin,msg:''});
         
     } catch (error) {
@@ -110,14 +110,13 @@ const superAdmin = req.session.user.superAdmin
         console.log(replyID);
         // console.log(postID.typeof);
         let result = await NoticeBoardReply.findByReplyID(replyID);
-        console.log(result);
+
         if (!result){
             msg+='Reply not found';
             return res.status(404).render('noticeboard-replies-update',{result:null,msg});
         }
         if (admin||superAdmin||(String(userID)==String(result.userID._id))){ //Remember to do type conversion
         
-        console.log(result)
         res.render('noticeboard-replies-update',{result,userID,msg});
         } else {
             let reason = req.session.admin ? null : 'not admin';
@@ -146,7 +145,7 @@ const replyID=req.body.replyID;
             msg.push('message missing from notice'+ ' ' +(validator.isMissingText(reply))+`<br>`);
             msg.push('User ID Missing from notice'+ ' ' +(validator.isInvalidId(userID))+ `<br>`);
             let result = await NoticeBoardReply.findByReplyID(replyID);
-            console.log(msg)
+           
             return res.status(400).render('noticeboard-replies-update',{result,msg});
         };
         let ReplyPending = await NoticeBoardReply.findByReplyID(replyID);
@@ -160,6 +159,7 @@ const replyID=req.body.replyID;
         let result = await NoticeBoardReply.UpdateReply(replyID,reply);
         console.log(result);
         if (result.modifiedCount===1){
+            await Logs.createALog(req.session.user.userId, 'Edited a reply to a post', 'post', result._id, 'NoticeBoard');
             result = await NoticeBoardReply.findByReplyID(replyID);
             res.render('noticeboard-replies-update',{result,msg:'edit successful'});
         
@@ -193,10 +193,10 @@ exports.getToDeleteReply = async (req,res) =>{
     try {
         const replyID=req.params.id;
        
-        console.log(replyID);
+        
         // console.log(postID.typeof);
         let result = await NoticeBoardReply.findByReplyID(replyID);
-        console.log(result);
+        
         if (!result){
             msg+='Reply not found';
             return res.status(404).render('noticeboard-replies-delete',{result:null,userID,msg});
@@ -224,8 +224,9 @@ exports.deleteReply = async (req,res) => {
     const userID = req.session.user.userId;
     try {
         let result = await NoticeBoardReply.deleteReply(replyID);
-        console.log(result);
+        
     if (result.deletedCount===1){
+        await Logs.createALog(req.session.user.userId, 'Deleted a reply to a post', 'post', replyID, 'NoticeBoard');
         res.render('noticeboard-replies-deletesuccess');
     } else {
         console.error('unknown delete error')
