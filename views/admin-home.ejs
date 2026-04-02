@@ -36,9 +36,9 @@
               type="text" 
               name="search" 
               placeholder="Enter name or email..." 
-              value="<%= searchQuery %>" 
+              value="<%= locals.searchQuery || '' %>"  
               style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background: white;">
-          </div>
+          </div> <!-- The locals check is Search Query  was passed, if not then returns undefined falls to || which goes to empty string instead. -->
 
           <!-- Role Filters -->
           <div style="display: flex; gap: 12px;">
@@ -48,7 +48,7 @@
                 type="checkbox" 
                 name="roles" 
                 value="superadmin"
-                <%= Array.isArray(selectedRoles) && selectedRoles.includes('superadmin') ? 'checked' : '' %>>
+                <%= (locals.selectedRoles || []).includes('superadmin') ? 'checked' : '' %>>
               Super Admin
             </label>
             <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--text); cursor: pointer;">
@@ -57,7 +57,7 @@
                 type="checkbox" 
                 name="roles" 
                 value="admin"
-                <%= Array.isArray(selectedRoles) && selectedRoles.includes('admin') ? 'checked' : '' %>>
+                <%= (locals.selectedRoles || []).includes('admin') ? 'checked' : '' %>>
               Admin
             </label>
             <label style="display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--text); cursor: pointer;">
@@ -66,7 +66,7 @@
                 type="checkbox" 
                 name="roles" 
                 value="user"
-                <%= Array.isArray(selectedRoles) && selectedRoles.includes('user') ? 'checked' : '' %>>
+                <%= (locals.selectedRoles || []).includes('user') ? 'checked' : '' %>>
               User
             </label>
             <!-- Array.isArray safety check + includes method; checkbox checked if 'user' is selected -->
