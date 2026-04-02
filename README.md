@@ -96,6 +96,8 @@ Server running at http://localhost:8000/
 
 To create an admin account manually, register a normal account first, then use the admin panel to promote the user via **Make Admin**.
 
+To create a superAdmin must have direct access to database they are supposed to be defined in the beginning directly editing and adding in the Boolean statement for superAdmin:true
+
 ---
 
 ## User Roles
@@ -107,7 +109,7 @@ The application has four levels of access:
 | **Not Logged User** | Can browse movies and homepage |
 | **Logged User** | Can browse movies, write and manage their own reviews, manage their watchlist, view recommendations, and edit their profile |
 | **Admin** | All user permissions, plus access to the admin panel: view all users, create new user accounts, promote users to admin, and delete users |
-| **Super Admin** | *(To be implemented)* — Intended to have elevated permissions above admin, such as managing admin accounts |
+| **Super Admin** | — Intended to have elevated permissions above admin, such as managing admin accounts |
 
 When a user with `admin: true` logs in, they are automatically redirected to `/admin` instead of `/`.
 
