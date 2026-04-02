@@ -147,7 +147,7 @@ exports.makeUserAdmin = async (req, res) => {
   
   try {
     let success = await User.updateAdminStatus(email, true);
-    console.log(success);
+    
     const userToPromote = await User.findOne({ email:email });
     if (success.modifiedCount > 0) {
       await Logs.createALog(req.session.user.userId, `Promoted ${userToPromote.name} to admin`, 'admin', userToPromote._id, 'User');

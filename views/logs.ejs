@@ -1,47 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logs</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Activity Logs – IAMdb</title>
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-    <h2>Activity log for <%= user.name %></h2>
+  <%- include('partials/navbar') %>
+  <div class="page-container">
+
+    <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h1 class="page-title">Activity Logs</h1>
+        <p class="page-subtitle">
+          Viewing logs for <strong><%= user.name %></strong>
+          <% if (user.superAdmin) { %>
+            &nbsp;<span class="superadmin-badge">Super Admin</span>
+          <% } else if (user.admin) { %>
+            &nbsp;<span class="admin-badge">Admin</span>
+          <% } else { %>
+            &nbsp;<span class="user-badge">User</span>
+          <% } %>
+        </p>
+      </div>
+      <a href="/admin" class="btn btn-ghost btn-sm">← Back to Admin</a>
+    </div>
 
     <% if (userLogs.length === 0) { %>
-    <p>No activity recorded for this user.</p>
+      <div class="empty-state">
+        <p>No activity recorded for this user yet.</p>
+      </div>
     <% } else { %>
-        <table border="1">
-            <thead>
+
+      <div class="logs-summary">
+        <span class="logs-count"><%= userLogs.length %> log<%= userLogs.length === 1 ? '' : 's' %> total</span>
+      </div>
+
+      <div class="logs-table-wrap">
+        <table class="admin-table logs-table">
+          <thead>
             <tr>
-                <th>Action</th>
-                <th>Category</th>
-                <th>Date</th>
-                <th>Link</th>
+              <th>Action</th>
+              <th>Category</th>
+              <th>Date &amp; Time</th>
+              <th>Link</th>
             </tr>
-            </thead>
-            <tbody>
+          </thead>
+          <tbody>
             <% userLogs.forEach(log => { %>
-                <tr>
-                <td><%= log.action %></td>
-                <td><%= log.category %></td>
-                <td><%= log.createdAt.toLocaleDateString("en-GB", { weekday: "short", year: "numeric", month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit"}) %>
+              <tr>
+                <td>
+                  <span class="log-action-text"><%= log.action %></span>
                 </td>
                 <td>
-                    <% if (log.targetId && log.targetModel === 'Movie') { %>
-                        <a href="/movie/<%= log.targetId %>">View Movie</a>
-                    <% } else if ((log.targetId && log.targetModel === 'Review')){ %>
-                        <a href="/movie/<%= log.targetId %>#reviews">View Review</a>
-                    <% } else { %>
-                        -
-                    <% } %>
+                  <span class="log-category-badge log-category-<%= log.category ? log.category.toLowerCase().replace(/\s+/g,'-') : 'other' %>">
+                    <%= log.category %>
+                  </span>
                 </td>
-                </tr>
+                <td class="log-date">
+                  <%= log.createdAt.toLocaleDateString('en-GB', {
+                    weekday: 'short', year: 'numeric', month: 'short',
+                    day: '2-digit', hour: '2-digit', minute: '2-digit'
+                  }) %>
+                </td>
+                <td>
+                  <% if (log.targetId && log.targetModel === 'Movie') { %>
+                    <a class="btn btn-sm btn-secondary" href="/movie/<%= log.targetId %>">View Movie</a>
+                  <% } else if (log.targetId && log.targetModel === 'Review') { %>
+                    <a class="btn btn-sm btn-secondary" href="/movie/<%= log.targetId %>#reviews">View Review</a>
+                  <% } else { %>
+                    <span style="color:var(--text-3);font-size:13px;">—</span>
+                  <% } %>
+                </td>
+              </tr>
             <% }) %>
-            </tbody>
+          </tbody>
         </table>
-    <% } %>
+      </div>
 
-    <a href="/admin">Back to Admin</a>
+    <% } %>
+  </div>
 </body>
 </html>

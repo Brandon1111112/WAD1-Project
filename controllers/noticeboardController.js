@@ -1,4 +1,5 @@
 const User=require('../models/user-model');
+const Logs = require('../models/logs-model');
 const validator = require("./utils/validation");
 const auth = require('../middlewares/auth-middleware');
 // get models (both)
@@ -101,7 +102,7 @@ exports.postNotice = async (req,res)=>{
         let user = req.session.user;
         // const admin=req.session.admin
         // const superAdmin=req.session.superAdmin;
-
+        await Logs.createALog(req.session.user.userId, 'Added a new post', 'post', result._id, 'NoticeBoard');
         // console.log(notices.length)
         let output= await generateOutputforNoticeboard();
         res.render('noticeboard',{output,user,result: result||null,msg});
@@ -179,6 +180,7 @@ exports.UpdateNotice= async (req,res) => {
         console.log(result);
         if (result.modifiedCount===1){
             result = await NoticeBoard.findByPostID(messageID);
+            await Logs.createALog(req.session.user.userId, 'Updated a post', 'post', result._id, 'NoticeBoard');
             res.render('noticeboard-update',{result,msg:'edit successful'});
         
         } else {
@@ -237,6 +239,7 @@ exports.deletePost = async (req,res) => {
         let result = await NoticeBoard.deleteNotice(messageID);
         console.log(result);
     if (result.deletedCount===1){
+        await Logs.createALog(req.session.user.userId, 'Deleted a post', 'post', messageID, 'NoticeBoard');
         res.render('noticeboard-deletesuccess');
     } else {
         console.error('unknown delete error')
