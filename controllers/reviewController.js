@@ -48,7 +48,7 @@ const addReview = async (req, res) => {
         await Review.createReview(newReview);
 
         const movieTitle = (await Movie.findById(movieId)).movieTitle;
-        await Logs.createALog(req.session.user.userId, `Added a review for ${movieTitle}`, 'review', movieId, 'Review');
+        await Logs.createALog(req.session.user.userId, `Added a review for ${movieTitle}`, 'review', movieId);
 
         return res.redirect(`/movie/${movieId}`);
     } catch (error) {
@@ -112,7 +112,7 @@ const updateReview = async (req, res) => {
         );
 
         const movieTitle = (await Movie.findById(existingReview.movieId)).movieTitle;
-        await Logs.createALog(req.session.user.userId, `Edited a review for ${movieTitle}`, 'review', existingReview.movieId, 'Review');
+        await Logs.createALog(req.session.user.userId, `Edited a review for ${movieTitle}`, 'review', existingReview.movieId);
         return res.redirect(`/movie/${existingReview.movieId}`);
     } catch (error) {
         console.error(error);
@@ -154,9 +154,9 @@ const deleteReview = async (req, res) => {
         const userName = await User.findById(existingReview.userId) || 'Deleted user';
 
         if (req.session.user.admin || req.session.user.superAdmin) {
-            await Logs.createALog(req.session.user.userId, `Deleted a review for ${movieTitle} of ${userName === 'Deleted user' ? 'Deleted user' : userName.name}`, 'review', existingReview.movieId, 'Review');
+            await Logs.createALog(req.session.user.userId, `Deleted a review for ${movieTitle} of ${userName === 'Deleted user' ? 'Deleted user' : userName.name}`, 'review', existingReview.movieId, true);
         } else if (req.session.user) {
-            await Logs.createALog(req.session.user.userId, `Deleted a review for ${movieTitle}`, 'review', existingReview.movieId, 'Review');
+            await Logs.createALog(req.session.user.userId, `Deleted a review for ${movieTitle}`, 'review', existingReview.movieId, true);
         }
 
         await Review.deleteReviewById(reviewId);

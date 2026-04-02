@@ -17,24 +17,24 @@ async function getJson(url) {
 // Get all movies from MongoDB and check if user watched or not
 const getAllMovies = async (req, res) => {
   try {
-    //get the search and genre queries to filter and search
+    // Get the search and genre queries to filter and search
     const searchQuery = req.query.search || "";
     const genreQuery = req.query.genre || "";
 
-    //get all genres
+    // Get all genres
     const genres = await Movie.getDistinctGenres();
 
     let watchlist = [];
     let alreadyWatched = [];
     let currentUser = null;
 
-    //get currently logged in user and their data about their watched movies
+    // Get currently logged in user and their data about their watched movies
     if (req.session.user){
       const user = await User.findOne({ _id: req.session.user.userId });
 
       if (user){
         currentUser = req.session.user;
-        //get movies that user wants to watch but has not watched to create the watchlist
+        // Get movies that user wants to watch but has not watched yet
         const watchedEntries = await Watchlist.find({
         userId: user._id,
         wantsToWatch: true,
@@ -43,7 +43,7 @@ const getAllMovies = async (req, res) => {
         
         watchlist = watchedEntries.map((entry) => entry.movieId.toString());
 
-        //get movies that user has watched to create the already watched list
+        // Get movies that user has already watched 
         const watchedMovies = await Watchlist.find({
           userId: user._id,
           wantsToWatch: false,
@@ -59,12 +59,13 @@ const getAllMovies = async (req, res) => {
 
     let movieList = await Movie.getAllMovies();
 
+    // Filter movie selection by the query of search bar
     if (searchQuery) {
        movieList = movieList.filter(movie => 
           movie.movieTitle.toLowerCase().includes(searchQuery.toLowerCase())
         );
     }
-
+    // Filter movie selection by the genre
     if (genreQuery) {
        movieList = movieList.filter(movie => 
           movie.genre.toLowerCase().includes(genreQuery.toLowerCase())
@@ -93,7 +94,7 @@ const getMovieById = async (req, res) => {
   }
 
   try {
-    //get the movies by the given movie id
+    // Get the movies by the given movie id
     const movie = await Movie.findMoveById(req.params.id);
     const error = req.session.error || null;
     req.session.error = null;
@@ -104,22 +105,22 @@ const getMovieById = async (req, res) => {
 
     const reviews = await Review.getReviewsByMovieId(req.params.id);
 
-    // find if the user has already movies in the watchlist
+    // Find the user's watchlist, if any
     const wantsToWatch = await Watchlist.find({
       userId: req.session.user.userId,
       wantsToWatch: true,
       hasWatched: false,
     });
-    // array of movies with wantToWatch: true and hasWatched: false
+    // Array of movies in the user's watchlist
     const watchlist = wantsToWatch.map((entry) => entry.movieId.toString());
 
-    // find movies the user has already watched
+    // Find movies the user has already watched
     const hasWatched = await Watchlist.find({
       userId: req.session.user.userId,
       wantsToWatch: false,
       hasWatched: true,
     });
-    // array of movies with wantToWatch: false and hasWatched: true
+    // Array of movies the user has already watched
     const alreadyWatched = hasWatched.map((entry) => entry.movieId.toString());
 
     const ratingSummary = await Review.getRatingSummaryByMovieId(req.params.id);
@@ -204,7 +205,7 @@ const createMovie = async (req, res) => {
     };
 
     const createdMovie = await Movie.createMovie(newMovie);
-    await Logs.createALog(req.session.user.userId, `The movie ${newMovie.movieTitle} was added`, 'movie', createdMovie._id, 'Movie');
+    await Logs.createALog(req.session.user.userId, `The movie ${newMovie.movieTitle} was added`, 'movie', createdMovie._id);
     // Redirect to the new movie's page
     return res.redirect(`/movie/${createdMovie._id}`);
   } catch (err) {
@@ -244,10 +245,13 @@ const deleteMovie = async (req, res) => {
     if (!movieFound) {
       return res.status(404).send("Movie not found!");
     }
-    //delete the movie and all its references from both te movies and the watchlist pages
+    // Delete the movie and all its references from both the movies and the watchlist collections
     await Movie.deleteMovieById(movieId);
     await Watchlist.deleteMany({ movieId: movieId });
+    
     await Logs.createALog(req.session.user.userId, `The movie ${movieFound.movieTitle} was deleted`, 'movie', movieId);
+    // All the logs with same movieId (tragetId) will be marked as deleted (isDeleted:true)
+    await Logs.updateMany({targetId:movieFound._id}, {isDeleted: true})
     // Redirect to all movies page after deletion
     return res.redirect("/movie");
   } catch (error) {
@@ -300,7 +304,7 @@ const updateMovieDetails = async (req, res) => {
       movieDescription.trim(),
       releaseDate,
     );
-    await Logs.createALog(req.session.user.userId, `The movie ${movieTitle} was edited`, 'movie', movieId, 'Movie');
+    await Logs.createALog(req.session.user.userId, `The movie ${movieTitle} was edited`, 'movie', movieId);
     // Redirect to the updated movie's page
     return res.redirect(`/movie/${movieId}`);
   } catch (error) {

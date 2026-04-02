@@ -87,10 +87,10 @@ exports.replyToPost = async (req,res) => {
                 
                 return res.render('noticeboard-replies',{output,userID,postID,admin,superAdmin,msg});
             };
-        const newReply = await NoticeBoardReply.addNewReply(reply);
+        await NoticeBoardReply.addNewReply(reply);
         output= await generateRepliesToPost(postID)
         let msg='Reply Successful'
-        await Logs.createALog(req.session.user.userId, 'Added a reply to a post', 'post', newReply._id, 'NoticeBoard');
+        await Logs.createALog(req.session.user.userId, 'Added a reply to a post', 'reply', postID);
     res.render('noticeboard-replies',{output,userID,postID,admin,superAdmin,msg:''});
         
     } catch (error) {
@@ -149,7 +149,7 @@ const replyID=req.body.replyID;
             return res.status(400).render('noticeboard-replies-update',{result,msg});
         };
         let ReplyPending = await NoticeBoardReply.findByReplyID(replyID);
-        console.log(ReplyPending);
+        
         if (reply===ReplyPending.reply){
             msg='reply is still the same as before';
             console.error(msg);
@@ -157,9 +157,9 @@ const replyID=req.body.replyID;
             return res.render('noticeboard-replies-update',{result,msg})
         }
         let result = await NoticeBoardReply.UpdateReply(replyID,reply);
-        console.log(result);
+        
         if (result.modifiedCount===1){
-            await Logs.createALog(req.session.user.userId, 'Edited a reply to a post', 'post', result._id, 'NoticeBoard');
+            await Logs.createALog(req.session.user.userId, 'Edited a reply to a post', 'reply', ReplyPending.parentPostID);
             result = await NoticeBoardReply.findByReplyID(replyID);
             res.render('noticeboard-replies-update',{result,msg:'edit successful'});
         
@@ -226,7 +226,7 @@ exports.deleteReply = async (req,res) => {
         let result = await NoticeBoardReply.deleteReply(replyID);
         
     if (result.deletedCount===1){
-        await Logs.createALog(req.session.user.userId, 'Deleted a reply to a post', 'post', replyID, 'NoticeBoard');
+        await Logs.createALog(req.session.user.userId, 'Deleted a reply to a post', 'reply', replyID, true);
         res.render('noticeboard-replies-deletesuccess');
     } else {
         console.error('unknown delete error')

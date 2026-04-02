@@ -1,4 +1,3 @@
-const express = require("express");
 const Logs = require('../models/logs-model');
 const User = require('../models/user-model');
 const Review = require("../models/review-model");
@@ -9,18 +8,20 @@ const showWatchlist = async (req, res) => {
   try {
     const searchQuery = req.query.search || "";
 
+    // Find watchlist entries of the user and populate by the movieId
     const watchlist = await Watchlist.find({
       userId: req.session.user.userId,
       wantsToWatch: true,
       hasWatched: false,
     }).populate("movieId");
-
+    // Find already watched entries of the user and populate by the movieId
     const alreadyWatched = await Watchlist.find({
       userId: req.session.user.userId,
       wantsToWatch: false,
       hasWatched: true,
     }).populate("movieId");
 
+    // Filter fucntion to filter entries based on searchQuery
     const filterBySearch = (entries) => {
       if (!searchQuery) return entries;
       return entries.filter((entry) =>
@@ -49,6 +50,10 @@ const addToWatchlist = async (req, res) => {
     const movieId = req.body.movieId;
     const movieTitle = (await Movie.findById(movieId)).movieTitle;
 
+    /* 
+    It will find the document by the userId and movieId, 
+    if document already exists it will update it, if it does not exist it will create a new document (upsert:true)
+    */
     await Watchlist.findOneAndUpdate(
       { userId: req.session.user.userId, movieId: movieId },
       {
@@ -59,8 +64,9 @@ const addToWatchlist = async (req, res) => {
       },
       { upsert: true },
     );
-    console.log("Successfully added to watchlist");
+
     await Logs.createALog(req.session.user.userId, `Added ${movieTitle} to watchlist`, 'watchlist');
+
     return res.redirect(req.headers.referer || "/movie");
   } catch (error) {
     console.log(error);
@@ -78,8 +84,8 @@ const removeFromWatchlist = async (req, res) => {
       { wantsToWatch: false, addDate: null },
     );
 
-    console.log("Successfully removed from watchlist");
     await Logs.createALog(req.session.user.userId, `Removed ${movieTitle} from watchlist`, 'watchlist');
+
     return res.redirect(req.headers.referer || "/movie");
   } catch (error) {
     console.log(error);
@@ -90,9 +96,13 @@ const removeFromWatchlist = async (req, res) => {
 const markAsWatched = async (req, res) => {
   try {
     const movieId = req.body.movieId;
-    const movie = await Movie.findMoveById(movieId);
+    const movie = await Movie.findById(movieId);
     const movieRunTime = movie.runTime;
     
+    /* 
+    It will update/create the document using the userId and movieId, 
+    if document already exists it will update it, if it does not exist it will create a new document (upsert:true)
+    */
     await Watchlist.updateOne(
       { userId: req.session.user.userId, movieId: movieId },
       {
@@ -104,8 +114,8 @@ const markAsWatched = async (req, res) => {
       { upsert: true },
     );
 
-    console.log("Successfully marked as watched");
     await Logs.createALog(req.session.user.userId, `Marked ${movie.movieTitle} as watched`, 'watchlist');
+
     return res.redirect(req.headers.referer || "/movie");
   } catch (error) {
     console.log(error);
@@ -123,8 +133,8 @@ const unmarkAsWatched = async (req, res) => {
       { wantsToWatch: false, hasWatched: false, watchTime: 0 },
     );
 
-    console.log("Successfully unmarked as watched");
     await Logs.createALog(req.session.user.userId, `Unmarked ${movieTitle} as watched`, 'watchlist');
+
     return res.redirect(req.headers.referer || "/movie");
   } catch (error) {
     console.log(error);
@@ -134,43 +144,44 @@ const unmarkAsWatched = async (req, res) => {
 
 const showRecommendations = async (req, res) => {
   try {
+    // Get the movie watched by the user
     const watched = await Watchlist.find({
       userId: req.session.user.userId,
       hasWatched: true,
     }).populate("movieId");
-
+    // Get the movie already in the user's watchlist
     const inWatchlist = await Watchlist.find({
       userId: req.session.user.userId,
       wantsToWatch: true,
     });
 
-    // count genres
+    // Count genres
     const genreCount = {};
     watched.forEach((entry) => {
       const genre = entry.movieId.genre;
       genreCount[genre] = (genreCount[genre] || 0) + 1;
     });
 
-    // get user favourite genres
+    // Get user favourite genres
     const rawUserFavouriteGenres = (await User.findById(req.session.user.userId)).favoriteGenres;
 
-    // find top 3 genres
+    // Find top 3 genres
     const rawTopGenres = Object.keys(genreCount)
       .sort((a, b) => genreCount[b] - genreCount[a])
       .filter(genre => !rawUserFavouriteGenres.includes(genre))
       .slice(0, 3);
 
-    // get all movies watched or in watchlist
+    // Get the movie to exlude by combining movies watched or in watchlist
     const excludedMovies = [
       ...inWatchlist.map((entry) => entry.movieId._id),
       ...watched.map((entry) => entry.movieId._id)
     ];
-    // get movies not yet watched within top 3 genres
+    // Get movies not yet watched within top 3 genres
     const recommendations = await Movie.getMoviesByGenres(
       rawTopGenres,
       excludedMovies,
     );
-    // get movies not yet watched from user fav genres
+    // Get movies not yet watched from user fav genres
     const favoriteRecommendations = await Movie.getMoviesByGenres(
       rawUserFavouriteGenres,
       excludedMovies,

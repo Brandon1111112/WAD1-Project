@@ -65,10 +65,26 @@
                   }) %>
                 </td>
                 <td>
-                  <% if (log.targetId && log.targetModel === 'Movie') { %>
-                    <a class="btn btn-sm btn-secondary" href="/movie/<%= log.targetId %>">View Movie</a>
-                  <% } else if (log.targetId && log.targetModel === 'Review') { %>
-                    <a class="btn btn-sm btn-secondary" href="/movie/<%= log.targetId %>#reviews">View Review</a>
+                  <% if (log.targetId && log.category === 'movie') { %>
+                    <% if (log.isDeleted) {%>
+                      <p style="color:var(--text-3);font-size:13px;">Movie was deleted</p>
+                    <% } else { %>
+                      <a class="btn btn-sm btn-secondary" href="/movie/<%= log.targetId %>">View Movie</a>
+                    <% } %>
+                  <% } else if (log.targetId && log.category === 'review') { %>
+                    <% if (log.isDeleted) {%>
+                      <p style="color:var(--text-3);font-size:13px;">Review was deleted</p>
+                    <% } else { %>
+                      <a class="btn btn-sm btn-secondary" href="/movie/<%= log.targetId %>#reviews">View Review</a>
+                    <% } %>
+                  <% } else if (log.targetId && log.category === 'post') { %>
+                    <% if (log.isDeleted) {%>
+                      <p style="color:var(--text-3);font-size:13px;">Post was deleted</p>
+                    <% } else { %>
+                      <a class="btn btn-sm btn-secondary" href="/noticeboard">View Post</a>
+                    <% } %>
+                  <% } else if (log.targetId && log.category === 'reply') { %>
+                    <a class="btn btn-sm btn-secondary" href="/noticeboard/<%= log.targetId %>/replies">View Reply</a>
                   <% } else { %>
                     <span style="color:var(--text-3);font-size:13px;">—</span>
                   <% } %>

@@ -1,8 +1,5 @@
-const fs = require('fs/promises');
 const bcrypt = require('bcrypt');
 const User = require('../models/user-model.js');
-const Movie = require('../models/movie-model.js');
-const Review = require('../models/review-model.js');
 const Logs = require('../models/logs-model.js');
 const Watchlist = require('../models/watchlist-model');
 
@@ -130,7 +127,7 @@ exports.createUser = async (req, res) => {
         admin: false
     });
     let result = await User.addUser(newUser);
-    await Logs.createALog(req.session.user.userId, `Added a new user ${newUser.name}`, 'admin', result._id, 'User');
+    await Logs.createALog(req.session.user.userId, `Added a new user ${newUser.name}`, 'admin', result._id);
     console.log("User created:" + result);
     let users = await User.find();
     res.render('admin-home', { message: 'User created successfully!', Users: users, error: null });
@@ -150,7 +147,7 @@ exports.makeUserAdmin = async (req, res) => {
     
     const userToPromote = await User.findOne({ email:email });
     if (success.modifiedCount > 0) {
-      await Logs.createALog(req.session.user.userId, `Promoted ${userToPromote.name} to admin`, 'admin', userToPromote._id, 'User');
+      await Logs.createALog(req.session.user.userId, `Promoted ${userToPromote.name} to admin`, 'admin', userToPromote._id);
       res.render('admin-status-success', {message: 'User is now an admin'});
     } else {
       let users = await User.find();
@@ -174,7 +171,7 @@ exports.demoteUserAdmin = async (req, res) => {
   }
   
   const userToDemote = await User.findOne({ email:email });
-  await Logs.createALog(currentUser.userId, `Demoted ${userToDemote.name} to user`, 'admin', userToDemote._id, 'User');
+  await Logs.createALog(currentUser.userId, `Demoted ${userToDemote.name} to user`, 'admin', userToDemote._id);
 
   let success = await User.updateAdminStatus(email, false);
   
@@ -187,8 +184,10 @@ exports.demoteUserAdmin = async (req, res) => {
 
 exports.showLogs = async (req,res) => {
   try {
+    // Get the userId from the url
     const userId = req.params.userID;
 
+    // Find the user and order its log by most recent
     const user = await User.findById(userId);
     const userLogs = await Logs.find({userId:userId})
         .sort({ createdAt: -1 });

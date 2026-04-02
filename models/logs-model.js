@@ -4,15 +4,15 @@ const logModel = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    require: true,
+    required: true,
   },
   action:{
     type: String,
-    require: true,
+    required: true,
   },
   category: {
     type: String,
-    require: true,
+    required: true,
   },
   createdAt: {
     type: Date,
@@ -20,21 +20,21 @@ const logModel = new mongoose.Schema({
   },
   targetId: {
     type: mongoose.Schema.Types.ObjectId,
-    require: false,
+    required: false,
     default: null,
   },
-  targetModel: {
-    type: String,
-    require: false,
-    default: null,
+  isDeleted: {
+    type: Boolean,
+    required: false,
+    default: false,
   }
 
 });
 
 const Logs = mongoose.model("Logs", logModel, "logs");
 
-Logs.createALog = function (userId, action, category, targetId, targetModel) {
-  return Logs.create({userId:userId, action:action, category:category, targetId:targetId, targetModel:targetModel})
+Logs.createALog = function (userId, action, category, targetId, isDeleted) {
+  return Logs.create({userId:userId, action:action, category:category, targetId:targetId, isDeleted:isDeleted})
 };
 
 module.exports = Logs;
