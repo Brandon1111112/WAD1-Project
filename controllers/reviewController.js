@@ -8,17 +8,14 @@ const addReview = async (req, res) => {
     const movieId = req.params.id;
     const { rating, review } = req.body;
 
-    // 400 Bad Request: movie ID format is invalid
     if (validator.isInvalidId(movieId)) {
         return res.status(400).render('error', { error: "Invalid movie id.", statusCode: 400 });
     }
 
-    // 401 Unauthorized: user must be logged in before adding a review
     if (!req.session.user || !req.session.user.userId) {
         return res.status(401).render('error', { error: "You must be logged in to review.", statusCode: 401 });
     }
 
-    // 400 Bad Request: rating or review text was not provided properly
     if (!rating || !review || review.trim() === "") {
         return res.status(400).render('error', { error: "Rating and review are required.", statusCode: 400 });
     }
@@ -26,7 +23,6 @@ const addReview = async (req, res) => {
     try {
         const movie = await Movie.findMoveById(movieId);
 
-        // 404 Not Found: movie does not exist in database
         if (!movie) {
             return res.status(404).render('error', { error: "Movie not found", statusCode: 404 });
         }
@@ -57,7 +53,6 @@ const addReview = async (req, res) => {
         return res.redirect(`/movie/${movieId}`);
     } catch (error) {
         console.error(error);
-        // 500 Internal Server Error: unexpected issue while adding review
         return res.status(500).render('error', { error: "Error adding review", statusCode: 500 });
     }
 };
@@ -65,7 +60,6 @@ const addReview = async (req, res) => {
 const getReviewToEdit = async (req, res) => {
     const reviewId = req.params.reviewId;
 
-    // 400 Bad Request: review ID format is invalid
     if (validator.isInvalidId(reviewId)) {
         return res.status(400).render('error', { error: "Invalid review id.", statusCode: 400 });
     }
@@ -73,12 +67,10 @@ const getReviewToEdit = async (req, res) => {
     try {
         const review = await Review.findReviewById(reviewId);
 
-        // 404 Not Found: review does not exist
         if (!review) {
             return res.status(404).render('error', { error: "Review not found.", statusCode: 404 });
         }
 
-        // 403 Forbidden: user is trying to edit someone else's review
         if (review.userId._id.toString() !== req.session.user.userId) {
             return res.status(403).render('error', { error: "You can only edit your own review.", statusCode: 403 });
         }
@@ -86,7 +78,6 @@ const getReviewToEdit = async (req, res) => {
         return res.render("edit-review", { review: review });
     } catch (error) {
         console.error(error);
-        // 500 Internal Server Error: unexpected issue while loading review edit page
         return res.status(500).render('error', { error: "Error fetching review.", statusCode: 500 });
     }
 };
@@ -95,12 +86,10 @@ const updateReview = async (req, res) => {
     const reviewId = req.params.reviewId;
     const { rating, review } = req.body;
 
-    // 400 Bad Request: review ID format is invalid
     if (validator.isInvalidId(reviewId)) {
         return res.status(400).render('error', { error: "Review ID not found", statusCode: 400 });
     }
 
-    // 400 Bad Request: rating or review text missing
     if (!rating || !review || review.trim() === "") {
         return res.status(400).render('error', { error: "Rating and review are required.", statusCode: 400 });
     }
@@ -108,12 +97,10 @@ const updateReview = async (req, res) => {
     try {
         const existingReview = await Review.findReviewById(reviewId);
 
-        // 404 Not Found: review no longer exists
         if (!existingReview) {
             return res.status(404).render('error', { error: "Review not found.", statusCode: 404 });
         }
 
-        // 403 Forbidden: user is trying to update someone else's review
         if (existingReview.userId._id.toString() !== req.session.user.userId) {
             return res.status(403).render('error', { error: "You can only update your own review.", statusCode: 403 });
         }
@@ -129,7 +116,6 @@ const updateReview = async (req, res) => {
         return res.redirect(`/movie/${existingReview.movieId}`);
     } catch (error) {
         console.error(error);
-        // 500 Internal Server Error: unexpected issue while updating review
         return res.status(500).render('error', { error: "Error updating review.", statusCode: 500 });
     }
 };
@@ -137,7 +123,6 @@ const updateReview = async (req, res) => {
 const deleteReview = async (req, res) => {
     const reviewId = req.params.reviewId;
 
-    // 400 Bad Request: review ID format is invalid
     if (validator.isInvalidId(reviewId)) {
         return res.status(400).render('error', { error: "Invalid review id.", statusCode: 400 });
     }
@@ -145,7 +130,6 @@ const deleteReview = async (req, res) => {
     try {
         const existingReview = await Review.findReviewById(reviewId);
 
-        // 404 Not Found: review does not exist
         if (!existingReview) {
             return res.status(404).render('error', { error: "Review not found.", statusCode: 404 });
         }
@@ -161,7 +145,6 @@ const deleteReview = async (req, res) => {
             req.session.user.superAdmin ||
             req.session.user.isSuperAdmin;
 
-        // 403 Forbidden: only owner or admin can delete this review
         if (!isOwner && !isAdmin) {
             return res.status(403).render('error', { error: "You are not allowed to delete this review.", statusCode: 403 });
         }
@@ -181,7 +164,6 @@ const deleteReview = async (req, res) => {
         return res.redirect(`/movie/${movieId}`);
     } catch (error) {
         console.error(error);
-        // 500 Internal Server Error: unexpected issue while deleting review
         return res.status(500).render('error', { error: "Error deleting review.", statusCode: 500 });
     }
 };
