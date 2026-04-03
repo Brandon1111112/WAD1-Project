@@ -21,7 +21,7 @@ const addReview = async (req, res) => {
     }
 
     try {
-        const movie = await Movie.findMoveById(movieId);
+        const movie = await Movie.findMovieById(movieId);
 
         if (!movie) {
             return res.status(404).render('error', { error: "Movie not found", statusCode: 404 });

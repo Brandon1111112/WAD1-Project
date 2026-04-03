@@ -35,7 +35,7 @@ Movie.getAllMovies = function () {
   return Movie.find();
 };
 
-Movie.findMoveById = function (_id) {
+Movie.findMovieById = function (_id) {
   return Movie.findOne({ _id: _id });
 };
 

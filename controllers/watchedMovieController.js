@@ -51,7 +51,7 @@ const showWatchlist = async (req, res) => {
 const addToWatchlist = async (req, res) => {
   try {
     const movieId = req.body.movieId;
-    const movie = await Movie.findById(movieId);
+    const movie = await Movie.findMovieById(movieId);
     if (!movie) {
       return res.status(404).render('error', { error: 'Movie not found', statusCode: 404 });
     }
@@ -85,7 +85,7 @@ const addToWatchlist = async (req, res) => {
 const removeFromWatchlist = async (req, res) => {
   try {
     const movieId = req.body.movieId;
-    const movie = await Movie.findById(movieId);
+    const movie = await Movie.findMovieById(movieId);
     if (!movie) {
       return res.status(404).render('error', { error: 'Movie not found', statusCode: 404 });
     }
@@ -110,7 +110,7 @@ const removeFromWatchlist = async (req, res) => {
 const markAsWatched = async (req, res) => {
   try {
     const movieId = req.body.movieId;
-    const movie = await Movie.findById(movieId);
+    const movie = await Movie.findMovieById(movieId);
     if (!movie) {
       return res.status(404).render('error', { error: 'Movie not found', statusCode: 404 });
     }
@@ -146,7 +146,7 @@ const markAsWatched = async (req, res) => {
 const unmarkAsWatched = async (req, res) => {
   try {
     const movieId = req.body.movieId;
-    const movie = await Movie.findById(movieId);
+    const movie = await Movie.findMovieById(movieId);
     if (!movie) {
       return res.status(404).render('error', { error: 'Movie not found', statusCode: 404 });
     }

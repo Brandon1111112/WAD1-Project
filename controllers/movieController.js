@@ -94,7 +94,7 @@ const getMovieById = async (req, res) => {
 
   try {
     // Get the movies by the given movie id
-    const movie = await Movie.findMoveById(req.params.id);
+    const movie = await Movie.findMovieById(req.params.id);
     const error = req.session.error || null;
     req.session.error = null;
 
@@ -213,7 +213,7 @@ const getMovieToBeDeleted = async (req, res) => {
   }
 
   try {
-    const movie = await Movie.findMoveById(movieId);
+    const movie = await Movie.findMovieById(movieId);
 
     if (!movie) {
       return res.status(404).render("error", { error: "Movie not found!", statusCode: 404 });
@@ -228,7 +228,7 @@ const getMovieToBeDeleted = async (req, res) => {
 const deleteMovie = async (req, res) => {
   try {
     const movieId = req.params.id;
-    const movieFound = await Movie.findMoveById(movieId);
+    const movieFound = await Movie.findMovieById(movieId);
 
     if (!movieFound) {
       return res.status(404).render("error", { error: "Movie not found!", statusCode: 404 });
@@ -236,6 +236,7 @@ const deleteMovie = async (req, res) => {
     // Delete the movie and all its references from both the movies and the watchlist collections
     await Movie.deleteMovieById(movieId);
     await Watchlist.deleteMany({ movieId: movieId });
+    await Review.deleteMany({ movieId: movieId });
     
     await Logs.createALog(req.session.user.userId, `The movie ${movieFound.movieTitle} was deleted`, 'movie', movieId);
     // All the logs with same movieId (tragetId) will be marked as deleted (isDeleted:true)
@@ -251,7 +252,7 @@ const getMovieToEdit = async (req, res) => {
   const movieId = req.params.id;
 
   try {
-    let movieDetails = await Movie.findMoveById(movieId);
+    let movieDetails = await Movie.findMovieById(movieId);
 
     if (!movieDetails) {
       return res.status(404).render("error", { error: "Movie not found!", statusCode: 404 });
