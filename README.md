@@ -86,15 +86,15 @@ Server running at http://localhost:8000/
 
 ## Test Credentials
 
-> ⚠️ **Placeholder — update these once testing is complete.**
-
 | Role | Email | Password |
 |---|---|---|
 | Regular User | `user@test.com` | `password123` |
 | Admin | `admin@test.com` | `adminpass123` |
 | Super Admin | `superadmin@test.com` | `superpass123` |
 
-To create an admin account manually, register a normal account first, then use the admin panel to promote the user via **Make Admin**.
+To create an admin account manually, register a normal account first, then use the admin panel to promote the user via **Make Admin**. 
+
+**Note**: Only a superAdmin can perform the initial promotion. Once the first admin is created, existing admins can promote other users to admin.
 
 To create a superAdmin must have direct access to database they are supposed to be defined in the beginning directly editing and adding in the Boolean statement for superAdmin:true
 
@@ -106,8 +106,8 @@ The application has four levels of access:
 
 | Role | Access |
 |---|---|
-| **Not Logged User** | Can browse movies and homepage |
-| **Logged User** | Can browse movies, write and manage their own reviews, manage their watchlist, view recommendations, and edit their profile |
+| **Guest** | Can browse movies and homepage |
+| **User** | Can browse movies, write and manage their own reviews, manage their watchlist, view recommendations, and edit their profile |
 | **Admin** | All user permissions, plus access to the admin panel: view all users, create new user accounts, promote users to admin, and delete users |
 | **Super Admin** | — Intended to have elevated permissions above admin, such as managing admin accounts |
 
@@ -132,7 +132,7 @@ When a user with `admin: true` logs in, they are automatically redirected to `/a
 
 | Method | Path | Description |
 |---|---|---|
-| GET | `/` | Renders the landing page. Requires login — redirects to `/login` if not authenticated |
+| GET | `/` | Renders the landing page. |
 
 ---
 
@@ -196,14 +196,7 @@ All admin routes require the user to be logged in and have `admin: true`. Non-ad
 | POST | `/admin/confirm-delete` | Shows a confirmation page listing users selected for deletion |
 | POST | `/admin/delete-users` | Permanently deletes the selected users from the database |
 | POST | `/admin/make-admin` | Promotes a user to admin by setting their `admin` flag to `true` |
-
----
-
-### View Users — `/viewusers`
-
-| Method | Path | Description |
-|---|---|---|
-| GET | `/viewusers` | Renders a view of users (admin utility route) |
+| GET | `/logs/:userID` | Shows the history logs of the user selected in the admin panel |
 
 ---
 
@@ -213,10 +206,10 @@ All admin routes require the user to be logged in and have `admin: true`. Non-ad
 WAD1-Project/
 ├── controllers/         # Business logic for each feature
 │   ├── adminController.js
-│   ├── loginController.js
+│   ├── discussionboardController.js
+│   ├── discussionboardreplyController.js
 │   ├── movieController.js
-│   ├── profileController.js
-│   ├── registerController.js
+│   ├── userController.js
 │   ├── reviewController.js
 │   ├── watchedMovieController.js
 │   └── utils/
@@ -224,6 +217,9 @@ WAD1-Project/
 ├── middlewares/
 │   └── auth-middleware.js   # isLoggedIn and isAdmin guards
 ├── models/
+│   ├── discussionboard-model.js
+│   ├── discussionboardreply-model.js
+│   ├── logs-model.js
 │   ├── movie-model.js
 │   ├── review-model.js
 │   ├── user-model.js
@@ -233,32 +229,42 @@ WAD1-Project/
 │   └── img/
 ├── routes/
 │   ├── adminRoutes.js
-│   ├── homeRoutes.js
-│   ├── loginRoutes.js
+│   ├── discussionBoardRoutes.js
 │   ├── movieRoutes.js
-│   ├── profileRoutes.js
-│   ├── registerRoutes.js
-│   ├── viewuserRoutes.js
+│   ├── userRoutes.js
 │   └── watchedMoviesRoutes.js
 ├── views/
 │   ├── partials/
 │   │   └── navbar.ejs
+│   ├── admin-delete-confirmation.ejs
+│   ├── admin-home.ejs
+│   ├── admin-status-success.ejs
+│   ├── all-movies.ejs
+│   ├── create-movie.ejs
+│   ├── create-user.ejs
+│   ├── delete-success.ejs
+│   ├── discussionboard-delete.ejs
+│   ├── discussionboard-deletesuccess.ejs
+│   ├── discussionboard-replies-delete.ejs
+│   ├── discussionboard-replies-deletesuccess.ejs
+│   ├── discussionboard-replies-update.ejs
+│   ├── discussionboard-replies.ejs
+│   ├── discussionboard-update.ejs
+│   ├── discussionboard.ejs
+│   ├── edit-movie.ejs
+│   ├── edit-review.ejs
+│   ├── edit-profile.ejs
+│   ├── error.ejs
 │   ├── home.ejs
 │   ├── login.ejs
-│   ├── register.ejs
-│   ├── all-movies.ejs
-│   ├── movie.ejs
-│   ├── create-movie.ejs
-│   ├── edit-movie.ejs
+│   ├── logs.ejs
 │   ├── movie-delete.ejs
-│   ├── edit-review.ejs
-│   ├── watchedMovies.ejs
-│   ├── recommendations.ejs
+│   ├── movie.ejs
 │   ├── profile.ejs
-│   ├── editprofile.ejs
-│   ├── admin-home.ejs
-│   ├── create-user.ejs
-│   └── user-delete-confirmation.ejs
+│   ├── recommendations.ejs
+│   ├── register.ejs
+│   ├── user-delete-confirmation.ejs
+│   └── wathcedMovies.ejs
 ├── server.js            # Entry point — connects to MongoDB and starts Express
 ├── config.env           # Environment variables (not committed to Git)
 └── package.json
