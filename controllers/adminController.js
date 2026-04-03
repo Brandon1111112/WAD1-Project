@@ -40,7 +40,7 @@ exports.showAdminHome = async (req, res) => {
     }); // If Roles is an array, use it, else if string convert to array else prepare for undefined case therefore return empty array. 
   } catch (error) {
     console.error(error);
-    return res.render('admin-home', {Users: [], error: 'Error reading database', message: null});
+    return res.render('admin-home', {Users: [], error: 'Error reading database', message: null, searchQuery:'', selectedRoles:[]});
   }
 };
 
