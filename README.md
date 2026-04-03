@@ -160,7 +160,7 @@ When a user with `admin: true` logs in, they are automatically redirected to `/a
 
 ---
 
-### Watchlist & Watched Movies — `/watched`
+### Watchlist & Watched Movies — `/watchlist`
 
 | Method | Path | Description |
 |---|---|---|
