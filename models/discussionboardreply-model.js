@@ -49,7 +49,6 @@ DiscussionBoardReply.findByReplyID=function(replyID){
 };
 // edit notice
 DiscussionBoardReply.UpdateReply = function(replyID,reply) {
-    // return DiscussionBoardReply.findByIdAndUpdate(postID,{message:message},{returnDocument:'after'}); // logging edits
     return DiscussionBoardReply.updateOne({_id:replyID},{reply:reply,edited:true})
 };
 

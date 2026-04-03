@@ -1,6 +1,5 @@
 const mongoose=require('mongoose');
 const DiscussionBoardReply = require('./discussionboardreply-model');
-// const { options } = require('../routes/discussionBoardRoutes');
 
 // messages schema
 const discussionBoardModel = new mongoose.Schema({
@@ -46,7 +45,6 @@ DiscussionBoard.findByPostID=function(postID){
 };
 // edit notice
 DiscussionBoard.UpdateNotice = function(postID,message) {
-    // return DiscussionBoard.findByIdAndUpdate(postID,{message:message},{returnDocument:'after'}); // logging edits
     return DiscussionBoard.updateOne({_id:postID},{message:message,edited:true})
 };
 

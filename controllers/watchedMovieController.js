@@ -51,8 +51,10 @@ const showWatchlist = async (req, res) => {
 const addToWatchlist = async (req, res) => {
   try {
     const movieId = req.body.movieId;
-    const movieTitle = (await Movie.findById(movieId)).movieTitle;
-
+    const movie = await Movie.findById(movieId);
+    if (!movie) {
+      return res.status(404).render('error', { error: 'Movie not found', statusCode: 404 });
+    }
     /* 
     It will find the document by the userId and movieId, 
     if document already exists it will update it, if it does not exist it will create a new document (upsert:true)
@@ -68,7 +70,7 @@ const addToWatchlist = async (req, res) => {
       { upsert: true },
     );
 
-    await Logs.createALog(req.session.user.userId, `Added ${movieTitle} to watchlist`, 'watchlist');
+    await Logs.createALog(req.session.user.userId, `Added ${movie.movieTitle} to watchlist`, 'watchlist');
 
     return res.redirect(req.headers.referer || "/movie");
   } catch (error) {
@@ -83,14 +85,17 @@ const addToWatchlist = async (req, res) => {
 const removeFromWatchlist = async (req, res) => {
   try {
     const movieId = req.body.movieId;
-    const movieTitle = (await Movie.findById(movieId)).movieTitle;
+    const movie = await Movie.findById(movieId);
+    if (!movie) {
+      return res.status(404).render('error', { error: 'Movie not found', statusCode: 404 });
+    }
 
     await Watchlist.updateOne(
       { userId: req.session.user.userId, movieId: movieId },
       { wantsToWatch: false, addDate: null },
     );
 
-    await Logs.createALog(req.session.user.userId, `Removed ${movieTitle} from watchlist`, 'watchlist');
+    await Logs.createALog(req.session.user.userId, `Removed ${movie.movieTitle} from watchlist`, 'watchlist');
 
     return res.redirect(req.headers.referer || "/movie");
   } catch (error) {
@@ -106,6 +111,9 @@ const markAsWatched = async (req, res) => {
   try {
     const movieId = req.body.movieId;
     const movie = await Movie.findById(movieId);
+    if (!movie) {
+      return res.status(404).render('error', { error: 'Movie not found', statusCode: 404 });
+    }
     const movieRunTime = movie.runTime;
     
     /* 
@@ -138,14 +146,17 @@ const markAsWatched = async (req, res) => {
 const unmarkAsWatched = async (req, res) => {
   try {
     const movieId = req.body.movieId;
-    const movieTitle = (await Movie.findById(movieId)).movieTitle;
+    const movie = await Movie.findById(movieId);
+    if (!movie) {
+      return res.status(404).render('error', { error: 'Movie not found', statusCode: 404 });
+    }
 
     await Watchlist.updateOne(
       { userId: req.session.user.userId, movieId: movieId },
       { wantsToWatch: false, hasWatched: false, watchTime: 0 },
     );
 
-    await Logs.createALog(req.session.user.userId, `Unmarked ${movieTitle} as watched`, 'watchlist');
+    await Logs.createALog(req.session.user.userId, `Unmarked ${movie.movieTitle} as watched`, 'watchlist');
 
     return res.redirect(req.headers.referer || "/movie");
   } catch (error) {
@@ -186,9 +197,9 @@ const showRecommendations = async (req, res) => {
       .filter(genre => !rawUserFavouriteGenres.includes(genre))
       .slice(0, 3);
 
-    // Get the movie to exlude by combining movies watched or in watchlist
+    // Get the movies to exlude by combining movies watched or in watchlist
     const excludedMovies = [
-      ...inWatchlist.map((entry) => entry.movieId._id),
+      ...inWatchlist.map((entry) => entry.movieId),
       ...watched.map((entry) => entry.movieId._id)
     ];
     // Get movies not yet watched within top 3 genres

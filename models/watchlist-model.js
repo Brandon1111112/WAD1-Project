@@ -5,12 +5,12 @@ const watchlistModel = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    require: true,
+    required: true,
   },
   movieId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Movie",
-    require: true,
+    required: true,
   },
   wantsToWatch: {
     type: Boolean,
