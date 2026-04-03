@@ -181,7 +181,7 @@ const deleteUser = async (req, res) => {
     try {
         const userId = req.session.user.userId;
         await User.findByIdAndDelete(userId);
-        await Watchlist.findByIdAndDelete(userId);
+        await Watchlist.deleteMany({userId:userId});
 
         await Logs.createALog(userId, 'Account was deleted', 'profile');
         // Destroy session after deleting user
